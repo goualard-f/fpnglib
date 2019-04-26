@@ -4,12 +4,16 @@ The *Floating-Point Number Generator Library* is a small C library to generate a
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. 
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ### Prerequisites
 
 The FPNGlib is built and tested on a Linux system with the GNU C Compiler. It should be compilable with minimal modifications on other platforms provided a sufficiently recent C compiler supporting
 the ISO/IEC 9899:1999 (C99) standard is available.
+
+The libraries relies on the following libraries to be installed beforehand:
+
+* `GNU GSL v. 2.5`
 
 ### Installing
 
