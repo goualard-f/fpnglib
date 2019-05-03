@@ -1,5 +1,23 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
+#
+# Copyright 2019 University of Nantes, France.
+#
+#	This file is part of the FPNGlib library.
+#
+#	The FPNGlib library is free software; you can redistribute it and/or modify
+#	it under the terms of the GNU Lesser General Public License as published by the 
+#	Free Software Foundation; either version 3 of the License, or (at your
+#	option) any later version.
+#	
+#	The FPNGlib library is distributed in the hope that it will be useful, but
+#	WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+#	or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+#	for more details.
+#	
+#	You should have received copies of the GNU General Public License and the
+#	GNU Lesser General Public License along with the FPNGlib Library.  If not,
+#	see https://www.gnu.org/licenses/. 	
 
 AC_PREREQ([2.69])
 AC_INIT([fpnglib],m4_esyscmd([tr -d '\n' < VERSION]),[frederic.goualard@univ-nantes.fr])
@@ -41,6 +59,9 @@ fi
 AC_PROG_LIBTOOL
 
 # Checks for libraries.
+AC_CHECK_LIB([m],[cos])
+AC_CHECK_LIB([gslcblas],[cblas_dgemm])
+AC_CHECK_LIB([gsl],[gsl_blas_dgemm])
 
 # Checks for header files.
 AC_HEADER_STDC
@@ -53,8 +74,9 @@ AC_TYPE_INT32_T
 AC_TYPE_INT64_T
 AC_TYPE_UINT64_T
 
-CFLAGS="$CFLAGS -Wall"
-
 # Checks for library functions.
+
+# Set default CFLAGS to nothing to avoid -O2 optimization in tests
+CFLAGS=
 
 AC_OUTPUT

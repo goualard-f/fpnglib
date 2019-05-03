@@ -18,8 +18,10 @@
 #	GNU Lesser General Public License along with the FPNGlib Library.  If not,
 #	see https://www.gnu.org/licenses/. 	
 
+AM_CFLAGS = -Wall
 lib_LTLIBRARIES = libfpnglib.la
-libfpnglib_la_SOURCES = fpu.c fp_double.c fp_float.c interval.c
+libfpnglib_la_SOURCES = fpu.c fp.c fp_double.c fp_float.c d_interval.c random.c
 libfpnglib_la_CPPFLAGS = -I$(top_srcdir)/srccd
-pkginclude_HEADERS = constants.h fp_double.h fp_float.h fpnglib.h fpu.h interval.h
+pkginclude_HEADERS = constants.h fp_double.h fp_float.h fp.h fpnglib.h fpu.h \
+	d_interval.h random.h
 libfpnglib_la_LDFLAGS = -version-info $(LT_VERSION_INFO)

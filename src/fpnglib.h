@@ -4,12 +4,12 @@
 
 	This file is part of the FPNGlib library.
 
-	The FPNGlib library brary is free software; you can redistribute it and/or modify
+	The FPNGlib library is free software; you can redistribute it and/or modify
 	it under the terms of the GNU Lesser General Public License as published by the 
 	Free Software Foundation; either version 3 of the License, or (at your
 	option) any later version.
 	
-	The FPNGlib Library is distributed in the hope that it will be useful, but
+	The FPNGlib library is distributed in the hope that it will be useful, but
 	WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 	or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 	for more details.
@@ -20,13 +20,13 @@
 	
  */
 
-#ifndef __fpnglib_h__
-#define __fpnglib_h__
+#ifndef __fpngl_fpnglib_h__
+#define __fpngl_fpnglib_h__
 
 #include <fpnglib/constants.h>
 #include <fpnglib/fpu.h>
 #include <fpnglib/fp_double.h>
 #include <fpnglib/fp_double.h>
-#include <fpnglib/interval.h>
+#include <fpnglib/d_interval.h>
 
-#endif // __fpnglib_h__
+#endif // __fpngl_fpnglib_h__

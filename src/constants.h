@@ -4,12 +4,12 @@
 
 	This file is part of the FPNGlib library.
 
-	The FPNGlib library brary is free software; you can redistribute it and/or modify
+	The FPNGlib library is free software; you can redistribute it and/or modify
 	it under the terms of the GNU Lesser General Public License as published by the 
 	Free Software Foundation; either version 3 of the License, or (at your
 	option) any later version.
 	
-	The FPNGlib Library is distributed in the hope that it will be useful, but
+	The FPNGlib library is distributed in the hope that it will be useful, but
 	WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 	or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 	for more details.
@@ -19,8 +19,8 @@
 	see https://www.gnu.org/licenses/. 	
 	
  */
-#ifndef __constants_h__
-#define __constants_h__
+#ifndef __fpngl_constants_h__
+#define __fpngl_constants_h__
 
 #include <float.h>
 
@@ -30,18 +30,24 @@
   Nicholas J. Higham. SIAM
  */
 
+// Double precision format **************************************
+// **************************************************************
 // Number of bits in the significand of a double precision number
-const double fpngl_d_t = 53;
+static const double fpngl_d_t = 53;
 // Smallest unbiased exponent of a double precision number
-const double fpngl_d_emin = -1022;
+static const double fpngl_d_emin = -1022;
 // Largest unbiased exponent of a double precision number
-const double fpngl_d_emax = 1023;
-const double fpngl_d_u = 0.5*DBL_EPSILON;
+static const double fpngl_d_emax = 1023;
+// Unit roundoff for a double precision number
+static const double fpngl_d_u = 0.5*DBL_EPSILON;
 // Smallest positive normalized double precision number
-const double fpngl_d_lambda = DBL_MIN;
+static const double fpngl_d_lambda = DBL_MIN;
 // Smallest positive double precision number
-const double fpngl_d_mu = DBL_MIN*DBL_EPSILON;
-const double fpngl_d_NaN = 0.0/0.0;
-const double fpngl_d_infinity = 1.0/0.0;
-const double fpngl_d_max = DBL_MAX;
-#endif // __constants_h__
+static const double fpngl_d_mu = DBL_MIN*DBL_EPSILON;
+static const double fpngl_d_NaN = 0.0/0.0;
+static const double fpngl_d_infinity = 1.0/0.0;
+// Largest positive finite double precision number
+static const double fpngl_d_max = DBL_MAX;
+
+
+#endif // __fpngl_constants_h__

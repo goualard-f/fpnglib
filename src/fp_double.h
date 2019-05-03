@@ -4,12 +4,12 @@
 
 	This file is part of the FPNGlib library.
 
-	The FPNGlib library brary is free software; you can redistribute it and/or modify
+	The FPNGlib library is free software; you can redistribute it and/or modify
 	it under the terms of the GNU Lesser General Public License as published by the 
 	Free Software Foundation; either version 3 of the License, or (at your
 	option) any later version.
 	
-	The FPNGlib Library is distributed in the hope that it will be useful, but
+	The FPNGlib library is distributed in the hope that it will be useful, but
 	WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 	or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 	for more details.
@@ -20,10 +20,12 @@
 	
  */
 
-#ifndef __fp_double_h__
-#define __fp_double_h__
+#ifndef __fpngl_fp_double_h__
+#define __fpngl_fp_double_h__
 
 #include <stdint.h>
+#include <fpnglib/fp.h>
+#include <fpnglib/random.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -33,36 +35,81 @@ extern "C" {
 	 double d;
 	 uint64_t i;
   } fpngl_dui_t;
-  
+
+ 
   /*
-	 Return a float that is n floating-point numbers after v.
+	 Return a double precision number that is 'n' floating-point numbers after 'v'.
 	 
 	 The parameter n must be in the interval [1, 0x7fe0000000000000].
   */
-  double fpngl_next_float(double v, uint64_t n);
+  double fpngl_d_next(double v, uint64_t n);
   
   /*
-	 Return a float that is n floating-point numbers before v.
+	 Return a double precision that is 'n' floating-point numbers before 'v'.
   */
-  double fpngl_previous_float(double v, uint64_t n);
+  double fpngl_d_previous(double v, uint64_t n);
   
+  // Return a random denormal double precision number
+  double fpngl_d_create_denormal(fpngl_rng_t *rng);
+  // Return +0.0 or -0.0 randomly with even probability
+  double fpngl_d_create_zero(fpngl_rng_t *rng);
+  // Return +oo or -oo randomly with even probability
+  double fpngl_d_create_inf(fpngl_rng_t *rng);
+  // Return a normal double precision number in [fngl_d_lambda,fpngl_d_max]
+  double fpngl_d_create_normal(fpngl_rng_t *rng);
   /*
-	 Return the "unit in the first place" of x 
-	 See: Accurate floating-point summation part I: faithful rounding. S. M. Rump, 
-	 T. Ogita, S. Oishi. SIAM J. Sci. Comput. 31(1), pp. 189--224, 2008.
-	 \pre x shall not be an infinity or a NaN	 
-  */
-  double fpngl_ufp(double x);
+	 create_double -- Returns a double precision number
+	 according to the specifications:
+  
+  - s: possible sign 
+  - minexp: minimum exponent (biased) in [0,2047]
+  - maxexp: maximum exponent (biased) in [0,2047]
+  - minfrac: minimum fractional part expressed as an unsigned integer
+             between 0x0000000000000000 and 0x000fffffffffffff
+  - maxfrac: maximum fractional part expressed as an unsigned integer
+             between 0x0000000000000000 and 0x000fffffffffffff
+  - andmask: AND mask applied to the 64 bits of the number created.
+             Should be 0xffffffffffffffff if no mask is needed.
+  - ormask:  OR mask applied to the 64 bits of the number created.
+             Should be 0x0000000000000000 if no mask is needed
+
+  WARNING: For better performances, the consistency of the defining
+  values are not checked.
+*/
+  double fpngl_d_create_by_field(fpngl_rng_t *rng,
+											fpngl_sign_t s, uint32_t minexp, uint32_t maxexp, 
+											uint64_t minfrac, uint64_t maxfrac, 
+											uint64_t andmask,
+											uint64_t ormask);
+  
 
   /*
-	 Return the "unit in the first place" of x with the sign of x.
-	 \pre x shall not be an infinity or a NaN	 
+	 Return a floating-point number from one of the four classes:
+	 { zero, denormalized, normalized, infinite }
+	 with a probability according to fpd.
   */
-  double fpngl_signed_ufp(double x);
+  double fpngl_d_create_by_distrib(fpngl_fp_distribution_t *fpd);
+
+  /*
+  Computes the number of floats (bounds included) from a to b.
+  Return 0 if either a or b are infinites or NaNs.
+  Return 1 if a == b
+  \pre a must be smaller or equal to b
+*/
+uint64_t fpngl_d_unfp(double a, double b);
+
+/*
+  Computes the number of floats (bounds included) from a to b.
+  Returns a negative value if a > b
+  Return 0 if either a or b are infinites or NaNs.
+  Return 1 if a == b
+*/
+int64_t fpngl_d_nfp(double a, double b);
+  
 
   
 #ifdef __cplusplus
 }
 #endif
 
-#endif // __fp_double_h__
+#endif // __fpngl_fp_double_h__
