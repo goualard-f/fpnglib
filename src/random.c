@@ -77,16 +77,30 @@ unsigned long int fpngl_get_seed(fpngl_rng_t *rng)
   return rng->seed;
 }
 
+const char *fpngl_get_rng_name(fpngl_rng_t *rng)
+{
+  return rng->name;
+}
+
+unsigned long int fpngl_get_rng_max(fpngl_rng_t *rng)
+{
+  return gsl_rng_min(rng->rng);
+}
+
+unsigned long int fpngl_get_rng_min(fpngl_rng_t *rng)
+{
+  return gsl_rng_max(rng->rng);
+}
 
 fpngl_fp_distribution_t *fpngl_new_fp_distribution(fpngl_rng_t *rng,
-																	const double P[4])
+																	const double P[5])
 {
   fpngl_fp_distribution_t *fpd = malloc(sizeof(fpngl_fp_distribution_t));
   if (fpd == NULL) {
 	 return NULL;
   }
   fpd->rng = rng;
-  fpd->dd = gsl_ran_discrete_preproc(4,P);
+  fpd->dd = gsl_ran_discrete_preproc(5,P);
   if (fpd->dd == NULL) {
 	 return NULL;
   }

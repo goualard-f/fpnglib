@@ -53,20 +53,22 @@ END_TEST
 START_TEST(test_fp_distribution)
 {
   fpngl_rng_t *r = fpngl_create_rng(57);
-  const double T[] = { 0.1, 0.1, 0.7, 0.1 };
+  const double T[] = { 0.1, 0.1, 0.7, 0.1, 0.0 };
   fpngl_fp_distribution_t *dd = fpngl_new_fp_distribution(r,T);
 
-  size_t noccur[] = { 0, 0, 0, 0 };
+  size_t noccur[] = { 0, 0, 0, 0, 0 };
   
   for (uint32_t i = 0; i < 10000; ++i) {
 	 size_t v = fpngl_fp_distribution_value(dd);
 	 ++noccur[v];
-	 ck_assert(v <= 3);
+	 ck_assert(v <= 4);
   }
   ck_assert(fabs(noccur[0]/10000. - 0.1) < 3e-3);
-  ck_assert(fabs(noccur[1]/10000. - 0.1) < 4e-3);
+  printf("AAA: %g\n",fabs(noccur[1]/10000. - 0.1));
+  ck_assert(fabs(noccur[1]/10000. - 0.1) < 5e-3);
   ck_assert(fabs(noccur[2]/10000. - 0.7) < 3e-3);
   ck_assert(fabs(noccur[3]/10000. - 0.1) < 4e-3);
+  ck_assert_uint_eq(noccur[4],0);
   
   fpngl_delete_fp_distribution(dd);
   fpngl_delete_rng(r);

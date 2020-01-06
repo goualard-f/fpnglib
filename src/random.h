@@ -40,7 +40,8 @@ extern "C" {
 
   /* Initializes the seed for the pseudo-random generators to 'seed'
 	  If seed==0, tries to retrieve a seed value from the GSL_RNG_SEED
-	  environment variable. Failing that, the seed defaults to 0.
+	  environment variable. Failing that, uses the default seed for the
+	  random generator used (see GSL documentation).
 	  
 	  Return NULL if memory cannot be allocated to represent the generator.
   */
@@ -55,15 +56,25 @@ extern "C" {
   // Return the seed used by the RNG
   unsigned long int fpngl_get_seed(fpngl_rng_t *rng);
 
+  // Return the name of the RNG used (see GSL documentation for more info.
+  const char *fpngl_get_rng_name(fpngl_rng_t *rng);
+
+  // Return the maximum value the RNG can return
+  unsigned long int fpngl_get_rng_max(fpngl_rng_t *rng);
+
+  // Return the minimum value the RNG can return
+  unsigned long int fpngl_get_rng_min(fpngl_rng_t *rng);
+  
   typedef struct fpngl_fp_distribution_t fpngl_fp_distribution_t;
 
   /* Create a structure to handle the distribution of possible floating-point
-	  numbers according to four categories:
-	  { pzero, pdenorm, pnorm, pinf }
-	  $\sum P$ need not be equal to 1.
+	  numbers according to five categories:
+	  { pzero, pdenorm, pnorm, pinf, pnan }
+	  $\sum P$ needs not be equal to 1.
+	  \return NULL if the result cannot be allocated
   */
   fpngl_fp_distribution_t *fpngl_new_fp_distribution(fpngl_rng_t *rng,
-																	  const double P[4]);
+																	  const double P[5]);
 
   /* Free memory allocated to represent the floating-point number
 	  distribution fpd.

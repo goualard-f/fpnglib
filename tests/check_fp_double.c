@@ -29,6 +29,7 @@
 
 fpngl_rng_t *rng;
 
+
 START_TEST(test_d_next)
 {
   // Case  n == 0
@@ -92,6 +93,14 @@ START_TEST(test_create_normal)
 {
   for (uint32_t i = 0; i < 100000; ++i) {
 	 ck_assert(isnormal(fpngl_d_create_normal(rng)));
+  }
+}
+END_TEST
+
+START_TEST(test_create_nan)
+{
+  for (uint32_t i = 0; i < 100000; ++i) {
+	 ck_assert(isnan(fpngl_d_create_nan(rng)));
   }
 }
 END_TEST
@@ -211,6 +220,7 @@ Suite *fp_double_suite(void)
   tcase_add_test(tc_random1, test_create_zero);
   tcase_add_test(tc_random1, test_create_inf);
   tcase_add_test(tc_random1, test_create_normal);
+  tcase_add_test(tc_random1, test_create_nan);
   tcase_add_test(tc_random1, test_create_by_field);
   tcase_add_test(tc_random1, test_create_by_distrib);
   suite_add_tcase(s, tc_random1);

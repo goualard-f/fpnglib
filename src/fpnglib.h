@@ -24,9 +24,10 @@
 #define __fpngl_fpnglib_h__
 
 #include <fpnglib/constants.h>
-#include <fpnglib/fpu.h>
-#include <fpnglib/fp_double.h>
-#include <fpnglib/fp_double.h>
 #include <fpnglib/d_interval.h>
+#include <fpnglib/fp_double.h>
+#include <fpnglib/random.h>
+#include <fpnglib/fp.h>
+#include <fpnglib/fpu.h>
 
 #endif // __fpngl_fpnglib_h__

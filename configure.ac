@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 #
-# Copyright 2019 University of Nantes, France.
+# Copyright 2019--2020 University of Nantes, France.
 #
 #	This file is part of the FPNGlib library.
 #
@@ -24,7 +24,7 @@ AC_INIT([fpnglib],m4_esyscmd([tr -d '\n' < VERSION]),[frederic.goualard@univ-nan
 dnl For Automake
 AM_INIT_AUTOMAKE([gnu 1.7 dist-bzip2])
 
-PKG_CHECK_MODULES([CHECK], [check >= 0.12.0])
+PKG_CHECK_MODULES([CHECK], [check >= 0.11.0])
 
 AC_CONFIG_SRCDIR([src/fpu.h])
 AC_CONFIG_HEADERS([config.h])

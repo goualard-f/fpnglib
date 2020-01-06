@@ -57,6 +57,9 @@ extern "C" {
   double fpngl_d_create_inf(fpngl_rng_t *rng);
   // Return a normal double precision number in [fngl_d_lambda,fpngl_d_max]
   double fpngl_d_create_normal(fpngl_rng_t *rng);
+  // Return a nan
+  double fpngl_d_create_nan(fpngl_rng_t *rng);
+
   /*
 	 create_double -- Returns a double precision number
 	 according to the specifications:
@@ -85,7 +88,7 @@ extern "C" {
 
   /*
 	 Return a floating-point number from one of the four classes:
-	 { zero, denormalized, normalized, infinite }
+	 { zero, denormalized, normalized, infinite, nan }
 	 with a probability according to fpd.
   */
   double fpngl_d_create_by_distrib(fpngl_fp_distribution_t *fpd);

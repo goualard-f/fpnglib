@@ -69,6 +69,9 @@ static inline unsigned long int randfrac2(fpngl_rng_t *rng, uint64_t min, uint64
 
 double fpngl_d_next(double v, uint64_t n)
 {
+  if (isnan(v)) {
+	 return v;
+  }
   if (n == 1) {
 	 return nextafter(v,fpngl_d_infinity);
   }
@@ -97,6 +100,9 @@ double fpngl_d_next(double v, uint64_t n)
 
 double fpngl_d_previous(double v, uint64_t n)
 {
+  if (isnan(v)) {
+	 return v;
+  }
   if (n == 1) {
 	 return nextafter(v,-fpngl_d_infinity);
   }
@@ -144,6 +150,17 @@ double fpngl_d_create_normal(fpngl_rng_t *rng)
   return di.d;
 }
 
+double fpngl_d_create_nan(fpngl_rng_t *rng)
+{
+  fpngl_dui_t di;
+  uint64_t sign = randsign(rng);
+  uint64_t fract = randfrac(rng);
+  
+  di.i = (sign << 63) | ((uint64_t)0x7ff << 52) | fract;
+  return di.d;
+  
+}
+
 double fpngl_d_create_by_field(fpngl_rng_t *rng,
 										 fpngl_sign_t s, uint32_t minexp, uint32_t maxexp, 
 										 uint64_t minfrac, uint64_t maxfrac, 
@@ -177,7 +194,8 @@ double fpngl_d_create_by_distrib(fpngl_fp_distribution_t *fpd)
 {
   typedef double (*realfun)(fpngl_rng_t *);
   static realfun createv[] = {fpngl_d_create_zero, fpngl_d_create_denormal,
-										fpngl_d_create_normal, fpngl_d_create_inf };
+										fpngl_d_create_normal, fpngl_d_create_inf,
+										fpngl_d_create_nan };
   return createv[fpngl_fp_distribution_value(fpd)](fpngl_get_rng(fpd));
 }
 
