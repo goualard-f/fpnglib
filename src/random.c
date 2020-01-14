@@ -22,8 +22,6 @@
 
 #include <stdlib.h>
 #include <fpnglib/random.h>
-#include <gsl/gsl_rng.h>
-#include <gsl/gsl_randist.h>
 
 // Random number generator
 struct fpngl_rng_t {

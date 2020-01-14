@@ -1,6 +1,6 @@
 /* Routines to set/get information in the fpu.
 
-	Copyright 2019 University of Nantes, France.
+	Copyright 2019--2020 University of Nantes, France.
 
 	This file is part of the FPNGlib library.
 
@@ -20,15 +20,13 @@
 	
  */
 
-#include <assert.h>
-#include <math.h>
 #include <fenv.h>
 
 #include <fpnglib/fpu.h>
 
-bool fpngl_inexact(void)
+int fpngl_inexact(void)
 {
-  return (fetestexcept(FE_INEXACT) & FE_INEXACT);
+  return fetestexcept(FE_INEXACT) & FE_INEXACT;
 }
 
 void fpngl_clear_inexact(void)

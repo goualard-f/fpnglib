@@ -23,16 +23,16 @@
 #include <stdlib.h>
 #include <check.h>
 #include <math.h>
-#include <fpnglib/constants.h>
+#include <fpnglib/constants64.h>
 
 START_TEST(test_constants)
 {
-  ck_assert_double_eq(fpngl_d_u,ldexp(1.0,-fpngl_d_t));
-  ck_assert_double_eq(fpngl_d_lambda,ldexp(1.0,fpngl_d_emin));
-  ck_assert_double_eq(fpngl_d_mu,ldexp(1.0,fpngl_d_emin-fpngl_d_t+1));
-  ck_assert_double_eq(fpngl_d_max,nextafter(fpngl_d_infinity,-fpngl_d_infinity));
-  ck_assert_double_nan(fpngl_d_NaN);
-  ck_assert_double_infinite(fpngl_d_infinity);
+  ck_assert_double_eq(fpngl_u64,ldexp(1.0,-fpngl_t64));
+  ck_assert_double_eq(fpngl_lambda64,ldexp(1.0,fpngl_emin64));
+  ck_assert_double_eq(fpngl_mu64,ldexp(1.0,fpngl_emin64-fpngl_t64+1));
+  ck_assert_double_eq(fpngl_max64,nextafter(fpngl_infinity64,-fpngl_infinity64));
+  ck_assert_double_nan(fpngl_NaN64);
+  ck_assert_double_infinite(fpngl_infinity64);
 }
 END_TEST
 

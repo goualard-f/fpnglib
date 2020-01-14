@@ -29,14 +29,19 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  
-  // Return 'true' if the FPU inexact flag was raised by previous computation.
-  bool fpngl_inexact(void);
 
-  // Clear the FPU inexact flag.
+	
+  /*
+		Return FE_INEXACT if the FPU inexact flag was raised by previous computation, and
+		0 otherwise.
+	*/
+  int fpngl_inexact(void);
+
+  /*
+		Clear the FPU inexact flag.
+	 */
   void fpngl_clear_inexact(void);
-
-  
+ 
   
 #ifdef __cplusplus
 }

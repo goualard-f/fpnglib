@@ -23,11 +23,8 @@
 #ifndef __fpngl_fpnglib_h__
 #define __fpngl_fpnglib_h__
 
-#include <fpnglib/constants.h>
-#include <fpnglib/d_interval.h>
-#include <fpnglib/fp_double.h>
+#include <fpnglib/constants64.h>
 #include <fpnglib/random.h>
-#include <fpnglib/fp.h>
 #include <fpnglib/fpu.h>
 
 #endif // __fpngl_fpnglib_h__

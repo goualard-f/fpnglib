@@ -107,9 +107,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-TESTS = check_random$(EXEEXT) check_constants$(EXEEXT) \
-	check_fpu$(EXEEXT) check_fp$(EXEEXT) check_fp_double$(EXEEXT) \
-	check_d_interval$(EXEEXT)
+TESTS = check_constants64$(EXEEXT) check_fpu$(EXEEXT)
 check_PROGRAMS = $(am__EXEEXT_1)
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -124,34 +122,17 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am__EXEEXT_1 = check_random$(EXEEXT) check_constants$(EXEEXT) \
-	check_fpu$(EXEEXT) check_fp$(EXEEXT) check_fp_double$(EXEEXT) \
-	check_d_interval$(EXEEXT)
-am_check_constants_OBJECTS = check_constants.$(OBJEXT)
-check_constants_OBJECTS = $(am_check_constants_OBJECTS)
-check_constants_LDADD = $(LDADD)
+am__EXEEXT_1 = check_constants64$(EXEEXT) check_fpu$(EXEEXT)
+am_check_constants64_OBJECTS = check_constants64.$(OBJEXT)
+check_constants64_OBJECTS = $(am_check_constants64_OBJECTS)
+check_constants64_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
-check_constants_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+check_constants64_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
 	$(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
-am_check_d_interval_OBJECTS = check_d_interval.$(OBJEXT)
-check_d_interval_OBJECTS = $(am_check_d_interval_OBJECTS)
-check_d_interval_LDADD = $(LDADD)
-check_d_interval_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
-	$(am__DEPENDENCIES_1)
-am_check_fp_OBJECTS = check_fp.$(OBJEXT)
-check_fp_OBJECTS = $(am_check_fp_OBJECTS)
-check_fp_LDADD = $(LDADD)
-check_fp_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
-	$(am__DEPENDENCIES_1)
-am_check_fp_double_OBJECTS = check_fp_double.$(OBJEXT)
-check_fp_double_OBJECTS = $(am_check_fp_double_OBJECTS)
-check_fp_double_LDADD = $(LDADD)
-check_fp_double_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
-	$(am__DEPENDENCIES_1)
 am_check_fpu_OBJECTS = check_fpu-check_fpu.$(OBJEXT)
 check_fpu_OBJECTS = $(am_check_fpu_OBJECTS)
 check_fpu_LDADD = $(LDADD)
@@ -160,11 +141,6 @@ check_fpu_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
 check_fpu_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(check_fpu_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-am_check_random_OBJECTS = check_random.$(OBJEXT)
-check_random_OBJECTS = $(am_check_random_OBJECTS)
-check_random_LDADD = $(LDADD)
-check_random_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
-	$(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -199,12 +175,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(check_constants_SOURCES) $(check_d_interval_SOURCES) \
-	$(check_fp_SOURCES) $(check_fp_double_SOURCES) \
-	$(check_fpu_SOURCES) $(check_random_SOURCES)
-DIST_SOURCES = $(check_constants_SOURCES) $(check_d_interval_SOURCES) \
-	$(check_fp_SOURCES) $(check_fp_double_SOURCES) \
-	$(check_fpu_SOURCES) $(check_random_SOURCES)
+SOURCES = $(check_constants64_SOURCES) $(check_fpu_SOURCES)
+DIST_SOURCES = $(check_constants64_SOURCES) $(check_fpu_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -560,13 +532,9 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 LDADD = $(top_builddir)/src/libfpnglib.la @CHECK_LIBS@ -lm $(LIBS)
 AM_CFLAGS = -I.. -Wall @CHECK_CFLAGS@
-check_constants_SOURCES = check_constants.c $(top_builddir)/fpnglib/constants.h
+check_constants64_SOURCES = check_constants64.c $(top_builddir)/fpnglib/constants64.h
 check_fpu_SOURCES = check_fpu.c $(top_builddir)/fpnglib/fpu.h
 check_fpu_CFLAGS = -frounding-math
-check_fp_SOURCES = check_fp.c $(top_builddir)/fpnglib/fp.h
-check_fp_double_SOURCES = check_fp_double.c $(top_builddir)/fpnglib/fp_double.h
-check_random_SOURCES = check_random.c $(top_builddir)/fpnglib/random.h
-check_d_interval_SOURCES = check_d_interval.c  $(top_builddir)/fpnglib/d_interval.h 
 all: all-am
 
 .SUFFIXES:
@@ -610,29 +578,13 @@ clean-checkPROGRAMS:
 	echo " rm -f" $$list; \
 	rm -f $$list
 
-check_constants$(EXEEXT): $(check_constants_OBJECTS) $(check_constants_DEPENDENCIES) $(EXTRA_check_constants_DEPENDENCIES) 
-	@rm -f check_constants$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(check_constants_OBJECTS) $(check_constants_LDADD) $(LIBS)
-
-check_d_interval$(EXEEXT): $(check_d_interval_OBJECTS) $(check_d_interval_DEPENDENCIES) $(EXTRA_check_d_interval_DEPENDENCIES) 
-	@rm -f check_d_interval$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(check_d_interval_OBJECTS) $(check_d_interval_LDADD) $(LIBS)
-
-check_fp$(EXEEXT): $(check_fp_OBJECTS) $(check_fp_DEPENDENCIES) $(EXTRA_check_fp_DEPENDENCIES) 
-	@rm -f check_fp$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(check_fp_OBJECTS) $(check_fp_LDADD) $(LIBS)
-
-check_fp_double$(EXEEXT): $(check_fp_double_OBJECTS) $(check_fp_double_DEPENDENCIES) $(EXTRA_check_fp_double_DEPENDENCIES) 
-	@rm -f check_fp_double$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(check_fp_double_OBJECTS) $(check_fp_double_LDADD) $(LIBS)
+check_constants64$(EXEEXT): $(check_constants64_OBJECTS) $(check_constants64_DEPENDENCIES) $(EXTRA_check_constants64_DEPENDENCIES) 
+	@rm -f check_constants64$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(check_constants64_OBJECTS) $(check_constants64_LDADD) $(LIBS)
 
 check_fpu$(EXEEXT): $(check_fpu_OBJECTS) $(check_fpu_DEPENDENCIES) $(EXTRA_check_fpu_DEPENDENCIES) 
 	@rm -f check_fpu$(EXEEXT)
 	$(AM_V_CCLD)$(check_fpu_LINK) $(check_fpu_OBJECTS) $(check_fpu_LDADD) $(LIBS)
-
-check_random$(EXEEXT): $(check_random_OBJECTS) $(check_random_DEPENDENCIES) $(EXTRA_check_random_DEPENDENCIES) 
-	@rm -f check_random$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(check_random_OBJECTS) $(check_random_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -640,12 +592,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_constants.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_d_interval.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_fp.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_fp_double.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_constants64.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_fpu-check_fpu.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_random.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -881,16 +829,9 @@ recheck: all $(check_PROGRAMS)
 	        am__force_recheck=am--force-recheck \
 	        TEST_LOGS="$$log_list"; \
 	exit $$?
-check_random.log: check_random$(EXEEXT)
-	@p='check_random$(EXEEXT)'; \
-	b='check_random'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-check_constants.log: check_constants$(EXEEXT)
-	@p='check_constants$(EXEEXT)'; \
-	b='check_constants'; \
+check_constants64.log: check_constants64$(EXEEXT)
+	@p='check_constants64$(EXEEXT)'; \
+	b='check_constants64'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
@@ -898,27 +839,6 @@ check_constants.log: check_constants$(EXEEXT)
 check_fpu.log: check_fpu$(EXEEXT)
 	@p='check_fpu$(EXEEXT)'; \
 	b='check_fpu'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-check_fp.log: check_fp$(EXEEXT)
-	@p='check_fp$(EXEEXT)'; \
-	b='check_fp'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-check_fp_double.log: check_fp_double$(EXEEXT)
-	@p='check_fp_double$(EXEEXT)'; \
-	b='check_fp_double'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-check_d_interval.log: check_d_interval$(EXEEXT)
-	@p='check_d_interval$(EXEEXT)'; \
-	b='check_d_interval'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

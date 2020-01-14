@@ -153,9 +153,8 @@ am__uninstall_files_from_dir = { \
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgincludedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libfpnglib_la_LIBADD =
-am_libfpnglib_la_OBJECTS = libfpnglib_la-fpu.lo libfpnglib_la-fp.lo \
-	libfpnglib_la-fp_double.lo libfpnglib_la-fp_float.lo \
-	libfpnglib_la-d_interval.lo libfpnglib_la-random.lo
+am_libfpnglib_la_OBJECTS = libfpnglib_la-fpu.lo \
+	libfpnglib_la-random.lo
 libfpnglib_la_OBJECTS = $(am_libfpnglib_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -351,11 +350,9 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CFLAGS = -Wall
 lib_LTLIBRARIES = libfpnglib.la
-libfpnglib_la_SOURCES = fpu.c fp.c fp_double.c fp_float.c d_interval.c random.c
-libfpnglib_la_CPPFLAGS = -I$(top_srcdir)/srccd
-pkginclude_HEADERS = constants.h fp_double.h fp_float.h fp.h fpnglib.h fpu.h \
-	d_interval.h random.h
-
+libfpnglib_la_SOURCES = fpu.c random.c
+libfpnglib_la_CPPFLAGS = -I$(top_srcdir)/src
+pkginclude_HEADERS = constants64.h fpnglib.h fpu.h random.h
 libfpnglib_la_LDFLAGS = -version-info $(LT_VERSION_INFO)
 all: all-am
 
@@ -435,10 +432,6 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfpnglib_la-d_interval.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfpnglib_la-fp.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfpnglib_la-fp_double.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfpnglib_la-fp_float.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfpnglib_la-fpu.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfpnglib_la-random.Plo@am__quote@
 
@@ -469,34 +462,6 @@ libfpnglib_la-fpu.lo: fpu.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='fpu.c' object='libfpnglib_la-fpu.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libfpnglib_la-fpu.lo `test -f 'fpu.c' || echo '$(srcdir)/'`fpu.c
-
-libfpnglib_la-fp.lo: fp.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libfpnglib_la-fp.lo -MD -MP -MF $(DEPDIR)/libfpnglib_la-fp.Tpo -c -o libfpnglib_la-fp.lo `test -f 'fp.c' || echo '$(srcdir)/'`fp.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libfpnglib_la-fp.Tpo $(DEPDIR)/libfpnglib_la-fp.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='fp.c' object='libfpnglib_la-fp.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libfpnglib_la-fp.lo `test -f 'fp.c' || echo '$(srcdir)/'`fp.c
-
-libfpnglib_la-fp_double.lo: fp_double.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libfpnglib_la-fp_double.lo -MD -MP -MF $(DEPDIR)/libfpnglib_la-fp_double.Tpo -c -o libfpnglib_la-fp_double.lo `test -f 'fp_double.c' || echo '$(srcdir)/'`fp_double.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libfpnglib_la-fp_double.Tpo $(DEPDIR)/libfpnglib_la-fp_double.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='fp_double.c' object='libfpnglib_la-fp_double.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libfpnglib_la-fp_double.lo `test -f 'fp_double.c' || echo '$(srcdir)/'`fp_double.c
-
-libfpnglib_la-fp_float.lo: fp_float.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libfpnglib_la-fp_float.lo -MD -MP -MF $(DEPDIR)/libfpnglib_la-fp_float.Tpo -c -o libfpnglib_la-fp_float.lo `test -f 'fp_float.c' || echo '$(srcdir)/'`fp_float.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libfpnglib_la-fp_float.Tpo $(DEPDIR)/libfpnglib_la-fp_float.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='fp_float.c' object='libfpnglib_la-fp_float.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libfpnglib_la-fp_float.lo `test -f 'fp_float.c' || echo '$(srcdir)/'`fp_float.c
-
-libfpnglib_la-d_interval.lo: d_interval.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libfpnglib_la-d_interval.lo -MD -MP -MF $(DEPDIR)/libfpnglib_la-d_interval.Tpo -c -o libfpnglib_la-d_interval.lo `test -f 'd_interval.c' || echo '$(srcdir)/'`d_interval.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libfpnglib_la-d_interval.Tpo $(DEPDIR)/libfpnglib_la-d_interval.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='d_interval.c' object='libfpnglib_la-d_interval.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libfpnglib_la-d_interval.lo `test -f 'd_interval.c' || echo '$(srcdir)/'`d_interval.c
 
 libfpnglib_la-random.lo: random.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libfpnglib_la-random.lo -MD -MP -MF $(DEPDIR)/libfpnglib_la-random.Tpo -c -o libfpnglib_la-random.lo `test -f 'random.c' || echo '$(srcdir)/'`random.c

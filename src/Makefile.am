@@ -20,8 +20,7 @@
 
 AM_CFLAGS = -Wall
 lib_LTLIBRARIES = libfpnglib.la
-libfpnglib_la_SOURCES = fpu.c fp.c fp_double.c fp_float.c d_interval.c random.c
-libfpnglib_la_CPPFLAGS = -I$(top_srcdir)/srccd
-pkginclude_HEADERS = constants.h fp_double.h fp_float.h fp.h fpnglib.h fpu.h \
-	d_interval.h random.h
+libfpnglib_la_SOURCES = fpu.c random.c mt19937-64.c
+libfpnglib_la_CPPFLAGS = -I$(top_srcdir)/src
+pkginclude_HEADERS = constants64.h fpnglib.h fpu.h random.h mt19937-64.h
 libfpnglib_la_LDFLAGS = -version-info $(LT_VERSION_INFO)

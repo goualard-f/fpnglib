@@ -19,8 +19,8 @@
 	see https://www.gnu.org/licenses/. 	
 	
  */
-#ifndef __fpngl_constants_h__
-#define __fpngl_constants_h__
+#ifndef __fpngl_constants64_h__
+#define __fpngl_constants64_h__
 
 #include <float.h>
 
@@ -33,21 +33,21 @@
 // Double precision format **************************************
 // **************************************************************
 // Number of bits in the significand of a double precision number
-static const double fpngl_d_t = 53;
+static const double fpngl_t64 = 53;
 // Smallest unbiased exponent of a double precision number
-static const double fpngl_d_emin = -1022;
+static const double fpngl_emin64 = -1022;
 // Largest unbiased exponent of a double precision number
-static const double fpngl_d_emax = 1023;
+static const double fpngl_emax64 = 1023;
 // Unit roundoff for a double precision number
-static const double fpngl_d_u = 0.5*DBL_EPSILON;
+static const double fpngl_u64 = 0.5*DBL_EPSILON;
 // Smallest positive normalized double precision number
-static const double fpngl_d_lambda = DBL_MIN;
+static const double fpngl_lambda64 = DBL_MIN;
 // Smallest positive double precision number
-static const double fpngl_d_mu = DBL_MIN*DBL_EPSILON;
-static const double fpngl_d_NaN = 0.0/0.0;
-static const double fpngl_d_infinity = 1.0/0.0;
+static const double fpngl_mu64 = DBL_MIN*DBL_EPSILON;
+static const double fpngl_NaN64 = 0.0/0.0;
+static const double fpngl_infinity64 = 1.0/0.0;
 // Largest positive finite double precision number
-static const double fpngl_d_max = DBL_MAX;
+static const double fpngl_max64 = DBL_MAX;
 
 
-#endif // __fpngl_constants_h__
+#endif // __fpngl_constants64_h__

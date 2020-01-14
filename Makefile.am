@@ -1,6 +1,6 @@
 # High-level Makefile
 #
-#	Copyright 2019 University of Nantes, France.
+#	Copyright 2019--2020 University of Nantes, France.
 #
 #	This file is part of the FPNGlib library.
 #
@@ -18,4 +18,4 @@
 #	GNU Lesser General Public License along with the FPNGlib Library.  If not,
 #	see https://www.gnu.org/licenses/. 	
 
-SUBDIRS = fpnglib src tests
+SUBDIRS = fpnglib src tests doc

@@ -36,9 +36,12 @@
 extern "C" {
 #endif
 
+	/*
+		Structure containing the state of an RNG.
+	 */
   typedef struct fpngl_rng_t  fpngl_rng_t;
 
-  /* Initializes the seed for the pseudo-random generators to 'seed'
+  /* Initialize the seed for the pseudo-random generators to 'seed'.
 	  If seed==0, tries to retrieve a seed value from the GSL_RNG_SEED
 	  environment variable. Failing that, uses the default seed for the
 	  random generator used (see GSL documentation).

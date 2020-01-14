@@ -28,7 +28,7 @@ PKG_CHECK_MODULES([CHECK], [check >= 0.11.0])
 
 AC_CONFIG_SRCDIR([src/fpu.h])
 AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_FILES([Makefile fpnglib/Makefile src/Makefile tests/Makefile])
+AC_CONFIG_FILES([Makefile fpnglib/Makefile src/Makefile tests/Makefile doc/Makefile])
 
 dnl Libtool support
 AC_CONFIG_MACRO_DIR([m4])
@@ -60,8 +60,6 @@ AC_PROG_LIBTOOL
 
 # Checks for libraries.
 AC_CHECK_LIB([m],[cos])
-AC_CHECK_LIB([gslcblas],[cblas_dgemm])
-AC_CHECK_LIB([gsl],[gsl_blas_dgemm])
 
 # Checks for header files.
 AC_HEADER_STDC
