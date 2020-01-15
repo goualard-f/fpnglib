@@ -1,0 +1,33 @@
+This is fpnglib.info, produced by makeinfo version 6.5 from
+fpnglib.texi.
+
+INFO-DIR-SECTION Scientific software
+START-INFO-DIR-ENTRY
+* FPNGlib: (FPNGlib).             The FPNGlib manual
+END-INFO-DIR-ENTRY
+
+This file documents the {No value for 'FPNGlib'} library.
+
+   Copyright (C) 2019,2020 University of Nantes, France
+
+   Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.2 or
+any later version published by the Free Software Foundation; with no
+Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.  A
+copy of the license is included in the section entitled "GNU Free
+Documentation License".
+
+About FPNGlib
+*************
+
+This file documents FPNGlib, a library to draw floating-point numbers at
+random.
+
+   More information about the FPNGlib library can be found at the
+project homepage, <https://gitlab.univ-nantes.fr/goualard-f/fpnglib>.
+
+
+
+Tag Table:
+
+End Tag Table

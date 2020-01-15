@@ -1,6 +1,6 @@
 # High-level Makefile
 #
-#	Copyright 2019 University of Nantes, France.
+#	Copyright 2019--2020 University of Nantes, France.
 #
 #	This file is part of the FPNGlib library.
 #
@@ -20,7 +20,7 @@
 
 AM_CFLAGS = -Wall
 lib_LTLIBRARIES = libfpnglib.la
-libfpnglib_la_SOURCES = fpu.c random.c mt19937-64.c
+libfpnglib_la_SOURCES = fpu.c mt19937ar.c mt19937-64.c
 libfpnglib_la_CPPFLAGS = -I$(top_srcdir)/src
-pkginclude_HEADERS = constants64.h fpnglib.h fpu.h random.h mt19937-64.h
+pkginclude_HEADERS = constants64.h fpnglib.h fpu.h mt19937ar.h mt19937-64.h rng_t.h
 libfpnglib_la_LDFLAGS = -version-info $(LT_VERSION_INFO)

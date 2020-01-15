@@ -16,7 +16,7 @@
 
 # High-level Makefile
 #
-#	Copyright 2019 University of Nantes, France.
+#	Copyright 2019--2020 University of Nantes, France.
 #
 #	This file is part of the FPNGlib library.
 #
@@ -154,7 +154,7 @@ am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgincludedir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libfpnglib_la_LIBADD =
 am_libfpnglib_la_OBJECTS = libfpnglib_la-fpu.lo \
-	libfpnglib_la-random.lo
+	libfpnglib_la-mt19937ar.lo libfpnglib_la-mt19937-64.lo
 libfpnglib_la_OBJECTS = $(am_libfpnglib_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -350,9 +350,9 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CFLAGS = -Wall
 lib_LTLIBRARIES = libfpnglib.la
-libfpnglib_la_SOURCES = fpu.c random.c
+libfpnglib_la_SOURCES = fpu.c mt19937ar.c mt19937-64.c
 libfpnglib_la_CPPFLAGS = -I$(top_srcdir)/src
-pkginclude_HEADERS = constants64.h fpnglib.h fpu.h random.h
+pkginclude_HEADERS = constants64.h fpnglib.h fpu.h mt19937ar.h mt19937-64.h rng_t.h
 libfpnglib_la_LDFLAGS = -version-info $(LT_VERSION_INFO)
 all: all-am
 
@@ -433,7 +433,8 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfpnglib_la-fpu.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfpnglib_la-random.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfpnglib_la-mt19937-64.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfpnglib_la-mt19937ar.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -463,12 +464,19 @@ libfpnglib_la-fpu.lo: fpu.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libfpnglib_la-fpu.lo `test -f 'fpu.c' || echo '$(srcdir)/'`fpu.c
 
-libfpnglib_la-random.lo: random.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libfpnglib_la-random.lo -MD -MP -MF $(DEPDIR)/libfpnglib_la-random.Tpo -c -o libfpnglib_la-random.lo `test -f 'random.c' || echo '$(srcdir)/'`random.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libfpnglib_la-random.Tpo $(DEPDIR)/libfpnglib_la-random.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='random.c' object='libfpnglib_la-random.lo' libtool=yes @AMDEPBACKSLASH@
+libfpnglib_la-mt19937ar.lo: mt19937ar.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libfpnglib_la-mt19937ar.lo -MD -MP -MF $(DEPDIR)/libfpnglib_la-mt19937ar.Tpo -c -o libfpnglib_la-mt19937ar.lo `test -f 'mt19937ar.c' || echo '$(srcdir)/'`mt19937ar.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libfpnglib_la-mt19937ar.Tpo $(DEPDIR)/libfpnglib_la-mt19937ar.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mt19937ar.c' object='libfpnglib_la-mt19937ar.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libfpnglib_la-random.lo `test -f 'random.c' || echo '$(srcdir)/'`random.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libfpnglib_la-mt19937ar.lo `test -f 'mt19937ar.c' || echo '$(srcdir)/'`mt19937ar.c
+
+libfpnglib_la-mt19937-64.lo: mt19937-64.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libfpnglib_la-mt19937-64.lo -MD -MP -MF $(DEPDIR)/libfpnglib_la-mt19937-64.Tpo -c -o libfpnglib_la-mt19937-64.lo `test -f 'mt19937-64.c' || echo '$(srcdir)/'`mt19937-64.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libfpnglib_la-mt19937-64.Tpo $(DEPDIR)/libfpnglib_la-mt19937-64.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mt19937-64.c' object='libfpnglib_la-mt19937-64.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libfpnglib_la-mt19937-64.lo `test -f 'mt19937-64.c' || echo '$(srcdir)/'`mt19937-64.c
 
 mostlyclean-libtool:
 	-rm -f *.lo

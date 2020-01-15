@@ -22,7 +22,6 @@
 
 #include <stdlib.h>
 #include <check.h>
-#include <fpnglib/fp_double.h>
 #include <fpnglib/fpu.h>
 
 START_TEST(test_inexact)

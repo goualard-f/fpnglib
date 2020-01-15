@@ -1,6 +1,6 @@
-# Makefile for tests
+# doc/Makefile
 #
-#	Copyright 2019 University of Nantes, France.
+#	Copyright 2019--2020 University of Nantes, France.
 #
 #	This file is part of the FPNGlib library.
 #
@@ -18,18 +18,4 @@
 #	GNU Lesser General Public License along with the FPNGlib Library.  If not,
 #	see https://www.gnu.org/licenses/. 	
 
-TESTS = check_constants64 check_fpu check_mt19937_32 check_mt19937_64
-check_PROGRAMS = $(TESTS)
-LDADD = $(top_builddir)/src/libfpnglib.la @CHECK_LIBS@ -lm $(LIBS)
-AM_CFLAGS = -I.. -Wall @CHECK_CFLAGS@
-
-
-
-check_constants64_SOURCES = check_constants64.c $(top_builddir)/fpnglib/constants64.h
-
-check_fpu_SOURCES = check_fpu.c $(top_builddir)/fpnglib/fpu.h
-check_fpu_CFLAGS = -frounding-math
-
-check_mt19937_32_SOURCES = check_mt19937_32.c $(top_builddir)/fpnglib/mt19937ar.h
-
-check_mt19937_64_SOURCES = check_mt19937_64.c $(top_builddir)/fpnglib/mt19937-64.h
+info_TEXINFOS = fpnglib.texi

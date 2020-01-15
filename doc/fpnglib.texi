@@ -1,0 +1,71 @@
+\input texinfo @c -*-texinfo-*-
+@c %**start of header
+@c @afourpaper
+@setfilename fpnglib.info
+@include version.texi
+@settitle The FPNGlib Library
+@finalout
+@c -@setchapternewpage odd
+@c %**end of header
+
+@dircategory Scientific software
+@direntry
+* FPNGlib: (FPNGlib).             The FPNGlib manual
+@end direntry
+
+
+@ifinfo
+This file documents the @value{FPNGlib} library.
+
+Copyright (C) 2019,2020 University of Nantes, France
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.2 or
+any later version published by the Free Software Foundation; with no
+Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.  A
+copy of the license is included in the section entitled ``GNU Free
+Documentation License''.
+@end ifinfo
+
+@titlepage
+@title The FPNGlib Manual
+@subtitle Edition @value{EDITION}, for FPNGlib Version @value{VERSION}
+@subtitle Updated @value{UPDATED}
+@author Fr@'ed@'eric Goualard
+University of Nantes, France
+
+@vskip 0pt plus 1filll
+Copyright @copyright{} 2019,2020 University of Nantes, France
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the entire
+resulting derived work is distributed under the terms of a permission
+notice identical to this one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions,
+except that this permission notice may be stated in a translation approved
+by the Foundation.
+@end titlepage
+
+@contents
+
+@top About FPNGlib
+
+@ifinfo
+This file documents FPNGlib, a library to draw floating-point numbers at random.
+
+More information about the FPNGlib library can be found at the project homepage,
+@uref{https://gitlab.univ-nantes.fr/goualard-f/fpnglib}.
+@end ifinfo
+
+@bye
+
+@c Local Variables:
+@c mode: texinfo
+@c TeX-master: t
+@c End:
