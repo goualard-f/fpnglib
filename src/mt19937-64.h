@@ -4,10 +4,6 @@
 	 modification is the creationg of a local state instead of a global state to allow
 	 parallel calls and more than one MT.
 
-	Copyright 2019--2020 University of Nantes, France.
-
-
-
 	This file is part of the FPNGlib library.
 
 	The FPNGlib library is free software; you can redistribute it and/or modify
@@ -30,6 +26,7 @@
 #define __mt19937_64_h__
 
 #include <stdint.h>
+#include <fpnglib/rng_t.h>
 
 // State of an MT19937-64 RNG
 typedef struct fpngl_mt19937_64_state_t fpngl_mt19937_64_state_t;
@@ -48,5 +45,9 @@ fpngl_mt19937_64_state_t *fpngl_init_mt19937_64_by_array64(uint64_t init_key[],
 void fpngl_free_mt19937_64(fpngl_mt19937_64_state_t *state);
 
 uint64_t fpngl_mt19937_64_next(fpngl_mt19937_64_state_t *state);
+
+
+fpngl_irng64_t *fpngl_new_mt19937_64(uint64_t seed);
+
 
 #endif // __mt19937_64_h__

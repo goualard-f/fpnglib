@@ -18,7 +18,8 @@
 #	GNU Lesser General Public License along with the FPNGlib Library.  If not,
 #	see https://www.gnu.org/licenses/. 	
 
-TESTS = check_constants64 check_fpu check_mt19937_32 check_mt19937_64
+TESTS = check_constants64 check_fpu check_mt19937_32 check_mt19937_64 check_uirange \
+	check_lcg
 check_PROGRAMS = $(TESTS)
 LDADD = $(top_builddir)/src/libfpnglib.la @CHECK_LIBS@ -lm $(LIBS)
 AM_CFLAGS = -I.. -Wall @CHECK_CFLAGS@
@@ -33,3 +34,7 @@ check_fpu_CFLAGS = -frounding-math
 check_mt19937_32_SOURCES = check_mt19937_32.c $(top_builddir)/fpnglib/mt19937ar.h
 
 check_mt19937_64_SOURCES = check_mt19937_64.c $(top_builddir)/fpnglib/mt19937-64.h
+
+check_uirange_SOURCES = check_uirange.c $(top_builddir)/fpnglib/uirange.h
+
+check_lcg_SOURCES = check_lcg.c $(top_builddir)/fpnglib/lcg.h

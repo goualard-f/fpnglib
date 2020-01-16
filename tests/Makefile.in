@@ -108,7 +108,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 TESTS = check_constants64$(EXEEXT) check_fpu$(EXEEXT) \
-	check_mt19937_32$(EXEEXT) check_mt19937_64$(EXEEXT)
+	check_mt19937_32$(EXEEXT) check_mt19937_64$(EXEEXT) \
+	check_uirange$(EXEEXT) check_lcg$(EXEEXT)
 check_PROGRAMS = $(am__EXEEXT_1)
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -124,7 +125,8 @@ CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__EXEEXT_1 = check_constants64$(EXEEXT) check_fpu$(EXEEXT) \
-	check_mt19937_32$(EXEEXT) check_mt19937_64$(EXEEXT)
+	check_mt19937_32$(EXEEXT) check_mt19937_64$(EXEEXT) \
+	check_uirange$(EXEEXT) check_lcg$(EXEEXT)
 am_check_constants64_OBJECTS = check_constants64.$(OBJEXT)
 check_constants64_OBJECTS = $(am_check_constants64_OBJECTS)
 check_constants64_LDADD = $(LDADD)
@@ -143,6 +145,11 @@ check_fpu_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
 check_fpu_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(check_fpu_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+am_check_lcg_OBJECTS = check_lcg.$(OBJEXT)
+check_lcg_OBJECTS = $(am_check_lcg_OBJECTS)
+check_lcg_LDADD = $(LDADD)
+check_lcg_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
 am_check_mt19937_32_OBJECTS = check_mt19937_32.$(OBJEXT)
 check_mt19937_32_OBJECTS = $(am_check_mt19937_32_OBJECTS)
 check_mt19937_32_LDADD = $(LDADD)
@@ -152,6 +159,11 @@ am_check_mt19937_64_OBJECTS = check_mt19937_64.$(OBJEXT)
 check_mt19937_64_OBJECTS = $(am_check_mt19937_64_OBJECTS)
 check_mt19937_64_LDADD = $(LDADD)
 check_mt19937_64_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
+am_check_uirange_OBJECTS = check_uirange.$(OBJEXT)
+check_uirange_OBJECTS = $(am_check_uirange_OBJECTS)
+check_uirange_LDADD = $(LDADD)
+check_uirange_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
 	$(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -188,9 +200,11 @@ am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = $(check_constants64_SOURCES) $(check_fpu_SOURCES) \
-	$(check_mt19937_32_SOURCES) $(check_mt19937_64_SOURCES)
+	$(check_lcg_SOURCES) $(check_mt19937_32_SOURCES) \
+	$(check_mt19937_64_SOURCES) $(check_uirange_SOURCES)
 DIST_SOURCES = $(check_constants64_SOURCES) $(check_fpu_SOURCES) \
-	$(check_mt19937_32_SOURCES) $(check_mt19937_64_SOURCES)
+	$(check_lcg_SOURCES) $(check_mt19937_32_SOURCES) \
+	$(check_mt19937_64_SOURCES) $(check_uirange_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -551,6 +565,8 @@ check_fpu_SOURCES = check_fpu.c $(top_builddir)/fpnglib/fpu.h
 check_fpu_CFLAGS = -frounding-math
 check_mt19937_32_SOURCES = check_mt19937_32.c $(top_builddir)/fpnglib/mt19937ar.h
 check_mt19937_64_SOURCES = check_mt19937_64.c $(top_builddir)/fpnglib/mt19937-64.h
+check_uirange_SOURCES = check_uirange.c $(top_builddir)/fpnglib/uirange.h
+check_lcg_SOURCES = check_lcg.c $(top_builddir)/fpnglib/lcg.h
 all: all-am
 
 .SUFFIXES:
@@ -602,6 +618,10 @@ check_fpu$(EXEEXT): $(check_fpu_OBJECTS) $(check_fpu_DEPENDENCIES) $(EXTRA_check
 	@rm -f check_fpu$(EXEEXT)
 	$(AM_V_CCLD)$(check_fpu_LINK) $(check_fpu_OBJECTS) $(check_fpu_LDADD) $(LIBS)
 
+check_lcg$(EXEEXT): $(check_lcg_OBJECTS) $(check_lcg_DEPENDENCIES) $(EXTRA_check_lcg_DEPENDENCIES) 
+	@rm -f check_lcg$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(check_lcg_OBJECTS) $(check_lcg_LDADD) $(LIBS)
+
 check_mt19937_32$(EXEEXT): $(check_mt19937_32_OBJECTS) $(check_mt19937_32_DEPENDENCIES) $(EXTRA_check_mt19937_32_DEPENDENCIES) 
 	@rm -f check_mt19937_32$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(check_mt19937_32_OBJECTS) $(check_mt19937_32_LDADD) $(LIBS)
@@ -609,6 +629,10 @@ check_mt19937_32$(EXEEXT): $(check_mt19937_32_OBJECTS) $(check_mt19937_32_DEPEND
 check_mt19937_64$(EXEEXT): $(check_mt19937_64_OBJECTS) $(check_mt19937_64_DEPENDENCIES) $(EXTRA_check_mt19937_64_DEPENDENCIES) 
 	@rm -f check_mt19937_64$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(check_mt19937_64_OBJECTS) $(check_mt19937_64_LDADD) $(LIBS)
+
+check_uirange$(EXEEXT): $(check_uirange_OBJECTS) $(check_uirange_DEPENDENCIES) $(EXTRA_check_uirange_DEPENDENCIES) 
+	@rm -f check_uirange$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(check_uirange_OBJECTS) $(check_uirange_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -618,8 +642,10 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_constants64.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_fpu-check_fpu.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_lcg.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_mt19937_32.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_mt19937_64.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_uirange.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -879,6 +905,20 @@ check_mt19937_32.log: check_mt19937_32$(EXEEXT)
 check_mt19937_64.log: check_mt19937_64$(EXEEXT)
 	@p='check_mt19937_64$(EXEEXT)'; \
 	b='check_mt19937_64'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+check_uirange.log: check_uirange$(EXEEXT)
+	@p='check_uirange$(EXEEXT)'; \
+	b='check_uirange'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+check_lcg.log: check_lcg$(EXEEXT)
+	@p='check_lcg$(EXEEXT)'; \
+	b='check_lcg'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

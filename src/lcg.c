@@ -1,4 +1,4 @@
-/* Unit tests for fpu.c
+/* Linear Congruential Generators
 
 	Copyright 2019--2020 University of Nantes, France.
 
@@ -21,52 +21,36 @@
  */
 
 #include <stdlib.h>
-#include <check.h>
-#include <fpnglib/fpu.h>
+#include <fpnglib/lcg.h>
 
-START_TEST(test_inexact)
-{
-  double a = 1.0;
-  double b = 10.0;
-  fpngl_clear_inexact();
-  double c = a/b;
-  ck_assert(fpngl_inexact());
-  a = 1.0;
-  b = 2.0;
-  fpngl_clear_inexact();
-  c = a/b;
-  ck_assert(!fpngl_inexact());
-}
-END_TEST
+struct fpngl_lcg64_state_t {
+	uint64_t st; // State
+	uint64_t m;
+	uint64_t a;
+	uint64_t c;
+};
 
-Suite *fpu_suite(void)
+fpngl_lcg64_state_t *fpngl_init_lcg64(uint64_t seed, uint64_t m, uint64_t a, uint64_t c)
 {
-  Suite *s;
-  TCase *tc_core;
-  
-  s = suite_create("fpu");
-  
-  /* Core test case */
-  tc_core = tcase_create("Core");
-  
-  tcase_add_test(tc_core, test_inexact);
-  suite_add_tcase(s, tc_core);
-  
-  return s;
+	fpngl_lcg64_state_t *state = malloc(sizeof(fpngl_lcg64_state_t));
+	if (state == NULL) {
+		return NULL;
+	}
+	state->st = seed;
+	state->m = m;
+	state->a = a;
+	state->c = c;
+	return state;
 }
 
-int main(void)
+void fpngl_free_lcg64(fpngl_lcg64_state_t *state)
 {
-  int number_failed;
-  Suite *s;
-  SRunner *sr;
-  
-  s = fpu_suite();
-  sr = srunner_create(s);
-  
-  srunner_run_all(sr, CK_NORMAL);
-  number_failed = srunner_ntests_failed(sr);
-  srunner_free(sr);
-  return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
+	free(state);
 }
 
+
+uint64_t fpngl_lcg64_next(fpngl_lcg64_state_t *state)
+{
+	state->st = (state->a*state->st + state->c) % state->m;
+	return state->st;
+}

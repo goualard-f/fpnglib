@@ -26,15 +26,28 @@
 #include <fpnglib/mt19937-64.h>
 
 const uint64_t mt19937_64_10[10] = {7266447313870364031ULL,
-																							4946485549665804864ULL,
-																							16945909448695747420ULL,
-																							16394063075524226720ULL,
-																							4873882236456199058ULL,
-																							14877448043947020171ULL,
-																							6740343660852211943ULL,
-																							13857871200353263164ULL,
-																							5249110015610582907ULL,
-																							10205081126064480383ULL};
+																		4946485549665804864ULL,
+																		16945909448695747420ULL,
+																		16394063075524226720ULL,
+																		4873882236456199058ULL,
+																		14877448043947020171ULL,
+																		6740343660852211943ULL,
+																		13857871200353263164ULL,
+																		5249110015610582907ULL,
+																		10205081126064480383ULL};
+
+// Ten first values generated with seed `42`.
+const uint64_t mt19937_10b[] = {13930160852258120406ULL,
+																11788048577503494824ULL,
+																13874630024467741450ULL,
+																2513787319205155662ULL,
+																16662371453428439381ULL,
+																1735254072534978428ULL,
+																10598951352238613536ULL,
+																6878563960102566144ULL,
+																5052085463162682550ULL,
+																7199227068870524257ULL};
+
 
 fpngl_mt19937_64_state_t *mt19937_64(void)
 {
@@ -42,18 +55,10 @@ fpngl_mt19937_64_state_t *mt19937_64(void)
 	return fpngl_init_mt19937_64_by_array64(init, length);
 }
 
-uint64_t generate_one_uint64(fpngl_irng64_t rng)
-{
-	return rng.next(rng.state);
-}
-
-
 START_TEST(test_generate_1)
 {
 	fpngl_mt19937_64_state_t *state = mt19937_64();
-	fpngl_irng64_t mt19937 = { .state = state,
-														 .next = (fpngl_irng64fun_t)fpngl_mt19937_64_next };
-	ck_assert(generate_one_uint64(mt19937) == 7266447313870364031ULL);
+	ck_assert(fpngl_mt19937_64_next(state) == 7266447313870364031ULL);
 	fpngl_free_mt19937_64(state);
 }
 END_TEST
@@ -65,6 +70,16 @@ START_TEST(test_generate_5)
 		ck_assert(mt19937_64_10[i] == fpngl_mt19937_64_next(state));
 	}
 	fpngl_free_mt19937_64(state);
+}
+END_TEST
+
+START_TEST(test_construction)
+{
+	fpngl_irng64_t *rng = fpngl_new_mt19937_64(42);
+	for (int i = 0; i < 10; ++i) {
+		ck_assert(fpngl_irng64_next(rng) == mt19937_10b[i]);
+	}
+	fpngl_delete_irng64(rng);
 }
 END_TEST
 
@@ -80,6 +95,7 @@ Suite *mt19937_64_suite(void)
   
   tcase_add_test(tc_core, test_generate_1);
   tcase_add_test(tc_core, test_generate_5);
+  tcase_add_test(tc_core, test_construction);
   suite_add_tcase(s, tc_core);
   
   return s;

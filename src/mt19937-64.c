@@ -186,3 +186,21 @@ uint64_t fpngl_mt19937_64_next(fpngl_mt19937_64_state_t *state)
 	
 	return x;
 }
+
+uint64_t fpngl_mt19937_64_next_void(void *state)
+{
+	return fpngl_mt19937_64_next((fpngl_mt19937_64_state_t*)state);
+}
+void fpngl_free_mt19937_64_void(void *state)
+{
+	fpngl_free_mt19937_64((fpngl_mt19937_64_state_t*)state);
+}
+
+
+fpngl_irng64_t *fpngl_new_mt19937_64(uint64_t seed)
+{
+	return  fpngl_create_irng64(seed,"mt19937-64",0,0xffffffffffffffff,
+															fpngl_init_mt19937_64(seed),
+															(uint64_t (*)(void*))fpngl_mt19937_64_next,
+															(void (*)(void*))fpngl_free_mt19937_64);
+}

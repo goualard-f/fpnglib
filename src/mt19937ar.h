@@ -4,8 +4,6 @@
 	 modification is the creationg of a local state instead of a global state to allow
 	 parallel calls and more than one MT.
 
-	Copyright 2019--2020 University of Nantes, France.
-
 	This file is part of the FPNGlib library.
 
 	The FPNGlib library is free software; you can redistribute it and/or modify

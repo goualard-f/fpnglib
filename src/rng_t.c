@@ -20,56 +20,70 @@
 	
  */
 
-#ifndef __rng_t_h__
-#define __rng_t_h__
+#include <stdlib.h>
+#include <fpnglib/rng_t.h>
 
-#include <stdint.h>
 
-/*
-	Prototype for an RNG returning a 32 bits integer.
- */
-typedef uint32_t (*fpngl_irng32fun_t)(void*);
-
-/*
-	Type for defining a generic RNG returning a 32 bits integer.
- */
-typedef struct {
+struct fpngl_irng64_t {
+	uint64_t seed; // The seed used
+	const char *name; // Name of the RNG
+	uint64_t min;
+	uint64_t max;
 	void* state; // State of the RNG
-	fpngl_irng32fun_t next; // Function returning the next random integer
-} fpngl_irng32_t;
+	fpngl_irng64fun_t next; // Function returning the next random integer
+	void (*delete)(void*); // Destructor
+};
 
-/*
-	Prototype for an RNG returning a 32 bits integer.
- */
-typedef uint64_t (*fpngl_irng64fun_t)(void*);
-
-/*
-	Type for defining an RNG returning a 64 bits integer.
- */
-typedef struct fpngl_irng64_t fpngl_irng64_t;
 
 fpngl_irng64_t *fpngl_create_irng64(uint64_t seed, const char* name,
 																		uint64_t min, uint64_t max,
 																		void *state, fpngl_irng64fun_t next,
-																		void (*delete)(void*));
+																		void (*delete)(void*))
+{
+	fpngl_irng64_t *rng = malloc(sizeof(fpngl_irng64_t));
+	rng->seed = seed;
+	rng->name = name;
+	rng->min = min;
+	rng->max = max;
+	rng->state = state;
+	rng->next = next;
+	rng->delete = delete;
+	return rng;
+}
 
 // Releases all resources acquired by the pseudo-random generator 'rng'
-void fpngl_delete_irng64(fpngl_irng64_t* rng);
+void fpngl_delete_irng64(fpngl_irng64_t* rng)
+{
+	rng->delete(rng->state);
+	free(rng);
+}
 
 // Return next pseudo-random number
-uint64_t fpngl_irng64_next(fpngl_irng64_t *rng);
+uint64_t fpngl_irng64_next(fpngl_irng64_t *rng)
+{
+	return rng->next(rng->state);
+}
 
 // Return the seed used by the RNG
-uint64_t fpngl_irng64_seed(fpngl_irng64_t *rng);
+uint64_t fpngl_irng64_seed(fpngl_irng64_t *rng)
+{
+	return rng->seed;
+}
 
 // Return the name of the RNG used (see GSL documentation for more info.
-const char *fpngl_get_irng64_name(fpngl_irng64_t *rng);
+const char *fpngl_get_irng64_name(fpngl_irng64_t *rng)
+{
+	return rng->name;
+}
 
 // Return the minimum value the RNG can return
-uint64_t fpngl_irng64_min(fpngl_irng64_t *rng);
+uint64_t fpngl_irng64_min(fpngl_irng64_t *rng)
+{
+	return rng->min;
+}
 
 // Return the maximum value the RNG can return
-uint64_t fpngl_irng64_max(fpngl_irng64_t *rng);
-
-
-#endif // __rng_t_h__
+uint64_t fpngl_irng64_max(fpngl_irng64_t *rng)
+{
+	return rng->max;
+}

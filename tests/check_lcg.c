@@ -1,4 +1,4 @@
-/* Unit tests for fpu.c
+/* Unit tests for lcg.c
 
 	Copyright 2019--2020 University of Nantes, France.
 
@@ -20,36 +20,44 @@
 	
  */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <check.h>
-#include <fpnglib/fpu.h>
+#include <fpnglib/lcg.h>
 
-START_TEST(test_inexact)
+const uint64_t minstd64T[] = {705894ULL,
+															1126542223ULL,
+															1579310009ULL,
+															565444343ULL,
+															807934826ULL,
+															421520601ULL,
+															2095673201ULL,
+															1100194760ULL,
+															1139130650ULL,
+															552121545ULL};
+
+START_TEST(test_lcg64)
 {
-  double a = 1.0;
-  double b = 10.0;
-  fpngl_clear_inexact();
-  double c = a/b;
-  ck_assert(fpngl_inexact());
-  a = 1.0;
-  b = 2.0;
-  fpngl_clear_inexact();
-  c = a/b;
-  ck_assert(!fpngl_inexact());
+	fpngl_lcg64_state_t *state = fpngl_init_lcg64(42,(1UL<<31)-1,16807,0);
+
+	for (uint32_t i = 0; i < 10; ++i) {
+		ck_assert(fpngl_lcg64_next(state)==minstd64T[i]);
+	}
+	fpngl_free_lcg64(state);
 }
 END_TEST
 
-Suite *fpu_suite(void)
+Suite *lcg_suite(void)
 {
   Suite *s;
   TCase *tc_core;
   
-  s = suite_create("fpu");
+  s = suite_create("lcg");
   
   /* Core test case */
   tc_core = tcase_create("Core");
   
-  tcase_add_test(tc_core, test_inexact);
+  tcase_add_test(tc_core, test_lcg64);
   suite_add_tcase(s, tc_core);
   
   return s;
@@ -61,7 +69,7 @@ int main(void)
   Suite *s;
   SRunner *sr;
   
-  s = fpu_suite();
+  s = lcg_suite();
   sr = srunner_create(s);
   
   srunner_run_all(sr, CK_NORMAL);

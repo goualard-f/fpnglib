@@ -1,4 +1,4 @@
-/* Unit tests for fpu.c
+/* Unit tests for uirange.c
 
 	Copyright 2019--2020 University of Nantes, France.
 
@@ -21,35 +21,38 @@
  */
 
 #include <stdlib.h>
+#include <stdint.h>
 #include <check.h>
-#include <fpnglib/fpu.h>
+#include <fpnglib/uirange.h>
 
-START_TEST(test_inexact)
+START_TEST(test_get_n_bits32)
 {
-  double a = 1.0;
-  double b = 10.0;
-  fpngl_clear_inexact();
-  double c = a/b;
-  ck_assert(fpngl_inexact());
-  a = 1.0;
-  b = 2.0;
-  fpngl_clear_inexact();
-  c = a/b;
-  ck_assert(!fpngl_inexact());
+	ck_assert(fpngl_get_n_bits32(0x10000000,7) == 0x8);
+	ck_assert(fpngl_get_n_bits32(0x80000000,7) == 0x40);
+	ck_assert(fpngl_get_n_bits32(0xf0000f00,3) == 0x7);
 }
 END_TEST
 
-Suite *fpu_suite(void)
+START_TEST(test_get_n_bits64)
+{
+	ck_assert(fpngl_get_n_bits64(0x1000000000000000,7) == 0x8);
+	ck_assert(fpngl_get_n_bits64(0x8000000000000000,7) == 0x40);
+	ck_assert(fpngl_get_n_bits64(0xf0000f0000000000,3) == 0x7);
+}
+END_TEST
+
+Suite *uirange_suite(void)
 {
   Suite *s;
   TCase *tc_core;
   
-  s = suite_create("fpu");
+  s = suite_create("uirange");
   
   /* Core test case */
   tc_core = tcase_create("Core");
   
-  tcase_add_test(tc_core, test_inexact);
+  tcase_add_test(tc_core, test_get_n_bits32);
+  tcase_add_test(tc_core, test_get_n_bits64);
   suite_add_tcase(s, tc_core);
   
   return s;
@@ -61,7 +64,7 @@ int main(void)
   Suite *s;
   SRunner *sr;
   
-  s = fpu_suite();
+  s = uirange_suite();
   sr = srunner_create(s);
   
   srunner_run_all(sr, CK_NORMAL);
