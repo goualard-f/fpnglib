@@ -39,6 +39,7 @@ typedef struct fpngl_mt19937_64_state_t fpngl_mt19937_64_state_t;
  */
 fpngl_mt19937_64_state_t *fpngl_init_mt19937_64(uint64_t seed);
 
+
 fpngl_mt19937_64_state_t *fpngl_init_mt19937_64_by_array64(uint64_t init_key[],
 																													 uint64_t key_length);
 
@@ -46,8 +47,20 @@ void fpngl_free_mt19937_64(fpngl_mt19937_64_state_t *state);
 
 uint64_t fpngl_mt19937_64_next(fpngl_mt19937_64_state_t *state);
 
+/* Return k random bits. The value of `k` must be in [1,64]. 
+	 Use preferentially fpngl_mt19937_64_to_32_next() for k=32 and 
+	 fpngl_mt19937_64_next() for k=64.
+*/
+uint64_t fpngl_mt19937_64_next_k(fpngl_mt19937_64_state_t *state, uint32_t k);
+
+uint32_t fpngl_mt19937_64_to_32_next(fpngl_mt19937_64_state_t *state);
+
+void fpngl_mt19937_64_array32(fpngl_mt19937_64_state_t *state, uint32_t *T, uint32_t n);
+void fpngl_mt19937_64_array64(fpngl_mt19937_64_state_t *state, uint64_t *T, uint32_t n);
 
 fpngl_irng64_t *fpngl_new_mt19937_64(uint64_t seed);
+
+fpngl_irng_t *fpngl_new_mt19937(uint64_t seed);
 
 
 #endif // __mt19937_64_h__

@@ -80,7 +80,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <fpnglib/mt19937-64.h>
+#include <fpnglib/utilities.h>
 
 #define NN 312
 #define MM 156
@@ -187,15 +189,6 @@ uint64_t fpngl_mt19937_64_next(fpngl_mt19937_64_state_t *state)
 	return x;
 }
 
-uint64_t fpngl_mt19937_64_next_void(void *state)
-{
-	return fpngl_mt19937_64_next((fpngl_mt19937_64_state_t*)state);
-}
-void fpngl_free_mt19937_64_void(void *state)
-{
-	fpngl_free_mt19937_64((fpngl_mt19937_64_state_t*)state);
-}
-
 
 fpngl_irng64_t *fpngl_new_mt19937_64(uint64_t seed)
 {
@@ -203,4 +196,49 @@ fpngl_irng64_t *fpngl_new_mt19937_64(uint64_t seed)
 															fpngl_init_mt19937_64(seed),
 															(uint64_t (*)(void*))fpngl_mt19937_64_next,
 															(void (*)(void*))fpngl_free_mt19937_64);
+}
+
+
+uint32_t fpngl_mt19937_64_to_32_next(fpngl_mt19937_64_state_t *state)
+{
+	uint64_t v = fpngl_mt19937_64_next(state);
+	return (uint32_t)(v >> 32);
+}
+
+void fpngl_mt19937_64_array32(fpngl_mt19937_64_state_t *state, uint32_t *T, uint32_t n)
+{
+	// Filling the array two 32 bits values at a time.
+	for (uint64_t *p = (uint64_t*)T; p < (uint64_t*)T+n/2; ++p) { // Default implementation
+		*p = fpngl_mt19937_64_next(state);
+	}
+	// odd(n) => there is still the last cell to fill
+	if (fpngl_odd(n)) {
+		*(T+n-1)= (uint32_t)(fpngl_mt19937_64_next(state)>>32);
+	}
+}
+
+void fpngl_mt19937_64_array64(fpngl_mt19937_64_state_t *state, uint64_t *T, uint32_t n)
+{
+	for (uint32_t i = 0; i < n; ++i) {
+		T[i] = fpngl_mt19937_64_next(state);
+	}
+}
+
+uint64_t fpngl_mt19937_64_next_k(fpngl_mt19937_64_state_t *state, uint32_t k)
+{
+	assert(k < 65 && k != 0);
+	return fpngl_mt19937_64_next(state) >> (64-k);
+}
+
+
+fpngl_irng_t *fpngl_new_mt19937(uint64_t seed)
+{
+	return  fpngl_create_irng(seed,"mt19937-64",0,0xffffffffffffffff,
+														fpngl_init_mt19937_64(seed),
+														(uint32_t (*)(void*))fpngl_mt19937_64_to_32_next,
+														(uint64_t (*)(void*))fpngl_mt19937_64_next,
+														(uint64_t (*)(void*,uint32_t))fpngl_mt19937_64_next_k,
+														(void (*)(void*, uint32_t*,uint32_t))fpngl_mt19937_64_array32,
+														(void (*)(void*, uint64_t*,uint32_t))fpngl_mt19937_64_array64,
+														(void (*)(void*))fpngl_free_mt19937_64);
 }

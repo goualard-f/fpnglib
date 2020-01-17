@@ -20,8 +20,9 @@
 
 AM_CFLAGS = -Wall
 lib_LTLIBRARIES = libfpnglib.la
-libfpnglib_la_SOURCES = fpu.c mt19937ar.c mt19937-64.c rng_t.c uirange.c lcg.c
+libfpnglib_la_SOURCES = fpu.c mt19937ar.c mt19937-64.c rng_t.c uirange.c lcg.c \
+	utilities.c
 libfpnglib_la_CPPFLAGS = -I$(top_srcdir)/src
 pkginclude_HEADERS = constants64.h fpnglib.h fpu.h mt19937ar.h mt19937-64.h rng_t.h \
-	uirange.h lcg.h
+	uirange.h lcg.h utilities.h
 libfpnglib_la_LDFLAGS = -version-info $(LT_VERSION_INFO)

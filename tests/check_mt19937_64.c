@@ -73,13 +73,23 @@ START_TEST(test_generate_5)
 }
 END_TEST
 
-START_TEST(test_construction)
+START_TEST(test_construction1)
 {
 	fpngl_irng64_t *rng = fpngl_new_mt19937_64(42);
 	for (int i = 0; i < 10; ++i) {
 		ck_assert(fpngl_irng64_next(rng) == mt19937_10b[i]);
 	}
 	fpngl_delete_irng64(rng);
+}
+END_TEST
+
+START_TEST(test_construction2)
+{
+	fpngl_irng_t *rng = fpngl_new_mt19937(42);
+	for (int i = 0; i < 10; ++i) {
+		ck_assert(fpngl_irng_next64(rng) == mt19937_10b[i]);
+	}
+	fpngl_delete_irng(rng);
 }
 END_TEST
 
@@ -95,7 +105,8 @@ Suite *mt19937_64_suite(void)
   
   tcase_add_test(tc_core, test_generate_1);
   tcase_add_test(tc_core, test_generate_5);
-  tcase_add_test(tc_core, test_construction);
+  tcase_add_test(tc_core, test_construction1);
+  tcase_add_test(tc_core, test_construction2);
   suite_add_tcase(s, tc_core);
   
   return s;

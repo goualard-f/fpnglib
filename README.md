@@ -8,8 +8,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-The FPNGlib is built and tested on a Linux system with the GNU C Compiler. It should be compilable with minimal modifications on other platforms provided a sufficiently recent C compiler supporting
-the ISO/IEC 9899:1999 (C99) standard is available.
+The FPNGlib is built and tested on a Linux system with the GNU C Compiler. It should be compilable with minimal modifications on other platforms provided a sufficiently recent C compiler supporting the ISO/IEC 9899:1999 (C99) standard is available.
 
 
 ### Installing

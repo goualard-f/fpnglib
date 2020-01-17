@@ -48,7 +48,7 @@ typedef uint64_t (*fpngl_irng64fun_t)(void*);
  */
 typedef struct fpngl_irng64_t fpngl_irng64_t;
 
-fpngl_irng64_t *fpngl_create_irng64(uint64_t seed, const char* name,
+fpngl_irng64_t *fpngl_create_irng64(uint64_t seed, const char *name,
 																		uint64_t min, uint64_t max,
 																		void *state, fpngl_irng64fun_t next,
 																		void (*delete)(void*));
@@ -70,6 +70,57 @@ uint64_t fpngl_irng64_min(fpngl_irng64_t *rng);
 
 // Return the maximum value the RNG can return
 uint64_t fpngl_irng64_max(fpngl_irng64_t *rng);
+
+typedef struct fpngl_irng_t fpngl_irng_t;
+
+fpngl_irng_t *fpngl_create_irng(uint64_t seed, const char *name,
+																uint64_t min, uint64_t max,
+																void *state,
+																uint32_t (*next32)(void *state),
+																uint64_t (*next64)(void *state),
+																uint64_t (*next)(void *state, uint32_t k),
+																void (*next_array32)(void *state,
+																										 uint32_t *T, uint32_t n),
+																void (*next_array64)(void *state,
+																										 uint64_t *T, uint32_t n),
+																void (*delete)(void*));
+
+// Releases all resources acquired by the pseudo-random generator 'rng'
+void fpngl_delete_irng(fpngl_irng_t* rng);
+
+// Return next 32 bits pseudo-random number
+uint32_t fpngl_irng_next32(fpngl_irng_t *rng);
+// Return next 64 bits pseudo-random number
+uint64_t fpngl_irng_next64(fpngl_irng_t *rng);
+/* Return k random bits. The value of `k` must be in [1,64]. 
+	 Use preferentially fpngl_irng_next32() for k=32 and 
+	 fpngl_irng_next64() for k=64.
+*/
+uint64_t fpngl_irng_next(fpngl_irng_t *rng, uint32_t k);
+/*
+ Fills array T with `n` 32 bits pseudo-random integers.
+ The array must have been allocated beforehand.
+ The value `n` must be greater than 0.
+*/
+void fpngl_irng_array32(fpngl_irng_t *rng, uint32_t *T, uint32_t n);
+/*
+ Fills array T with `n` 64 bits pseudo-random integers.
+ The array must have been allocated beforehand.
+ The value `n` must be greater than 0.
+*/
+void fpngl_irng_array64(fpngl_irng_t *rng, uint64_t *T, uint32_t n);
+
+// Return the seed used by the RNG
+uint64_t fpngl_irng_seed(fpngl_irng_t *rng);
+
+// Return the name of the RNG used (see GSL documentation for more info.
+const char *fpngl_get_irng_name(fpngl_irng_t *rng);
+
+// Return the minimum value the RNG can return
+uint64_t fpngl_irng_min(fpngl_irng_t *rng);
+
+// Return the maximum value the RNG can return
+uint64_t fpngl_irng_max(fpngl_irng_t *rng);
 
 
 #endif // __rng_t_h__
