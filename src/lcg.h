@@ -25,26 +25,44 @@
 
 #include <fpnglib/fpngl_config.h>
 #include <stdint.h>
-#include <fpnglib/rng_t.h>
+#include <fpnglib/irng64_t.h>
+#include <fpnglib/irng_t.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-fpngl_irng64_t *fpngl_new_lcg_64(uint64_t seed);
+	fpngl_irng64_t *fpngl_new_lcg_64(uint64_t seed, uint64_t m, uint64_t a, uint64_t c);
+	
+	fpngl_irng_t *fpngl_new_lcg(uint64_t seed, uint64_t m, uint64_t a, uint64_t c);
 
-fpngl_irng_t *fpngl_new_lcg(uint64_t seed);
+	/*
+		MINSTD implementation of Park/Miller RNG
+		*See*: _Random Number Generators: Good Ones Are Hard to Find_. S. K. Park 
+		and K.W. Miller. Comm. ACM 31(10), 1988.
+	*/
+	fpngl_irng_t *fpngl_minstd(uint64_t seed);
 
+	/*
+		RNG proposed in the GNU Libc for `rand()`. This is not the default 
+		implementation of `rand()`, as of glibc 2.29.
+	 */
+	fpngl_irng_t *fpngl_lcg_gnu_c(uint64_t seed);
+	
+	/*
+		
+	 */
+	fpngl_irng_t *fpngl_(uint64_t seed);
 
+	/*
+		RANDU RNG in the Scientific Subroutine Package on IBM Mainframe.
+		
+		*Source*: Numerical Computing with MATLAB. Steve Moler. Chap. 9
+		*/
+	fpngl_irng_t *fpngl_randu(uint64_t seed);
+	
 
-
-typedef struct fpngl_lcg64_state_t fpngl_lcg64_state_t;
-
-fpngl_lcg64_state_t *fpngl_init_lcg64(uint64_t seed, uint64_t m, uint64_t a, uint64_t c);
-void fpngl_free_lcg64(fpngl_lcg64_state_t *state);
-uint64_t fpngl_lcg64_next(fpngl_lcg64_state_t *state);
-
-
+	
 #ifdef __cplusplus
 }
 #endif

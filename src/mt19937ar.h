@@ -27,32 +27,19 @@
 
 #include <fpnglib/fpngl_config.h>
 #include <stdint.h>
+#include <fpnglib/irng32_t.h>
+#include <fpnglib/irng_t.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-// State of an MT19937-32 RNG
-typedef struct fpngl_mt19937_32_state_t fpngl_mt19937_32_state_t;
+fpngl_irng32_t *fpngl_new_mt19937v32_32(uint32_t seed);
 
-/*
-	Initialize the state for an MT19937-32 RNG with the seed `seed`.
-	Return NULL if the memory for representing the state could not be allocated.
-	The user should call fpngl_free_mt19937_32() to free the memory allocated 
-	when the RNG is not needed anymore.
- */
-fpngl_mt19937_32_state_t *fpngl_init_mt19937_32(uint32_t seed);
-
-fpngl_mt19937_32_state_t *fpngl_init_mt19937_32_by_array32(uint32_t init_key[],
-																													 uint32_t key_length);
-
-void fpngl_free_mt19937_32(fpngl_mt19937_32_state_t *state);
-
-uint32_t fpngl_mt19937_32_next(fpngl_mt19937_32_state_t *state);
+fpngl_irng_t *fpngl_new_mt19937v32(uint64_t seed);
 
 #ifdef __cplusplus
 }
 #endif
-
 	
 #endif // __mt19937ar_h__

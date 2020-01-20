@@ -27,7 +27,9 @@
 #include <fpnglib/constants32.h>
 #include <fpnglib/constants64.h>
 #include <fpnglib/fpu.h>
-#include <fpnglib/rng_t.h>
+#include <fpnglib/irng_t.h>
+#include <fpnglib/irng32_t.h>
+#include <fpnglib/irng64_t.h>
 #include <fpnglib/uirange.h>
 #include <fpnglib/utilities.h>
 

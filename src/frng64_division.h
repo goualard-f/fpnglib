@@ -1,8 +1,7 @@
-/* Original 64 bits Mersenne Twister by Nishimura & Matsumoto.
+/* Implementation of double precision floating-point number generators
+	 through division of an integer by another integer.
 
-	 Some cosmetic modifications made for the FPNGlib library. The biggest 
-	 modification is the creationg of a local state instead of a global state to allow
-	 parallel calls and more than one MT.
+	Copyright 2019--2020 University of Nantes, France.
 
 	This file is part of the FPNGlib library.
 
@@ -22,24 +21,22 @@
 	
  */
 
-#ifndef __mt19937_64_h__
-#define __mt19937_64_h__
+#ifndef __fpngl_frng64_division_h__
+#define __fpngl_frng64_division_h__
 
 #include <fpnglib/fpngl_config.h>
-#include <stdint.h>
-#include <fpnglib/irng64_t.h>
+#include <fpnglib/frng64_t.h>
 #include <fpnglib/irng_t.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-	fpngl_irng64_t *fpngl_new_mt19937v64_64(uint64_t seed);
-	
-	fpngl_irng_t *fpngl_new_mt19937v64(uint64_t seed);
+	fpngl_frng64_t *fpngl_new_bydivision(uint64_t seed, fpngl_irng_t (*irngfun)(uint64_t));
 
+	
 #ifdef __cplusplus
 }
 #endif
-	
-#endif // __mt19937_64_h__
+
+#endif // __fpngl_frng64_division_h__

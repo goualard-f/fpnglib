@@ -22,14 +22,16 @@
 
 #include <global.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <fpnglib/lcg.h>
+#include <fpnglib/utilities.h>
 
-struct fpngl_lcg64_state_t {
+typedef struct fpngl_lcg64_state_t {
 	uint64_t st; // State
 	uint64_t m;
 	uint64_t a;
 	uint64_t c;
-};
+} fpngl_lcg64_state_t;
 
 fpngl_lcg64_state_t *fpngl_init_lcg64(uint64_t seed, uint64_t m, uint64_t a, uint64_t c)
 {
@@ -50,8 +52,77 @@ void fpngl_free_lcg64(fpngl_lcg64_state_t *state)
 }
 
 
-uint64_t fpngl_lcg64_next(fpngl_lcg64_state_t *state)
+uint64_t fpngl_lcg64_next64(fpngl_lcg64_state_t *state)
 {
 	state->st = (state->a*state->st + state->c) % state->m;
 	return state->st;
+}
+
+
+fpngl_irng64_t *fpngl_new_lcg_64(uint64_t seed, uint64_t m, uint64_t a, uint64_t c)
+{
+	return  fpngl_new_irng64(seed,"LCG-64",0,0xffffffffffffffff,
+													 fpngl_init_lcg64(seed,m,a,c),
+													 (uint64_t (*)(void*))fpngl_lcg64_next64,
+													 (void (*)(void*))fpngl_free_lcg64);
+}
+
+
+uint32_t fpngl_lcg64_next32(fpngl_lcg64_state_t *state)
+{
+	uint64_t v = fpngl_lcg64_next64(state);
+	return (uint32_t)(v >> 32);
+}
+
+void fpngl_lcg64_array32(fpngl_lcg64_state_t *state, uint32_t *T, uint32_t n)
+{
+	// Filling the array two 32 bits values at a time.
+	for (uint64_t *p = (uint64_t*)T; p < (uint64_t*)T+n/2; ++p) { // Default implementation
+		*p = fpngl_lcg64_next64(state);
+	}
+	// odd(n) => there is still the last cell to fill
+	if (fpngl_odd(n)) {
+		*(T+n-1)= (uint32_t)(fpngl_lcg64_next64(state)>>32);
+	}
+}
+
+void fpngl_lcg64_array64(fpngl_lcg64_state_t *state, uint64_t *T, uint32_t n)
+{
+	for (uint32_t i = 0; i < n; ++i) {
+		T[i] = fpngl_lcg64_next64(state);
+	}
+}
+
+uint64_t fpngl_lcg64_nextk(fpngl_lcg64_state_t *state, uint32_t k)
+{
+	assert(k < 65 && k != 0);
+	return fpngl_lcg64_next64(state) >> (64-k);
+}
+
+
+fpngl_irng_t *fpngl_new_lcg(uint64_t seed, uint64_t m, uint64_t a, uint64_t c)
+{
+	return  fpngl_new_irng(seed,"LCG-64",0,0xffffffffffffffff,
+												 fpngl_init_lcg64(seed,m,a,c),
+														(uint32_t (*)(void*))fpngl_lcg64_next32,
+														(uint64_t (*)(void*))fpngl_lcg64_next64,
+														(uint64_t (*)(void*,uint32_t))fpngl_lcg64_nextk,
+														(void (*)(void*, uint32_t*,uint32_t))fpngl_lcg64_array32,
+														(void (*)(void*, uint64_t*,uint32_t))fpngl_lcg64_array64,
+														(void (*)(void*))fpngl_free_lcg64);
+}
+
+fpngl_irng_t *fpngl_minstd(uint64_t seed)
+{
+	return fpngl_new_lcg(seed,((uint64_t)1 << 31) - 1,16807,0);
+}
+
+fpngl_irng_t *fpngl_lcg_gnu_c(uint64_t seed)
+{
+	return fpngl_new_lcg(seed,((uint64_t)1 << 31),1103515245,12345);
+}
+
+fpngl_irng_t *fpngl_randu(uint64_t seed)
+{
+	return fpngl_new_lcg(seed,((uint64_t)1 << 31),65539,0);
 }

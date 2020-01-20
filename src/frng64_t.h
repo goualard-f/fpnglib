@@ -1,8 +1,6 @@
-/* Original 64 bits Mersenne Twister by Nishimura & Matsumoto.
+/* Encapsulation of an RNG able to produce double precision floats
 
-	 Some cosmetic modifications made for the FPNGlib library. The biggest 
-	 modification is the creationg of a local state instead of a global state to allow
-	 parallel calls and more than one MT.
+	Copyright 2019--2020 University of Nantes, France.
 
 	This file is part of the FPNGlib library.
 
@@ -22,24 +20,30 @@
 	
  */
 
-#ifndef __mt19937_64_h__
-#define __mt19937_64_h__
+#ifndef __fpngl_frng64_t_h__
+#define __fpngl_frng64_t_h__
 
 #include <fpnglib/fpngl_config.h>
 #include <stdint.h>
-#include <fpnglib/irng64_t.h>
-#include <fpnglib/irng_t.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-	fpngl_irng64_t *fpngl_new_mt19937v64_64(uint64_t seed);
-	
-	fpngl_irng_t *fpngl_new_mt19937v64(uint64_t seed);
+	typedef struct fpngl_frng64_t fpngl_frng64_t;
 
+	fpngl_frng64_t *fpngl_new_frng64_co(uint64_t seed,
+																			const char *name,
+																			void *state,
+																			double (*nextd64)(void*),
+																			void (*next_arrayd64)(void *state,
+																														double *T, uint32_t n),
+																			void (*delete)(void*));
+	void fpngl_delete_frng64(fpngl_frng64_t *rng);
+
+	
 #ifdef __cplusplus
 }
 #endif
-	
-#endif // __mt19937_64_h__
+
+#endif // __fpngl_frng64_t_h__

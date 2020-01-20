@@ -24,10 +24,17 @@
 #include <config.h>
 #include <stdlib.h>
 #include <check.h>
-#include <fpnglib/rng_t.h>
+#include <fpnglib/irng_t.h>
+#include <fpnglib/irng32_t.h>
 #include <fpnglib/mt19937ar.h>
 
-const uint32_t mt19937_32_10[10] = {1067595299UL,
+typedef struct fpngl_mt19937v32_state_t fpngl_mt19937v32_state_t;
+fpngl_mt19937v32_state_t *fpngl_init_mt19937v32_by_array32(uint32_t init_key[],
+																													 uint32_t key_length);
+uint32_t fpngl_mt19937v32_next32(fpngl_mt19937v32_state_t *state);
+void fpngl_free_mt19937v32(fpngl_mt19937v32_state_t *state);
+
+const uint32_t mt19937v32_10[10] = {1067595299UL,
 																		955945823UL,
 																		477289528UL,
 																		4107218783UL,
@@ -39,36 +46,28 @@ const uint32_t mt19937_32_10[10] = {1067595299UL,
 																		2591290167UL};
 
 
-fpngl_mt19937_32_state_t *mt19937_32(void)
+fpngl_mt19937v32_state_t *mt19937v32(void)
 {
 	uint32_t init[4]={0x123, 0x234, 0x345, 0x456}, length=4;
-	return fpngl_init_mt19937_32_by_array32(init, length);
-}
-
-uint32_t generate_one_uint32(fpngl_irng32_t *rng)
-{
-	return rng->next(rng->state);
+	return fpngl_init_mt19937v32_by_array32(init, length);
 }
 
 
 START_TEST(test_generate_1)
 {
-	fpngl_mt19937_32_state_t *state = mt19937_32();
-	fpngl_irng32_t *mt19937 = malloc(sizeof(fpngl_irng32_t));
-	mt19937->state = state;
-	mt19937->next = (uint32_t (*)(void*))fpngl_mt19937_32_next;
-	ck_assert(generate_one_uint32(mt19937) == 1067595299UL);
-	fpngl_free_mt19937_32(state);
+	fpngl_mt19937v32_state_t *state = mt19937v32();
+	ck_assert(fpngl_mt19937v32_next32(state) == 1067595299UL);
+	fpngl_free_mt19937v32(state);
 }
 END_TEST
 
 START_TEST(test_generate_5)
 {
-	fpngl_mt19937_32_state_t *state = mt19937_32();
+	fpngl_mt19937v32_state_t *state = mt19937v32();
 	for (int i=0; i<10; i++) {
-		ck_assert(mt19937_32_10[i] == fpngl_mt19937_32_next(state));
+		ck_assert(mt19937v32_10[i] == fpngl_mt19937v32_next32(state));
 	}
-	fpngl_free_mt19937_32(state);
+	fpngl_free_mt19937v32(state);
 }
 END_TEST
 

@@ -18,8 +18,8 @@
 #	GNU Lesser General Public License along with the FPNGlib Library.  If not,
 #	see https://www.gnu.org/licenses/. 	
 
-TESTS = check_constants32 check_constants64 check_fpu check_mt19937_64 check_uirange \
-	check_lcg check_utilities
+TESTS = check_constants32 check_constants64 check_fpu check_mt19937v32 check_mt19937v64 \
+	check_uirange	check_lcg check_utilities
 check_PROGRAMS = $(TESTS)
 LDADD = $(top_builddir)/src/libfpnglib.la @CHECK_LIBS@ -lm $(LIBS)
 AM_CFLAGS = -I.. -Wall @CHECK_CFLAGS@

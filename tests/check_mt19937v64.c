@@ -24,11 +24,19 @@
 #include <stdlib.h>
 #include <string.h>
 #include <check.h>
-#include <fpnglib/rng_t.h>
+#include <fpnglib/irng64_t.h>
+#include <fpnglib/irng_t.h>
 #include <fpnglib/mt19937-64.h>
 
+typedef struct fpngl_mt19937v64_state_t fpngl_mt19937v64_state_t;
+fpngl_mt19937v64_state_t *fpngl_init_mt19937v64_by_array64(uint64_t init_key[],
+																													 uint64_t key_length);
+
+uint64_t fpngl_mt19937v64_next64(fpngl_mt19937v64_state_t *state);
+void fpngl_free_mt19937v64(fpngl_mt19937v64_state_t *state);
+
 // Ten first values with array init[4] (see below) as seed.
-const uint64_t mt19937_64_10[10] = {7266447313870364031ULL,
+const uint64_t mt19937v64_10[10] = {7266447313870364031ULL,
 																		4946485549665804864ULL,
 																		16945909448695747420ULL,
 																		16394063075524226720ULL,
@@ -52,35 +60,35 @@ const uint64_t mt19937_10b[] = {13930160852258120406ULL,
 																7199227068870524257ULL};
 
 
-fpngl_mt19937_64_state_t *mt19937_64(void)
+fpngl_mt19937v64_state_t *mt19937v64(void)
 {
 	uint64_t init[4]={0x12345ULL, 0x23456ULL, 0x34567ULL, 0x45678ULL}, length=4;
-	return fpngl_init_mt19937_64_by_array64(init, length);
+	return fpngl_init_mt19937v64_by_array64(init, length);
 }
 
 START_TEST(test_generate_1)
 {
-	fpngl_mt19937_64_state_t *state = mt19937_64();
-	ck_assert(fpngl_mt19937_64_next64(state) == 7266447313870364031ULL);
-	fpngl_free_mt19937_64(state);
+	fpngl_mt19937v64_state_t *state = mt19937v64();
+	ck_assert(fpngl_mt19937v64_next64(state) == 7266447313870364031ULL);
+	fpngl_free_mt19937v64(state);
 }
 END_TEST
 
 START_TEST(test_generate_5)
 {
-	fpngl_mt19937_64_state_t *state = mt19937_64();
+	fpngl_mt19937v64_state_t *state = mt19937v64();
 	for (int i=0; i<10; i++) {
-		ck_assert(mt19937_64_10[i] == fpngl_mt19937_64_next64(state));
+		ck_assert(mt19937v64_10[i] == fpngl_mt19937v64_next64(state));
 	}
-	fpngl_free_mt19937_64(state);
+	fpngl_free_mt19937v64(state);
 }
 END_TEST
 
 START_TEST(test_construction)
 {
-	fpngl_irng64_t *rng = fpngl_new_mt19937_64(42);
+	fpngl_irng64_t *rng = fpngl_new_mt19937v64_64(42);
 	for (int i = 0; i < 10; ++i) {
-		ck_assert(fpngl_irng64_next(rng) == mt19937_10b[i]);
+		ck_assert(fpngl_irng64_next64(rng) == mt19937_10b[i]);
 	}
 	fpngl_delete_irng64(rng);
 }
@@ -88,7 +96,7 @@ END_TEST
 
 START_TEST(test_next64)
 {
-	fpngl_irng_t *rng = fpngl_new_mt19937(42);
+	fpngl_irng_t *rng = fpngl_new_mt19937v64(42);
 	for (int i = 0; i < 10; ++i) {
 		ck_assert(fpngl_irng_next64(rng) == mt19937_10b[i]);
 	}
@@ -98,7 +106,7 @@ END_TEST
 
 START_TEST(test_next32)
 {
-	fpngl_irng_t *rng = fpngl_new_mt19937(42);
+	fpngl_irng_t *rng = fpngl_new_mt19937v64(42);
 	for (int i = 0; i < 10; ++i) {
 		ck_assert(fpngl_irng_next32(rng) == (mt19937_10b[i] >> 32));
 	}
@@ -108,21 +116,21 @@ END_TEST
 
 START_TEST(test_seed)
 {
-	fpngl_irng_t *rng = fpngl_new_mt19937(42);
+	fpngl_irng_t *rng = fpngl_new_mt19937v64(42);
 	ck_assert(fpngl_irng_seed(rng) == 42);
 }
 END_TEST
 
 START_TEST(test_name)
 {
-	fpngl_irng_t *rng = fpngl_new_mt19937(42);
+	fpngl_irng_t *rng = fpngl_new_mt19937v64(42);
 	ck_assert(!strcmp(fpngl_irng_name(rng),"mt19937-64"));
 }
 END_TEST
 
 START_TEST(test_array64)
 {
-	fpngl_irng_t *rng = fpngl_new_mt19937(42);
+	fpngl_irng_t *rng = fpngl_new_mt19937v64(42);
 	uint64_t T[10];
 	fpngl_irng_array64(rng,T,10);
 	for (int i = 0; i < 10; ++i) {
@@ -134,7 +142,7 @@ END_TEST
 
 START_TEST(test_array32)
 {
-	fpngl_irng_t *rng = fpngl_new_mt19937(42);
+	fpngl_irng_t *rng = fpngl_new_mt19937v64(42);
 	uint32_t T[20];
 	fpngl_irng_array32(rng,T,20);
 	for (int i = 0,j=0; i < 10; i+=2,++j) {
@@ -147,8 +155,8 @@ END_TEST
 
 START_TEST(test_next_k)
 {
-	fpngl_irng_t *rng = fpngl_new_mt19937(42);
-	uint64_t v = fpngl_irng_next(rng,13);
+	fpngl_irng_t *rng = fpngl_new_mt19937v64(42);
+	uint64_t v = fpngl_irng_nextk(rng,13);
 	ck_assert(v == 0x182a);
 	fpngl_delete_irng(rng);
 }

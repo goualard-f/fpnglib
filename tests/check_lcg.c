@@ -38,12 +38,12 @@ const uint64_t minstd64T[] = {705894ULL,
 
 START_TEST(test_lcg64)
 {
-	fpngl_lcg64_state_t *state = fpngl_init_lcg64(42,(1UL<<31)-1,16807,0);
+	fpngl_irng_t *rng = fpngl_new_lcg(42,(1UL<<31)-1,16807,0);
 
 	for (uint32_t i = 0; i < 10; ++i) {
-		ck_assert(fpngl_lcg64_next(state)==minstd64T[i]);
+		ck_assert(fpngl_irng_next64(rng)==minstd64T[i]);
 	}
-	fpngl_free_lcg64(state);
+	fpngl_delete_irng(rng);
 }
 END_TEST
 
