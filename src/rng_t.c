@@ -20,8 +20,14 @@
 	
  */
 
+#include <global.h>
 #include <stdlib.h>
 #include <fpnglib/rng_t.h>
+
+struct fpngl_irng32_t {
+	void* state; // State of the RNG
+	uint32_t (*next)(void*); // Function returning the next random integer
+};
 
 
 struct fpngl_irng64_t {
@@ -30,14 +36,15 @@ struct fpngl_irng64_t {
 	uint64_t min;
 	uint64_t max;
 	void* state; // State of the RNG
-	fpngl_irng64fun_t next; // Function returning the next random integer
+	uint64_t (*next)(void*); // Function returning the next random integer
 	void (*delete)(void*); // Destructor
 };
 
 
 fpngl_irng64_t *fpngl_create_irng64(uint64_t seed, const char* name,
 																		uint64_t min, uint64_t max,
-																		void *state, fpngl_irng64fun_t next,
+																		void *state,
+																		uint64_t (*next)(void*),
 																		void (*delete)(void*))
 {
 	fpngl_irng64_t *rng = malloc(sizeof(fpngl_irng64_t));
@@ -124,6 +131,7 @@ fpngl_irng_t *fpngl_create_irng(uint64_t seed, const char *name,
 	rng->min = min;
 	rng->max = max;
 	rng->state = state;
+	rng->next = next;
 	rng->next32 = next32;
 	rng->next64 = next64;
 	rng->next_array32 = next_array32;
@@ -182,7 +190,7 @@ uint64_t fpngl_irng_seed(fpngl_irng_t *rng)
 }
 
 // Return the name of the RNG used (see GSL documentation for more info.
-const char *fpngl_get_irng_name(fpngl_irng_t *rng)
+const char *fpngl_irng_name(fpngl_irng_t *rng)
 {
 	return rng->name;
 }

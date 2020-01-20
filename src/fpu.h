@@ -23,6 +23,7 @@
 #ifndef __fpngl_fpu_h__
 #define __fpngl_fpu_h__
 
+#include <fpnglib/fpngl_config.h>
 #include <stdbool.h>
 #include <stdint.h>
 

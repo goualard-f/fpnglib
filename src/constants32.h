@@ -1,4 +1,4 @@
-/* Useful double precision constants.
+/* Useful single precision constants.
 
 	Copyright 2019--2020 University of Nantes, France.
 
@@ -19,8 +19,8 @@
 	see https://www.gnu.org/licenses/. 	
 	
  */
-#ifndef __fpngl_constants64_h__
-#define __fpngl_constants64_h__
+#ifndef __fpngl_constants32_h__
+#define __fpngl_constants32_h__
 
 #include <fpnglib/fpngl_config.h>
 #include <stdint.h>
@@ -34,22 +34,22 @@
 
 // Double precision format **************************************
 // **************************************************************
-// Number of bits in the significand of a double precision number
-static const uint32_t fpngl_t64 = 53;
-// Smallest unbiased exponent of a double precision number
-static const int32_t fpngl_emin64 = -1022;
-// Largest unbiased exponent of a double precision number
-static const int32_t fpngl_emax64 = 1023;
-// Unit roundoff for a double precision number
-static const double fpngl_u64 = 0.5*DBL_EPSILON;
-// Smallest positive normalized double precision number
-static const double fpngl_lambda64 = DBL_MIN;
-// Smallest positive double precision number
-static const double fpngl_mu64 = DBL_MIN*DBL_EPSILON;
-static const double fpngl_NaN64 = 0.0/0.0;
-static const double fpngl_infinity64 = 1.0/0.0;
-// Largest positive finite double precision number
-static const double fpngl_max64 = DBL_MAX;
+// Number of bits in the significand of a single precision number
+static const uint32_t fpngl_t32 = 24;
+// Smallest unbiased exponent of a single precision number
+static const int32_t fpngl_emin32 = -126;
+// Largest unbiased exponent of a single precision number
+static const int32_t fpngl_emax32 = 127;
+// Unit roundoff for a single precision number
+static const float fpngl_u32 = 0.5f*FLT_EPSILON;
+// Smallest positive normalized single precision number
+static const float fpngl_lambda32 = FLT_MIN;
+// Smallest positive single precision number
+static const float fpngl_mu32 = FLT_MIN*FLT_EPSILON;
+static const float fpngl_NaN32 = 0.0f/0.0f;
+static const float fpngl_infinity32 = 1.0f/0.0f;
+// Largest positive finite float precision number
+static const float fpngl_max32 = FLT_MAX;
 
 
-#endif // __fpngl_constants64_h__
+#endif // __fpngl_constants32_h__

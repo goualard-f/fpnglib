@@ -25,7 +25,12 @@
 #ifndef __mt19937ar_h__
 #define __mt19937ar__h__
 
+#include <fpnglib/fpngl_config.h>
 #include <stdint.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 // State of an MT19937-32 RNG
 typedef struct fpngl_mt19937_32_state_t fpngl_mt19937_32_state_t;
@@ -45,4 +50,9 @@ void fpngl_free_mt19937_32(fpngl_mt19937_32_state_t *state);
 
 uint32_t fpngl_mt19937_32_next(fpngl_mt19937_32_state_t *state);
 
+#ifdef __cplusplus
+}
+#endif
+
+	
 #endif // __mt19937ar_h__

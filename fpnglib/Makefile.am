@@ -1,6 +1,6 @@
 # High-level Makefile
 #
-#	Copyright 2019 University of Nantes, France.
+#	Copyright 2019--2020 University of Nantes, France.
 #
 #	This file is part of the FPNGlib library.
 #

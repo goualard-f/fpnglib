@@ -1,6 +1,6 @@
-/* Unit tests for constants
+/* Unit tests for double precision constants
 
-	Copyright 2019 University of Nantes, France.
+	Copyright 2019--2020 University of Nantes, France.
 
 	This file is part of the FPNGlib library.
 
@@ -20,6 +20,7 @@
 	
  */
 
+#include <config.h>
 #include <stdlib.h>
 #include <check.h>
 #include <math.h>

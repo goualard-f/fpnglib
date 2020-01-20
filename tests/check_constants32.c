@@ -1,4 +1,4 @@
-/* Unit tests for utilities.[ch]
+/* Unit tests for single precision constants
 
 	Copyright 2019--2020 University of Nantes, France.
 
@@ -23,34 +23,31 @@
 #include <config.h>
 #include <stdlib.h>
 #include <check.h>
-#include <fpnglib/utilities.h>
+#include <math.h>
+#include <fpnglib/constants32.h>
 
-START_TEST(test_odd)
+START_TEST(test_constants)
 {
-	ck_assert(fpngl_odd(53));
-	ck_assert(!fpngl_odd(128));
+  ck_assert_float_eq(fpngl_u32,ldexpf(1.0f,-fpngl_t32));
+  ck_assert_float_eq(fpngl_lambda32,ldexpf(1.0f,fpngl_emin32));
+  ck_assert_float_eq(fpngl_mu32,ldexpf(1.0f,fpngl_emin32-fpngl_t32+1));
+  ck_assert_float_eq(fpngl_max32,nextafterf(fpngl_infinity32,-fpngl_infinity32));
+  ck_assert_float_nan(fpngl_NaN32);
+  ck_assert_float_infinite(fpngl_infinity32);
 }
 END_TEST
 
-START_TEST(test_even)
-{
-	ck_assert(fpngl_even(4));
-	ck_assert(!fpngl_even(5));
-}
-END_TEST
-
-Suite *utilities_suite(void)
+Suite *constants_suite(void)
 {
   Suite *s;
   TCase *tc_core;
   
-  s = suite_create("utilities");
+  s = suite_create("constants");
   
   /* Core test case */
   tc_core = tcase_create("Core");
   
-  tcase_add_test(tc_core, test_odd);
-  tcase_add_test(tc_core, test_even);
+  tcase_add_test(tc_core, test_constants);
   suite_add_tcase(s, tc_core);
   
   return s;
@@ -62,7 +59,7 @@ int main(void)
   Suite *s;
   SRunner *sr;
   
-  s = utilities_suite();
+  s = constants_suite();
   sr = srunner_create(s);
   
   srunner_run_all(sr, CK_NORMAL);
@@ -70,4 +67,3 @@ int main(void)
   srunner_free(sr);
   return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
-

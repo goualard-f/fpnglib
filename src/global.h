@@ -1,4 +1,4 @@
-/* Various auxiliary functions
+/* Macros and configuration material used throughout the source of library.
 
 	Copyright 2019--2020 University of Nantes, France.
 
@@ -19,12 +19,23 @@
 	see https://www.gnu.org/licenses/. 	
 	
  */
+/*
+	BEWARE: this file must be included by '.c' files only and will not be installed.
+	Include fpnglib/fpngl_config.h if you need some configuration macros in public 
+	header files.
+*/
 
-#include <global.h>
-#include <fpnglib/utilities.h>
+#ifndef __fpngl_global_h__
+#define __fpngl_global_h__
 
-// "Instantiation" of inline functions to make them visible in the shared library
-//{
-int fpngl_odd(uint64_t n);
-int fpngl_even(uint64_t n);
-//}
+#include <config.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // __fpngl_global_h__

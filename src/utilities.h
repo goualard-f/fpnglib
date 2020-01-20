@@ -23,7 +23,13 @@
 #ifndef __utilities_h__
 #define __utilities_h__
 
+#include <fpnglib/fpngl_config.h>
 #include <stdint.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 // Return 1 if its argument is an odd number and 0 otherwise
 inline int fpngl_odd(uint64_t n)
@@ -36,5 +42,9 @@ inline int fpngl_even(uint64_t n)
 {
 	return !fpngl_odd(n);
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // __utilities_h__

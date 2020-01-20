@@ -20,6 +20,7 @@
 	
  */
 
+#include <global.h>
 #include <stdlib.h>
 #include <fpnglib/lcg.h>
 

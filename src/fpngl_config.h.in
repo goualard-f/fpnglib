@@ -1,0 +1,62 @@
+/* Macros defined by configure and used in public headers.
+
+	Copyright 2019--2020 University of Nantes, France.
+
+	This file is part of the FPNGlib library.
+
+	The FPNGlib library is free software; you can redistribute it and/or modify
+	it under the terms of the GNU Lesser General Public License as published by the 
+	Free Software Foundation; either version 3 of the License, or (at your
+	option) any later version.
+	
+	The FPNGlib library is distributed in the hope that it will be useful, but
+	WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+	or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+	for more details.
+	
+	You should have received copies of the GNU General Public License and the
+	GNU Lesser General Public License along with the FPNGlib Library.  If not,
+	see https://www.gnu.org/licenses/. 	
+	
+ */
+
+#ifndef __fpngl_config_h__
+#define __fpngl_config_h__
+
+/* Define for Solaris 2.5.1 so the uint32_t typedef from <sys/synch.h>,
+   <pthread.h>, or <semaphore.h> is not used. If the typedef were allowed, the
+   #define below would cause a syntax error. */
+#undef _UINT32_T
+
+/* Define for Solaris 2.5.1 so the uint64_t typedef from <sys/synch.h>,
+   <pthread.h>, or <semaphore.h> is not used. If the typedef were allowed, the
+   #define below would cause a syntax error. */
+#undef _UINT64_T
+
+/* Define to empty if `const' does not conform to ANSI C. */
+#undef const
+
+/* Define to `__inline__' or `__inline' if that's what the C compiler
+   calls it, or to nothing if 'inline' is not supported under any name.  */
+#ifndef __cplusplus
+#undef inline
+#endif
+
+/* Define to the type of a signed integer type of width exactly 32 bits if
+   such a type exists and the standard includes do not define it. */
+#undef int32_t
+
+/* Define to the type of a signed integer type of width exactly 64 bits if
+   such a type exists and the standard includes do not define it. */
+#undef int64_t
+
+/* Define to the type of an unsigned integer type of width exactly 32 bits if
+   such a type exists and the standard includes do not define it. */
+#undef uint32_t
+
+/* Define to the type of an unsigned integer type of width exactly 64 bits if
+   such a type exists and the standard includes do not define it. */
+#undef uint64_t
+
+#endif // __fpngl_config_h__
+

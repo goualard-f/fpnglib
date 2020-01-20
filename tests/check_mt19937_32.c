@@ -1,6 +1,6 @@
 /* Unit tests for mt19937ar.c
 
-	Copyright 2019 University of Nantes, France.
+	Copyright 2019--2020 University of Nantes, France.
 
 	This file is part of the FPNGlib library.
 
@@ -20,6 +20,8 @@
 	
  */
 
+
+#include <config.h>
 #include <stdlib.h>
 #include <check.h>
 #include <fpnglib/rng_t.h>
@@ -43,17 +45,18 @@ fpngl_mt19937_32_state_t *mt19937_32(void)
 	return fpngl_init_mt19937_32_by_array32(init, length);
 }
 
-uint32_t generate_one_uint32(fpngl_irng32_t rng)
+uint32_t generate_one_uint32(fpngl_irng32_t *rng)
 {
-	return rng.next(rng.state);
+	return rng->next(rng->state);
 }
 
 
 START_TEST(test_generate_1)
 {
 	fpngl_mt19937_32_state_t *state = mt19937_32();
-	fpngl_irng32_t mt19937 = { .state = state,
-														 .next = (fpngl_irng32fun_t)fpngl_mt19937_32_next };
+	fpngl_irng32_t *mt19937 = malloc(sizeof(fpngl_irng32_t));
+	mt19937->state = state;
+	mt19937->next = (uint32_t (*)(void*))fpngl_mt19937_32_next;
 	ck_assert(generate_one_uint32(mt19937) == 1067595299UL);
 	fpngl_free_mt19937_32(state);
 }

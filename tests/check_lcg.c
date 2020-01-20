@@ -20,7 +20,7 @@
 	
  */
 
-#include <stdio.h>
+#include <config.h>
 #include <stdlib.h>
 #include <check.h>
 #include <fpnglib/lcg.h>

@@ -20,14 +20,18 @@
 	
  */
 
+#include <global.h>
+#include <assert.h>
 #include <fpnglib/uirange.h>
 
-uint32_t fpngl_get_n_bits32(uint32_t v, uint32_t n)
+uint32_t fpngl_n_bits32(uint32_t v, uint32_t n)
 {
+	assert(n < 32);
 	return v >> (32-n);
 }
 
-uint64_t fpngl_get_n_bits64(uint64_t v, uint32_t n)
+uint64_t fpngl_n_bits64(uint64_t v, uint32_t n)
 {
+	assert(n < 64);
 	return v >> (64-n);
 }

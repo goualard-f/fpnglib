@@ -28,18 +28,27 @@
 #ifndef __uirange_h__
 #define __uirange_h__
 
+#include <fpnglib/fpngl_config.h>
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
-	Return an bits unsigned integer composed with the `n` highest bits of `v`.
+	Return an unsigned integer composed with the `n` highest bits of `v`.
 	
  */
-uint32_t fpngl_get_n_bits32(uint32_t v, uint32_t n);
-uint64_t fpngl_get_n_bits64(uint64_t v, uint32_t n);
+uint32_t fpngl_n_bits32(uint32_t v, uint32_t n);
+uint64_t fpngl_n_bits64(uint64_t v, uint32_t n);
 
 /*
 	Return an integer in the domain [a,b]
  */
-
+// TODO
+	
+#ifdef __cplusplus
+}
+#endif
 
 #endif // __uirange_h__

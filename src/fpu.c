@@ -20,6 +20,7 @@
 	
  */
 
+#include <global.h>
 #include <fenv.h>
 
 #include <fpnglib/fpu.h>

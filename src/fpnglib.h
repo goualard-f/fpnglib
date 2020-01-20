@@ -1,6 +1,6 @@
 /* The general FPNGlib header including all others.
 
-	Copyright 2019 University of Nantes, France.
+	Copyright 2019--2020 University of Nantes, France.
 
 	This file is part of the FPNGlib library.
 
@@ -23,8 +23,13 @@
 #ifndef __fpngl_fpnglib_h__
 #define __fpngl_fpnglib_h__
 
+#include <fpnglib/fpngl_config.h>
+#include <fpnglib/constants32.h>
 #include <fpnglib/constants64.h>
-#include <fpnglib/random.h>
 #include <fpnglib/fpu.h>
+#include <fpnglib/rng_t.h>
+#include <fpnglib/uirange.h>
+#include <fpnglib/utilities.h>
+
 
 #endif // __fpngl_fpnglib_h__

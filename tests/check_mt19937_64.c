@@ -1,6 +1,6 @@
 /* Unit tests for mt19937-64.c
 
-	Copyright 2019 University of Nantes, France.
+	Copyright 2019--2020 University of Nantes, France.
 
 	This file is part of the FPNGlib library.
 
@@ -20,11 +20,14 @@
 	
  */
 
+#include <config.h>
 #include <stdlib.h>
+#include <string.h>
 #include <check.h>
 #include <fpnglib/rng_t.h>
 #include <fpnglib/mt19937-64.h>
 
+// Ten first values with array init[4] (see below) as seed.
 const uint64_t mt19937_64_10[10] = {7266447313870364031ULL,
 																		4946485549665804864ULL,
 																		16945909448695747420ULL,
@@ -58,7 +61,7 @@ fpngl_mt19937_64_state_t *mt19937_64(void)
 START_TEST(test_generate_1)
 {
 	fpngl_mt19937_64_state_t *state = mt19937_64();
-	ck_assert(fpngl_mt19937_64_next(state) == 7266447313870364031ULL);
+	ck_assert(fpngl_mt19937_64_next64(state) == 7266447313870364031ULL);
 	fpngl_free_mt19937_64(state);
 }
 END_TEST
@@ -67,13 +70,13 @@ START_TEST(test_generate_5)
 {
 	fpngl_mt19937_64_state_t *state = mt19937_64();
 	for (int i=0; i<10; i++) {
-		ck_assert(mt19937_64_10[i] == fpngl_mt19937_64_next(state));
+		ck_assert(mt19937_64_10[i] == fpngl_mt19937_64_next64(state));
 	}
 	fpngl_free_mt19937_64(state);
 }
 END_TEST
 
-START_TEST(test_construction1)
+START_TEST(test_construction)
 {
 	fpngl_irng64_t *rng = fpngl_new_mt19937_64(42);
 	for (int i = 0; i < 10; ++i) {
@@ -83,12 +86,70 @@ START_TEST(test_construction1)
 }
 END_TEST
 
-START_TEST(test_construction2)
+START_TEST(test_next64)
 {
 	fpngl_irng_t *rng = fpngl_new_mt19937(42);
 	for (int i = 0; i < 10; ++i) {
 		ck_assert(fpngl_irng_next64(rng) == mt19937_10b[i]);
 	}
+	fpngl_delete_irng(rng);
+}
+END_TEST
+
+START_TEST(test_next32)
+{
+	fpngl_irng_t *rng = fpngl_new_mt19937(42);
+	for (int i = 0; i < 10; ++i) {
+		ck_assert(fpngl_irng_next32(rng) == (mt19937_10b[i] >> 32));
+	}
+	fpngl_delete_irng(rng);
+}
+END_TEST
+
+START_TEST(test_seed)
+{
+	fpngl_irng_t *rng = fpngl_new_mt19937(42);
+	ck_assert(fpngl_irng_seed(rng) == 42);
+}
+END_TEST
+
+START_TEST(test_name)
+{
+	fpngl_irng_t *rng = fpngl_new_mt19937(42);
+	ck_assert(!strcmp(fpngl_irng_name(rng),"mt19937-64"));
+}
+END_TEST
+
+START_TEST(test_array64)
+{
+	fpngl_irng_t *rng = fpngl_new_mt19937(42);
+	uint64_t T[10];
+	fpngl_irng_array64(rng,T,10);
+	for (int i = 0; i < 10; ++i) {
+		ck_assert(T[i] == mt19937_10b[i]);
+	}
+	fpngl_delete_irng(rng);
+}
+END_TEST
+
+START_TEST(test_array32)
+{
+	fpngl_irng_t *rng = fpngl_new_mt19937(42);
+	uint32_t T[20];
+	fpngl_irng_array32(rng,T,20);
+	for (int i = 0,j=0; i < 10; i+=2,++j) {
+		ck_assert(T[i] == (mt19937_10b[j] & 0x00000000ffffffff));
+		ck_assert(T[i+1] == (mt19937_10b[j] >> 32));
+	}
+	fpngl_delete_irng(rng);
+}
+END_TEST
+
+START_TEST(test_next_k)
+{
+	fpngl_irng_t *rng = fpngl_new_mt19937(42);
+	uint64_t v = fpngl_irng_next(rng,13);
+	ck_assert(v == 0x182a);
 	fpngl_delete_irng(rng);
 }
 END_TEST
@@ -105,8 +166,14 @@ Suite *mt19937_64_suite(void)
   
   tcase_add_test(tc_core, test_generate_1);
   tcase_add_test(tc_core, test_generate_5);
-  tcase_add_test(tc_core, test_construction1);
-  tcase_add_test(tc_core, test_construction2);
+  tcase_add_test(tc_core, test_construction);
+  tcase_add_test(tc_core, test_next64);
+  tcase_add_test(tc_core, test_next32);
+  tcase_add_test(tc_core, test_seed);
+  tcase_add_test(tc_core, test_name);
+  tcase_add_test(tc_core, test_array64);
+	tcase_add_test(tc_core, test_array32);
+	tcase_add_test(tc_core, test_next_k);
   suite_add_tcase(s, tc_core);
   
   return s;

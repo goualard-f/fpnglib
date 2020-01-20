@@ -1,6 +1,6 @@
 # Makefile for tests
 #
-#	Copyright 2019 University of Nantes, France.
+#	Copyright 2019--2020 University of Nantes, France.
 #
 #	This file is part of the FPNGlib library.
 #
@@ -18,25 +18,10 @@
 #	GNU Lesser General Public License along with the FPNGlib Library.  If not,
 #	see https://www.gnu.org/licenses/. 	
 
-TESTS = check_constants64 check_fpu check_mt19937_32 check_mt19937_64 check_uirange \
+TESTS = check_constants32 check_constants64 check_fpu check_mt19937_64 check_uirange \
 	check_lcg check_utilities
 check_PROGRAMS = $(TESTS)
 LDADD = $(top_builddir)/src/libfpnglib.la @CHECK_LIBS@ -lm $(LIBS)
 AM_CFLAGS = -I.. -Wall @CHECK_CFLAGS@
 
-
-
-check_constants64_SOURCES = check_constants64.c $(top_builddir)/fpnglib/constants64.h
-
-check_fpu_SOURCES = check_fpu.c $(top_builddir)/fpnglib/fpu.h
-check_fpu_CFLAGS = -frounding-math
-
-check_mt19937_32_SOURCES = check_mt19937_32.c $(top_builddir)/fpnglib/mt19937ar.h
-
-check_mt19937_64_SOURCES = check_mt19937_64.c $(top_builddir)/fpnglib/mt19937-64.h
-
-check_uirange_SOURCES = check_uirange.c $(top_builddir)/fpnglib/uirange.h
-
-check_lcg_SOURCES = check_lcg.c $(top_builddir)/fpnglib/lcg.h
-
-check_utilities_SOURCES = check_utilities.c $(top_builddir)/fpnglib/utilities.h
+check_fpu_CFLAGS = -frounding-math -I.. -Wall @CHECK_CFLAGS@ -Wno-unused-but-set-variable

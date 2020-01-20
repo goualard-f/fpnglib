@@ -27,7 +27,7 @@ AM_INIT_AUTOMAKE([gnu 1.7 dist-bzip2])
 PKG_CHECK_MODULES([CHECK], [check >= 0.11.0])
 
 AC_CONFIG_SRCDIR([src/fpu.h])
-AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_HEADERS([config.h src/fpngl_config.h])
 AC_CONFIG_FILES([Makefile fpnglib/Makefile src/Makefile tests/Makefile doc/Makefile])
 
 dnl Libtool support
@@ -69,12 +69,14 @@ AC_CHECK_HEADERS([fenv.h stdint.h])
 AC_C_CONST
 AC_C_INLINE
 AC_TYPE_INT32_T
+AC_TYPE_UINT32_T
 AC_TYPE_INT64_T
 AC_TYPE_UINT64_T
 
-# Checks for library functions.
-
 # Set default CFLAGS to nothing to avoid -O2 optimization in tests
 CFLAGS=
+
+AC_HEADER_ASSERT
+# Checks for library functions.
 
 AC_OUTPUT

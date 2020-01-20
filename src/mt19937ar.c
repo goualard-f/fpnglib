@@ -65,6 +65,7 @@
    email: m-mat @ math.sci.hiroshima-u.ac.jp (remove space)
 */
 
+#include <global.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <fpnglib/mt19937ar.h>

@@ -20,24 +20,25 @@
 	
  */
 
+#include <config.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <check.h>
 #include <fpnglib/uirange.h>
 
-START_TEST(test_get_n_bits32)
+START_TEST(test_n_bits32)
 {
-	ck_assert(fpngl_get_n_bits32(0x10000000,7) == 0x8);
-	ck_assert(fpngl_get_n_bits32(0x80000000,7) == 0x40);
-	ck_assert(fpngl_get_n_bits32(0xf0000f00,3) == 0x7);
+	ck_assert(fpngl_n_bits32(0x10000000,7) == 0x8);
+	ck_assert(fpngl_n_bits32(0x80000000,7) == 0x40);
+	ck_assert(fpngl_n_bits32(0xf0000f00,3) == 0x7);
 }
 END_TEST
 
-START_TEST(test_get_n_bits64)
+START_TEST(test_n_bits64)
 {
-	ck_assert(fpngl_get_n_bits64(0x1000000000000000,7) == 0x8);
-	ck_assert(fpngl_get_n_bits64(0x8000000000000000,7) == 0x40);
-	ck_assert(fpngl_get_n_bits64(0xf0000f0000000000,3) == 0x7);
+	ck_assert(fpngl_n_bits64(0x1000000000000000,7) == 0x8);
+	ck_assert(fpngl_n_bits64(0x8000000000000000,7) == 0x40);
+	ck_assert(fpngl_n_bits64(0xf0000f0000000000,3) == 0x7);
 }
 END_TEST
 
@@ -51,8 +52,8 @@ Suite *uirange_suite(void)
   /* Core test case */
   tc_core = tcase_create("Core");
   
-  tcase_add_test(tc_core, test_get_n_bits32);
-  tcase_add_test(tc_core, test_get_n_bits64);
+  tcase_add_test(tc_core, test_n_bits32);
+  tcase_add_test(tc_core, test_n_bits64);
   suite_add_tcase(s, tc_core);
   
   return s;

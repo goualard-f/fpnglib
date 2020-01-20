@@ -25,8 +25,20 @@
 #ifndef __mt19937_64_h__
 #define __mt19937_64_h__
 
+#include <fpnglib/fpngl_config.h>
 #include <stdint.h>
 #include <fpnglib/rng_t.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+fpngl_irng64_t *fpngl_new_mt19937_64(uint64_t seed);
+
+fpngl_irng_t *fpngl_new_mt19937(uint64_t seed);
+
+
+
 
 // State of an MT19937-64 RNG
 typedef struct fpngl_mt19937_64_state_t fpngl_mt19937_64_state_t;
@@ -45,7 +57,7 @@ fpngl_mt19937_64_state_t *fpngl_init_mt19937_64_by_array64(uint64_t init_key[],
 
 void fpngl_free_mt19937_64(fpngl_mt19937_64_state_t *state);
 
-uint64_t fpngl_mt19937_64_next(fpngl_mt19937_64_state_t *state);
+uint64_t fpngl_mt19937_64_next64(fpngl_mt19937_64_state_t *state);
 
 /* Return k random bits. The value of `k` must be in [1,64]. 
 	 Use preferentially fpngl_mt19937_64_to_32_next() for k=32 and 
@@ -53,14 +65,14 @@ uint64_t fpngl_mt19937_64_next(fpngl_mt19937_64_state_t *state);
 */
 uint64_t fpngl_mt19937_64_next_k(fpngl_mt19937_64_state_t *state, uint32_t k);
 
-uint32_t fpngl_mt19937_64_to_32_next(fpngl_mt19937_64_state_t *state);
+uint32_t fpngl_mt19937_64_next32(fpngl_mt19937_64_state_t *state);
 
 void fpngl_mt19937_64_array32(fpngl_mt19937_64_state_t *state, uint32_t *T, uint32_t n);
 void fpngl_mt19937_64_array64(fpngl_mt19937_64_state_t *state, uint64_t *T, uint32_t n);
 
-fpngl_irng64_t *fpngl_new_mt19937_64(uint64_t seed);
 
-fpngl_irng_t *fpngl_new_mt19937(uint64_t seed);
-
-
+#ifdef __cplusplus
+}
+#endif
+	
 #endif // __mt19937_64_h__
