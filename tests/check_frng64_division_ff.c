@@ -1,4 +1,4 @@
-/* Unit tests for lcg.c
+/* Unit tests for frng64_division_ff.c
 
 	Copyright 2019--2020 University of Nantes, France.
 
@@ -22,42 +22,29 @@
 
 #include <config.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include <check.h>
-#include <fpnglib/lcg.h>
+#include <fpnglib/frng64_t.h>
+#include <fpnglib/frng64_division_ff.h>
 
-const uint64_t minstd64T[] = {705894ULL,
-															1126542223ULL,
-															1579310009ULL,
-															565444343ULL,
-															807934826ULL,
-															421520601ULL,
-															2095673201ULL,
-															1100194760ULL,
-															1139130650ULL,
-															552121545ULL};
 
-START_TEST(test_lcg64)
+START_TEST(test_)
 {
-	fpngl_irng_t *rng = fpngl_new_lcg(42,"minstd",(1UL<<31)-1,16807,0);
-
-	for (uint32_t i = 0; i < 10; ++i) {
-		ck_assert(fpngl_irng_next64(rng)==minstd64T[i]);
-	}
-	fpngl_delete_irng(rng);
 }
 END_TEST
 
-Suite *lcg_suite(void)
+Suite *frng64_division_ff_suite(void)
 {
   Suite *s;
   TCase *tc_core;
   
-  s = suite_create("lcg");
+  s = suite_create("frng64_division_ff");
   
   /* Core test case */
   tc_core = tcase_create("Core");
   
-  tcase_add_test(tc_core, test_lcg64);
+  tcase_add_test(tc_core, test_);
   suite_add_tcase(s, tc_core);
   
   return s;
@@ -69,7 +56,7 @@ int main(void)
   Suite *s;
   SRunner *sr;
   
-  s = lcg_suite();
+  s = frng64_division_ff_suite();
   sr = srunner_create(s);
   
   srunner_run_all(sr, CK_NORMAL);

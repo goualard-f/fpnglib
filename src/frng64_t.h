@@ -32,15 +32,28 @@ extern "C" {
 
 	typedef struct fpngl_frng64_t fpngl_frng64_t;
 
-	fpngl_frng64_t *fpngl_new_frng64_co(uint64_t seed,
-																			const char *name,
-																			void *state,
-																			double (*nextd64)(void*),
-																			void (*next_arrayd64)(void *state,
-																														double *T, uint32_t n),
-																			void (*delete)(void*));
-	void fpngl_delete_frng64(fpngl_frng64_t *rng);
+	fpngl_frng64_t *fpngl_new_frng64(const char *name,
+																	 void *state,
+																	 double (*nextf64)(void*),
+																	 void (*next_arrayf64)(void *state,
+																												 double *T, uint32_t n),
+																	 void (*delete)(void*),
+																	 uint64_t (*seed)(void*));
+	
+	void fpngl_frng64_delete(fpngl_frng64_t *frng);
 
+	uint64_t fpngl_frng64_seed(fpngl_frng64_t *frng);
+
+	double fpngl_frng64_nextf64(fpngl_frng64_t *frng);
+
+	/*
+		Fill the array `T` with `n` random floating-point numbers.
+
+		@caution The function may allocate a temporary array of `n` uin64_t integers.
+	*/
+	void fpngl_frng64_next_arrayf64(fpngl_frng64_t *frng, double *T, uint32_t n);
+
+	const char* fpngl_frng64_name(fpngl_frng64_t *frng);
 	
 #ifdef __cplusplus
 }

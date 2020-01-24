@@ -32,9 +32,11 @@
 extern "C" {
 #endif
 
-	fpngl_irng64_t *fpngl_new_lcg_64(uint64_t seed, uint64_t m, uint64_t a, uint64_t c);
+	fpngl_irng64_t *fpngl_new_lcg_64(uint64_t seed, const char *name,
+																	 uint64_t m, uint64_t a, uint64_t c);
 	
-	fpngl_irng_t *fpngl_new_lcg(uint64_t seed, uint64_t m, uint64_t a, uint64_t c);
+	fpngl_irng_t *fpngl_new_lcg(uint64_t seed, const char *name,
+															uint64_t m, uint64_t a, uint64_t c);
 
 	/*
 		MINSTD implementation of Park/Miller RNG
@@ -50,18 +52,28 @@ extern "C" {
 	fpngl_irng_t *fpngl_lcg_gnu_c(uint64_t seed);
 	
 	/*
-		
-	 */
-	fpngl_irng_t *fpngl_(uint64_t seed);
-
-	/*
 		RANDU RNG in the Scientific Subroutine Package on IBM Mainframe.
 		
 		*Source*: Numerical Computing with MATLAB. Steve Moler. Chap. 9
 		*/
 	fpngl_irng_t *fpngl_randu(uint64_t seed);
-	
 
+	/*
+		LCG used by the GNU and FreeBSD implementations of drand48().
+		
+		This LCG is also used by java.util.Random, according to L'Ecuyer and Simard
+		(see also: https://docs.oracle.com/javase/8/docs/api/java/util/Random.html).
+
+		*Source:* [IEEE Std 1003.1-2017](http://pubs.opengroup.org/onlinepubs/9699919799/functions/drand48.html) and https://github.com/lattera/glibc/blob/master/stdlib/erand48_r.c
+		*Source:* https://opensource.apple.com/source/Libc/Libc-583/gen/FreeBSD/erand48.c.auto.html
+	 */ 
+	fpngl_irng_t *fpngl_drand48_lcg(uint64_t seed);
+	
+	/*
+		MuPAD LCG used in MuPAD Pro 3.1 and Maple 10 according to 
+		[Morgenstern](https://link.springer.com/chapter/10.1007%2F978-3-540-69995-8_90)
+	 */
+	fpngl_irng_t *fpngl_mupad(uint64_t seed);
 	
 #ifdef __cplusplus
 }

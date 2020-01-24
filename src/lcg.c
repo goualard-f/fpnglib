@@ -59,9 +59,10 @@ uint64_t fpngl_lcg64_next64(fpngl_lcg64_state_t *state)
 }
 
 
-fpngl_irng64_t *fpngl_new_lcg_64(uint64_t seed, uint64_t m, uint64_t a, uint64_t c)
+fpngl_irng64_t *fpngl_new_lcg_64(uint64_t seed, const char *name,
+																 uint64_t m, uint64_t a, uint64_t c)
 {
-	return  fpngl_new_irng64(seed,"LCG-64",0,0xffffffffffffffff,
+	return  fpngl_new_irng64(seed,name,0,0xffffffffffffffff,
 													 fpngl_init_lcg64(seed,m,a,c),
 													 (uint64_t (*)(void*))fpngl_lcg64_next64,
 													 (void (*)(void*))fpngl_free_lcg64);
@@ -100,9 +101,10 @@ uint64_t fpngl_lcg64_nextk(fpngl_lcg64_state_t *state, uint32_t k)
 }
 
 
-fpngl_irng_t *fpngl_new_lcg(uint64_t seed, uint64_t m, uint64_t a, uint64_t c)
+fpngl_irng_t *fpngl_new_lcg(uint64_t seed, const char *name,
+														uint64_t m, uint64_t a, uint64_t c)
 {
-	return  fpngl_new_irng(seed,"LCG-64",0,0xffffffffffffffff,
+	return  fpngl_new_irng(seed,name,0,0xffffffffffffffff,
 												 fpngl_init_lcg64(seed,m,a,c),
 														(uint32_t (*)(void*))fpngl_lcg64_next32,
 														(uint64_t (*)(void*))fpngl_lcg64_next64,
@@ -114,15 +116,25 @@ fpngl_irng_t *fpngl_new_lcg(uint64_t seed, uint64_t m, uint64_t a, uint64_t c)
 
 fpngl_irng_t *fpngl_minstd(uint64_t seed)
 {
-	return fpngl_new_lcg(seed,((uint64_t)1 << 31) - 1,16807,0);
+	return fpngl_new_lcg(seed,"minstd",(1UL << 31) - 1,16807,0);
 }
 
 fpngl_irng_t *fpngl_lcg_gnu_c(uint64_t seed)
 {
-	return fpngl_new_lcg(seed,((uint64_t)1 << 31),1103515245,12345);
+	return fpngl_new_lcg(seed,"gnuc",(1UL << 31),1103515245,12345);
 }
 
 fpngl_irng_t *fpngl_randu(uint64_t seed)
 {
-	return fpngl_new_lcg(seed,((uint64_t)1 << 31),65539,0);
+	return fpngl_new_lcg(seed,"randu",(1UL << 31),65539,0);
+}
+
+fpngl_irng_t *fpngl_drand48_lcg(uint64_t seed)
+{
+	return fpngl_new_lcg(seed,"drand48-lcg",1UL<<48,25214903917,11);
+}
+
+fpngl_irng_t *fpngl_mupad(uint64_t seed)
+{
+	return fpngl_new_lcg(seed,"mupad-lcg",0xe8d4a50ff5UL,427419669081UL,0);
 }
