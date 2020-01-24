@@ -58,15 +58,18 @@ extern "C" {
 		
 		Return a floating-point number in `(0,1)`.
 	 */
-	fpngl_frng64_t *fpgnl_new_mupad(uint64_t seed);
+	fpngl_frng64_t *fpngl_new_mupad(uint64_t seed);
 
 	/*
 		Computation of a random floating-point number in `[0,1)` by calling twice 
 		the same LCG as `drand48()` and combining the two results.
 		According to L'Ecuyer and Simard, this is the RNG from `java.util.Random`.
 		See also: https://docs.oracle.com/javase/8/docs/api/java/util/Random.html
+
+		@caution Calling fpngl_frng64_next_arrayf64() for this RNG creates on the heap a
+		a temporary array twice the size of the one passed as an argument.
 	 */
-	fpngl_frng64_t *fpgnl_new_java(uint64_t seed);
+	fpngl_frng64_t *fpngl_new_java(uint64_t seed);
 
 #ifdef __cplusplus
 }

@@ -22,6 +22,7 @@
  */
 
 #include <global.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <assert.h>
@@ -89,7 +90,7 @@ fpngl_frng64_t *fpngl_new_matlabp5(uint64_t seed)
 
 fpngl_frng64_t *fpngl_new_drand48bsd(uint64_t seed)
 {
-	return fpngl_new_bydivision(seed,"drand48-gnu",fpngl_drand48_lcg,1UL<<48);
+	return fpngl_new_bydivision(seed,"drand48bsd",fpngl_drand48_lcg,1UL<<48);
 }
 
 fpngl_frng64_t *fpngl_new_mupad(uint64_t seed)
@@ -101,21 +102,21 @@ static double java_nextf64(frng_division_state_t *frng)
 {
 	uint64_t xa = fpngl_irng_next64(frng->irng);
 	uint64_t xb = fpngl_irng_next64(frng->irng);
-	return (((uint64_t)trunc(xa/(double)(1UL<<22)) << 27) +
-					((uint64_t)trunc(xb/(double)(1UL<<21))))/frng->denominator;
+	return (0x1p+27*trunc(xa*0x1p-22)+trunc(xb*0x1p-21))*0x1p-53;
 }
 
 static void java_next_arrayf64(frng_division_state_t *frngstate,
 															 double *T, uint32_t n)
 {
-	uint64_t T2[n];
-	// Casting double* T to uint64_t *T to avoid creating a temp
-	fpngl_irng_array64(frngstate->irng,(uint64_t*)T,n);
-	fpngl_irng_array64(frngstate->irng,T2,n);
-	for (uint32_t i = 0; i < n ; ++i) {
-		T[i] =  (((uint64_t)trunc(T[i]/(double)(1UL<<22)) << 27) +
-					((uint64_t)trunc(T2[i]/(double)(1UL<<21))))/frngstate->denominator;
+	// Creating the array dynamically to avoid a size limitation on the stack
+	uint64_t *T2 = calloc(2*n,sizeof(uint64_t));
+	assert(T2 != NULL);
+	fpngl_irng_array64(frngstate->irng,T2,2*n);
+	uint32_t j = 0;
+	for (uint32_t i = 0; i < 2*n ; i+=2) {
+		T[j++] =  (0x1p+27*trunc(T2[i]*0x1p-22)+trunc(T2[i+1]*0x1p-21))*0x1p-53;
 	}
+	free(T2);
 }
 
 fpngl_frng64_t *fpngl_new_java(uint64_t seed)
@@ -126,7 +127,7 @@ fpngl_frng64_t *fpngl_new_java(uint64_t seed)
 		return NULL;
 	}
 
-	frngstate->irng = fpngl_lcg_gnu_c(seed);
+	frngstate->irng = fpngl_drand48_lcg(seed);
 	frngstate->denominator = 1UL<<53; // BEWARE: what if some rounding takes place?
 
 	return  fpngl_new_frng64("java", frngstate,

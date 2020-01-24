@@ -39,43 +39,89 @@ const double matlabp5_T[] = {0x1.58accp-12,
 														 0x1.0f970468p-1,
 														 0x1.0745a648p-2};
 
-START_TEST(test_matlabp5_nextf64)
-{
-	fpngl_frng64_t *frng = fpngl_new_matlabp5(42);
-	for (uint32_t i = 0; i < 10; ++i) {
-		ck_assert(fpngl_frng64_nextf64(frng) == matlabp5_T[i]);
-	}
-	fpngl_frng64_delete(frng);
-}
-END_TEST
+const double drand48bsd_T[] = {0x1.ed25bb9bdap-9,
+															 0x1.673c57df37e8p-1,
+															 0x1.d76eb0253ddep-1,
+															 0x1.0fb40218cb9cp-1,
+															 0x1.a6004e99b304p-2,
+															 0x1.196106fb687p-1,
+															 0x1.e46d00805f18p-3,
+															 0x1.7548c18e0364p-1,
+															 0x1.f4afd8b349aap-1,
+															 0x1.b6175a7a32fp-2};
 
-START_TEST(test_matlabp5_nextarrayf64)
-{
-	fpngl_frng64_t *frng = fpngl_new_matlabp5(42);
-	double T[10];
-	fpngl_frng64_next_arrayf64(frng,T,10);
-	for (uint32_t i = 0; i < 10; ++i) {
-		ck_assert(T[i] == matlabp5_T[i]);
-	}
-	fpngl_frng64_delete(frng);
-}
-END_TEST
+const double mupad_T[] = {0x1.e73b8950c7853p-1,
+													0x1.94d5687fdc7d6p-1,
+													0x1.cfae5e9ba0302p-2,
+													0x1.53c37c3d37d83p-1,
+													0x1.3a3f0b3e4423dp-1,
+													0x1.a392a222d588bp-1,
+													0x1.e56c080a47138p-2,
+													0x1.9afc8d07780bfp-2,
+													0x1.f2c6f8782b675p-4,
+													0x1.c1579efde7d3p-1};
 
-START_TEST(test_matlabp5_name)
-{
-	fpngl_frng64_t *frng = fpngl_new_matlabp5(42);
-	ck_assert(!strcmp(fpngl_frng64_name(frng),"matlabp5"));
-	fpngl_frng64_delete(frng);
-}
-END_TEST
+const double java_T[] = {0x1.ed25d9cf15fp-9,
+												 0x1.d76eb043ed008p-1,
+												 0x1.a6004e8cb0836p-2,
+												 0x1.e46d017548c18p-3,
+												 0x1.f4afd8b6c2eb4p-1,
+												 0x1.f15f328438619p-1,
+												 0x1.44a582ce800f6p-1,
+												 0x1.c7c64b0ee725p-2,
+												 0x1.d2310edd3d41cp-1,
+												 0x1.b5a1e13b47104p-2};
 
-START_TEST(test_matlabp5_seed)
-{
-	fpngl_frng64_t *frng = fpngl_new_matlabp5(42);
-	ck_assert(fpngl_frng64_seed(frng) == 42);
-	fpngl_frng64_delete(frng);
-}
-END_TEST
+#define TESTING(name)    																				 \
+	START_TEST(test_##name##_nextf64)															 \
+	{                                                              \
+	  fpngl_frng64_t *frng = fpngl_new_##name(42);								 \
+		for (uint32_t i = 0; i < 10; ++i) {												   \
+			ck_assert(fpngl_frng64_nextf64(frng) == name##_T[i]);			 \
+		}																														 \
+		fpngl_frng64_delete(frng);																	 \
+	}																															 \
+	END_TEST																											 \
+																																 \
+	START_TEST(test_##name##_nextarrayf64)												 \
+	{																															 \
+	  fpngl_frng64_t *frng = fpngl_new_##name(42);								 \
+		double T[10];																								 \
+		fpngl_frng64_next_arrayf64(frng,T,10);											 \
+		for (uint32_t i = 0; i < 10; ++i) {													 \
+			ck_assert(T[i] == name##_T[i]);														 \
+		}																														 \
+		fpngl_frng64_delete(frng);																	 \
+	}	  																													 \
+  END_TEST																										   \
+	START_TEST(test_##name##_name)																 \
+	{																															 \
+		fpngl_frng64_t *frng = fpngl_new_##name(42);								 \
+		ck_assert(!strcmp(fpngl_frng64_name(frng),#name));					 \
+		fpngl_frng64_delete(frng);																	 \
+	}																															 \
+	END_TEST																											 \
+																																 \
+	START_TEST(test_##name##_seed)																 \
+	{																															 \
+		fpngl_frng64_t *frng = fpngl_new_##name(42);								 \
+		ck_assert(fpngl_frng64_seed(frng) == 42);										 \
+		fpngl_frng64_delete(frng);																	 \
+	}																															 \
+	END_TEST
+
+#define ADD_TEST(name)																	\
+	tcase_add_test(tc_core, test_##name##_nextf64);				\
+  tcase_add_test(tc_core, test_##name##_nextarrayf64);	\
+  tcase_add_test(tc_core, test_##name##_name);					\
+  tcase_add_test(tc_core, test_##name##_seed);
+	
+	
+
+TESTING(matlabp5);
+TESTING(drand48bsd);
+TESTING(mupad);
+TESTING(java);
 
 Suite *frng64_division_fc_suite(void)
 {
@@ -86,11 +132,10 @@ Suite *frng64_division_fc_suite(void)
   
   /* Core test case */
   tc_core = tcase_create("Core");
-  
-  tcase_add_test(tc_core, test_matlabp5_nextf64);
-  tcase_add_test(tc_core, test_matlabp5_nextarrayf64);
-  tcase_add_test(tc_core, test_matlabp5_name);
-  tcase_add_test(tc_core, test_matlabp5_seed);
+  ADD_TEST(matlabp5);
+  ADD_TEST(drand48bsd);
+	ADD_TEST(mupad);
+	ADD_TEST(java);
   suite_add_tcase(s, tc_core);
   
   return s;
