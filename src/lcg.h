@@ -32,7 +32,7 @@
 extern "C" {
 #endif
 
-	fpngl_irng64_t *fpngl_new_lcg_64(uint64_t seed, const char *name,
+	fpngl_irng64_t *fpngl_new_lcg64(uint64_t seed, const char *name,
 																	 uint64_t m, uint64_t a, uint64_t c);
 	
 	fpngl_irng_t *fpngl_new_lcg(uint64_t seed, const char *name,
@@ -73,7 +73,7 @@ extern "C" {
 		MuPAD LCG used in MuPAD Pro 3.1 and Maple 10 according to 
 		[Morgenstern](https://link.springer.com/chapter/10.1007%2F978-3-540-69995-8_90)
 	 */
-	fpngl_irng_t *fpngl_mupad(uint64_t seed);
+	fpngl_irng_t *fpngl_mupad_lcg(uint64_t seed);
 	
 #ifdef __cplusplus
 }

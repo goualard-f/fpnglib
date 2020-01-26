@@ -83,19 +83,19 @@ fpngl_frng64_t *fpngl_new_bydivision(uint64_t seed, const char *name,
 													 (uint64_t (*)(void*))frng64_seed);
 }
 
-fpngl_frng64_t *fpngl_new_matlabp5(uint64_t seed)
+fpngl_frng64_t *fpngl_matlabp5(uint64_t seed)
 {
 	return fpngl_new_bydivision(seed,"matlabp5",fpngl_minstd,1UL<<31);
 }
 
-fpngl_frng64_t *fpngl_new_drand48bsd(uint64_t seed)
+fpngl_frng64_t *fpngl_drand48bsd(uint64_t seed)
 {
 	return fpngl_new_bydivision(seed,"drand48bsd",fpngl_drand48_lcg,1UL<<48);
 }
 
-fpngl_frng64_t *fpngl_new_mupad(uint64_t seed)
+fpngl_frng64_t *fpngl_mupad(uint64_t seed)
 {
-	return fpngl_new_bydivision(seed,"mupad",fpngl_mupad,0xe8d4a50ff5UL);
+	return fpngl_new_bydivision(seed,"mupad",fpngl_mupad_lcg,0xe8d4a50ff5UL);
 }
 
 static double java_nextf64(frng_division_state_t *frng)
@@ -119,7 +119,7 @@ static void java_next_arrayf64(frng_division_state_t *frngstate,
 	free(T2);
 }
 
-fpngl_frng64_t *fpngl_new_java(uint64_t seed)
+fpngl_frng64_t *fpngl_java(uint64_t seed)
 {
 	frng_division_state_t *frngstate = malloc(sizeof(frng_division_state_t));
 	

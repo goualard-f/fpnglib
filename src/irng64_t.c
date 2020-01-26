@@ -76,7 +76,7 @@ uint64_t fpngl_irng64_seed(fpngl_irng64_t *rng)
 }
 
 // Return the name of the RNG used
-const char *fpngl_get_irng64_name(fpngl_irng64_t *rng)
+const char *fpngl_irng64_name(fpngl_irng64_t *rng)
 {
 	return rng->name;
 }

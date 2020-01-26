@@ -43,14 +43,14 @@ extern "C" {
 	/*
 		Double precision floating-point generator used by MATLAB until MATLAB 5.
 	 */
-	fpngl_frng64_t *fpngl_new_matlabp5(uint64_t seed);
+	fpngl_frng64_t *fpngl_matlabp5(uint64_t seed);
 
 	/*
     The POSIX drand48() function as implemented in FreeBSD. 
        Returns a floating-point number in ``[0,1)`` with only 48 bits of entropy.
     *Source*: [IEEE Std 1003.1-2017](http://pubs.opengroup.org/onlinepubs/9699919799/functions/drand48.html) and https://opensource.apple.com/source/Libc/Libc-583/gen/FreeBSD/erand48.c.auto.html
 	 */
-	fpngl_frng64_t *fpngl_new_drand48bsd(uint64_t seed);
+	fpngl_frng64_t *fpngl_drand48bsd(uint64_t seed);
 
 	/*
 		LCG generator used in Maple 10 and MuPAD Pro 3.1, according to 
@@ -58,7 +58,7 @@ extern "C" {
 		
 		Return a floating-point number in `(0,1)`.
 	 */
-	fpngl_frng64_t *fpngl_new_mupad(uint64_t seed);
+	fpngl_frng64_t *fpngl_mupad(uint64_t seed);
 
 	/*
 		Computation of a random floating-point number in `[0,1)` by calling twice 
@@ -69,7 +69,7 @@ extern "C" {
 		@caution Calling fpngl_frng64_next_arrayf64() for this RNG creates on the heap a
 		a temporary array twice the size of the one passed as an argument.
 	 */
-	fpngl_frng64_t *fpngl_new_java(uint64_t seed);
+	fpngl_frng64_t *fpngl_java(uint64_t seed);
 
 #ifdef __cplusplus
 }

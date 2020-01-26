@@ -22,30 +22,90 @@
 
 #include <config.h>
 #include <stdlib.h>
+#include <string.h>
 #include <check.h>
 #include <fpnglib/lcg.h>
 
-const uint64_t minstd64T[] = {705894ULL,
-															1126542223ULL,
-															1579310009ULL,
-															565444343ULL,
-															807934826ULL,
-															421520601ULL,
-															2095673201ULL,
-															1100194760ULL,
-															1139130650ULL,
-															552121545ULL};
+const uint64_t minstd_T64[] = {705894ULL,
+															 1126542223ULL,
+															 1579310009ULL,
+															 565444343ULL,
+															 807934826ULL,
+															 421520601ULL,
+															 2095673201ULL,
+															 1100194760ULL,
+															 1139130650ULL,
+															 552121545ULL};
+const uint32_t minstd_T32[] = {705894UL,
+															 1126542219UL,
+															 1579233965UL,
+															 1434844124UL,
+															 1331308677UL,
+															 672805828UL,
+															 1346144477UL,
+															 909993260UL,
+															 2025663413UL,
+															 1266710548UL};
 
 START_TEST(test_lcg64)
 {
-	fpngl_irng_t *rng = fpngl_new_lcg(42,"minstd",(1UL<<31)-1,16807,0);
+	fpngl_irng64_t *rng = fpngl_new_lcg64(42,"minstd",(1UL<<31)-1,16807,0);
+
+	ck_assert(fpngl_irng64_seed(rng) == 42);
+	ck_assert(!strcmp(fpngl_irng64_name(rng),"minstd"));
+	ck_assert(fpngl_irng64_min(rng) == 0);
+	ck_assert(fpngl_irng64_max(rng) == 0xffffffffffffffff);
 
 	for (uint32_t i = 0; i < 10; ++i) {
-		ck_assert(fpngl_irng_next64(rng)==minstd64T[i]);
+		ck_assert(fpngl_irng64_next64(rng)==minstd_T64[i]);
+	}
+	fpngl_delete_irng64(rng);
+}
+END_TEST
+
+START_TEST(test_lcg)
+{
+	fpngl_irng_t *rng = fpngl_new_lcg(42,"minstd",(1UL<<31)-1,16807,0);
+
+	ck_assert(fpngl_irng_seed(rng) == 42);
+	ck_assert(!strcmp(fpngl_irng_name(rng),"minstd"));
+	ck_assert(fpngl_irng_min(rng) == 0);
+	ck_assert(fpngl_irng_max(rng) == 0xffffffffffffffff);
+
+	for (uint32_t i = 0; i < 10; ++i) {
+		ck_assert(fpngl_irng_next64(rng)==minstd_T64[i]);
 	}
 	fpngl_delete_irng(rng);
 }
 END_TEST
+
+START_TEST(test_minstd_next64)
+{
+	fpngl_irng_t *rng = fpngl_minstd(42);
+
+	for (uint32_t i = 0; i < 10; ++i) {
+		ck_assert(fpngl_irng_next64(rng)==minstd_T64[i]);
+	}
+	fpngl_delete_irng(rng);
+}
+END_TEST
+
+START_TEST(test_minstd_next32)
+{
+	fpngl_irng_t *rng = fpngl_minstd(42);
+
+	ck_assert(fpngl_irng_seed(rng) == 42);
+	ck_assert(!strcmp(fpngl_irng_name(rng),"minstd"));
+	ck_assert(fpngl_irng_min(rng) == 0);
+	ck_assert(fpngl_irng_max(rng) == 0xffffffffffffffff);
+	
+	for (uint32_t i = 0; i < 10; ++i) {
+		ck_assert(fpngl_irng_next32(rng) == minstd_T32[i]);
+	}
+	fpngl_delete_irng(rng);
+}
+END_TEST
+
 
 Suite *lcg_suite(void)
 {
@@ -58,7 +118,10 @@ Suite *lcg_suite(void)
   tc_core = tcase_create("Core");
   
   tcase_add_test(tc_core, test_lcg64);
-  suite_add_tcase(s, tc_core);
+  tcase_add_test(tc_core, test_lcg);
+  tcase_add_test(tc_core, test_minstd_next64);
+  tcase_add_test(tc_core, test_minstd_next32);
+	suite_add_tcase(s, tc_core);
   
   return s;
 }

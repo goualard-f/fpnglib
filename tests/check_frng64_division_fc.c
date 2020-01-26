@@ -75,7 +75,7 @@ const double java_T[] = {0x1.ed25d9cf15fp-9,
 #define TESTING(name)    																				 \
 	START_TEST(test_##name##_nextf64)															 \
 	{                                                              \
-	  fpngl_frng64_t *frng = fpngl_new_##name(42);								 \
+	  fpngl_frng64_t *frng = fpngl_##name(42);										 \
 		for (uint32_t i = 0; i < 10; ++i) {												   \
 			ck_assert(fpngl_frng64_nextf64(frng) == name##_T[i]);			 \
 		}																														 \
@@ -85,7 +85,7 @@ const double java_T[] = {0x1.ed25d9cf15fp-9,
 																																 \
 	START_TEST(test_##name##_nextarrayf64)												 \
 	{																															 \
-	  fpngl_frng64_t *frng = fpngl_new_##name(42);								 \
+	  fpngl_frng64_t *frng = fpngl_##name(42);										 \
 		double T[10];																								 \
 		fpngl_frng64_next_arrayf64(frng,T,10);											 \
 		for (uint32_t i = 0; i < 10; ++i) {													 \
@@ -96,7 +96,7 @@ const double java_T[] = {0x1.ed25d9cf15fp-9,
   END_TEST																										   \
 	START_TEST(test_##name##_name)																 \
 	{																															 \
-		fpngl_frng64_t *frng = fpngl_new_##name(42);								 \
+		fpngl_frng64_t *frng = fpngl_##name(42);										 \
 		ck_assert(!strcmp(fpngl_frng64_name(frng),#name));					 \
 		fpngl_frng64_delete(frng);																	 \
 	}																															 \
@@ -104,7 +104,7 @@ const double java_T[] = {0x1.ed25d9cf15fp-9,
 																																 \
 	START_TEST(test_##name##_seed)																 \
 	{																															 \
-		fpngl_frng64_t *frng = fpngl_new_##name(42);								 \
+		fpngl_frng64_t *frng = fpngl_##name(42);										 \
 		ck_assert(fpngl_frng64_seed(frng) == 42);										 \
 		fpngl_frng64_delete(frng);																	 \
 	}																															 \
