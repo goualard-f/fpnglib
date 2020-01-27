@@ -22,7 +22,6 @@
 
 #include <config.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 #include <check.h>
 #include <fpnglib/frng64_t.h>

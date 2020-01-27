@@ -97,7 +97,15 @@ void fpngl_lcg64_array64(fpngl_lcg64_state_t *state, uint64_t *T, uint32_t n)
 uint64_t fpngl_lcg64_nextk(fpngl_lcg64_state_t *state, uint32_t k)
 {
 	assert(k < 65 && k != 0);
-	return fpngl_lcg64_next64(state) >> (64-k);
+	/* 
+		 Some LCG may fill only the 32 lowest bits. To avoid returning only zeros, 
+		 we return the k highest bit in the first 32 bits word if k is lower than 32.
+	 */
+	if (k < 32) {
+		return fpngl_lcg64_next64(state) >> (32-k);
+	} else {
+		return fpngl_lcg64_next64(state) >> (64-k);
+	}
 }
 
 
@@ -119,9 +127,9 @@ fpngl_irng_t *fpngl_minstd(uint64_t seed)
 	return fpngl_new_lcg(seed,"minstd",(1UL << 31) - 1,16807,0);
 }
 
-fpngl_irng_t *fpngl_lcg_gnu_c(uint64_t seed)
+fpngl_irng_t *fpngl_gnuc_lcg(uint64_t seed)
 {
-	return fpngl_new_lcg(seed,"gnuc",(1UL << 31),1103515245,12345);
+	return fpngl_new_lcg(seed,"gnuc_lcg",(1UL << 31),1103515245,12345);
 }
 
 fpngl_irng_t *fpngl_randu(uint64_t seed)
@@ -131,10 +139,10 @@ fpngl_irng_t *fpngl_randu(uint64_t seed)
 
 fpngl_irng_t *fpngl_drand48_lcg(uint64_t seed)
 {
-	return fpngl_new_lcg(seed,"drand48-lcg",1UL<<48,25214903917,11);
+	return fpngl_new_lcg(seed,"drand48_lcg",1UL<<48,25214903917,11);
 }
 
 fpngl_irng_t *fpngl_mupad_lcg(uint64_t seed)
 {
-	return fpngl_new_lcg(seed,"mupad-lcg",0xe8d4a50ff5UL,427419669081UL,0);
+	return fpngl_new_lcg(seed,"mupad_lcg",0xe8d4a50ff5UL,427419669081UL,0);
 }

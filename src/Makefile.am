@@ -20,14 +20,15 @@
 
 AM_CFLAGS = -Wall
 lib_LTLIBRARIES = libfpnglib.la
-libfpnglib_la_SOURCES = fpu.c irng32_t.c irng64_t.c irng_t.c uirange.c utilities.c \
+libfpnglib_la_SOURCES = fpu.c irng32_t.c irng64_t.c irng_t.c uirange.c \
+	utilities.c debug.c \
 	mt19937ar.c mt19937-64.c lcg.c \
 	frng64_t.c frng64_division_fc.c frng64_division_ff.c \
 	frng64_fields.c
 
 libfpnglib_la_CPPFLAGS = -I$(top_srcdir)/src
 pkginclude_HEADERS = fpngl_config.h constants32.h constants64.h fpnglib.h fpu.h \
-	irng32_t.h irng64_t.h irng_t.h uirange.h utilities.h \
+	irng32_t.h irng64_t.h irng_t.h uirange.h utilities.h debug.h\
 	mt19937ar.h mt19937-64.h \
 	lcg.h \
 	frng64_t.h frng64_division_fc.h frng64_division_ff.c \

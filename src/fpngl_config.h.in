@@ -58,5 +58,8 @@
    such a type exists and the standard includes do not define it. */
 #undef uint64_t
 
+/* Define to 1 if assertions should be disabled. */
+#undef NDEBUG
+
 #endif // __fpngl_config_h__
 
