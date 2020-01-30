@@ -155,12 +155,12 @@ LTLIBRARIES = $(lib_LTLIBRARIES)
 libfpnglib_la_LIBADD =
 am_libfpnglib_la_OBJECTS = libfpnglib_la-fpu.lo \
 	libfpnglib_la-irng32_t.lo libfpnglib_la-irng64_t.lo \
-	libfpnglib_la-irng_t.lo libfpnglib_la-uirange.lo \
+	libfpnglib_la-irng_t.lo libfpnglib_la-irange.lo \
 	libfpnglib_la-utilities.lo libfpnglib_la-mt19937ar.lo \
 	libfpnglib_la-mt19937-64.lo libfpnglib_la-lcg.lo \
 	libfpnglib_la-frng64_t.lo libfpnglib_la-frng64_division_fc.lo \
 	libfpnglib_la-frng64_division_ff.lo \
-	libfpnglib_la-frng64_fields.lo
+	libfpnglib_la-frng64_fields.lo libfpnglib_la-irng32_vnm.lo
 libfpnglib_la_OBJECTS = $(am_libfpnglib_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -356,21 +356,22 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CFLAGS = -Wall
+AM_CFLAGS = -Wall -O3
 lib_LTLIBRARIES = libfpnglib.la
-libfpnglib_la_SOURCES = fpu.c irng32_t.c irng64_t.c irng_t.c uirange.c \
+libfpnglib_la_SOURCES = fpu.c irng32_t.c irng64_t.c irng_t.c irange.c \
 	utilities.c \
 	mt19937ar.c mt19937-64.c lcg.c \
 	frng64_t.c frng64_division_fc.c frng64_division_ff.c \
-	frng64_fields.c
+	frng64_fields.c \
+	irng32_vnm.c
 
 libfpnglib_la_CPPFLAGS = -I$(top_srcdir)/src
 pkginclude_HEADERS = fpngl_config.h constants32.h constants64.h fpnglib.h fpu.h \
-	irng32_t.h irng64_t.h irng_t.h uirange.h utilities.h debug.h\
+	irng32_t.h irng64_t.h irng_t.h irange.h utilities.h debug.h\
 	mt19937ar.h mt19937-64.h \
 	lcg.h \
 	frng64_t.h frng64_division_fc.h frng64_division_ff.c \
-	frng64_fields.h
+	frng64_fields.h irng32_vnm.h
 
 libfpnglib_la_LDFLAGS = -version-info $(LT_VERSION_INFO)
 all: fpngl_config.h
@@ -468,13 +469,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfpnglib_la-frng64_division_ff.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfpnglib_la-frng64_fields.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfpnglib_la-frng64_t.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfpnglib_la-irange.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfpnglib_la-irng32_t.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfpnglib_la-irng32_vnm.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfpnglib_la-irng64_t.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfpnglib_la-irng_t.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfpnglib_la-lcg.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfpnglib_la-mt19937-64.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfpnglib_la-mt19937ar.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfpnglib_la-uirange.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfpnglib_la-utilities.Plo@am__quote@
 
 .c.o:
@@ -526,12 +528,12 @@ libfpnglib_la-irng_t.lo: irng_t.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libfpnglib_la-irng_t.lo `test -f 'irng_t.c' || echo '$(srcdir)/'`irng_t.c
 
-libfpnglib_la-uirange.lo: uirange.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libfpnglib_la-uirange.lo -MD -MP -MF $(DEPDIR)/libfpnglib_la-uirange.Tpo -c -o libfpnglib_la-uirange.lo `test -f 'uirange.c' || echo '$(srcdir)/'`uirange.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libfpnglib_la-uirange.Tpo $(DEPDIR)/libfpnglib_la-uirange.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='uirange.c' object='libfpnglib_la-uirange.lo' libtool=yes @AMDEPBACKSLASH@
+libfpnglib_la-irange.lo: irange.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libfpnglib_la-irange.lo -MD -MP -MF $(DEPDIR)/libfpnglib_la-irange.Tpo -c -o libfpnglib_la-irange.lo `test -f 'irange.c' || echo '$(srcdir)/'`irange.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libfpnglib_la-irange.Tpo $(DEPDIR)/libfpnglib_la-irange.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='irange.c' object='libfpnglib_la-irange.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libfpnglib_la-uirange.lo `test -f 'uirange.c' || echo '$(srcdir)/'`uirange.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libfpnglib_la-irange.lo `test -f 'irange.c' || echo '$(srcdir)/'`irange.c
 
 libfpnglib_la-utilities.lo: utilities.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libfpnglib_la-utilities.lo -MD -MP -MF $(DEPDIR)/libfpnglib_la-utilities.Tpo -c -o libfpnglib_la-utilities.lo `test -f 'utilities.c' || echo '$(srcdir)/'`utilities.c
@@ -588,6 +590,13 @@ libfpnglib_la-frng64_fields.lo: frng64_fields.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='frng64_fields.c' object='libfpnglib_la-frng64_fields.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libfpnglib_la-frng64_fields.lo `test -f 'frng64_fields.c' || echo '$(srcdir)/'`frng64_fields.c
+
+libfpnglib_la-irng32_vnm.lo: irng32_vnm.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libfpnglib_la-irng32_vnm.lo -MD -MP -MF $(DEPDIR)/libfpnglib_la-irng32_vnm.Tpo -c -o libfpnglib_la-irng32_vnm.lo `test -f 'irng32_vnm.c' || echo '$(srcdir)/'`irng32_vnm.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libfpnglib_la-irng32_vnm.Tpo $(DEPDIR)/libfpnglib_la-irng32_vnm.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='irng32_vnm.c' object='libfpnglib_la-irng32_vnm.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libfpnglib_la-irng32_vnm.lo `test -f 'irng32_vnm.c' || echo '$(srcdir)/'`irng32_vnm.c
 
 mostlyclean-libtool:
 	-rm -f *.lo

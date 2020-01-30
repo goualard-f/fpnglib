@@ -1,4 +1,4 @@
-/* Manipulation of the domain of the random integers produced.
+/* Testing the time needed to fill an array with MT19937v64
 
 	Copyright 2019--2020 University of Nantes, France.
 
@@ -20,18 +20,25 @@
 	
  */
 
-#include <global.h>
-#include <assert.h>
-#include <fpnglib/uirange.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <fpnglib/mt19937-64.h>
+#include "ctiming.h"
 
-uint32_t fpngl_n_bits32(uint32_t v, uint32_t n)
+int main(void)
 {
-	assert(n < 32);
-	return v >> (32-n);
-}
-
-uint64_t fpngl_n_bits64(uint64_t v, uint32_t n)
-{
-	assert(n < 64);
-	return v >> (64-n);
+	fpngl_irng64_t *irng = fpngl_mt19937v64(53);
+	const uint32_t szT = 1000000;
+	uint64_t T[szT];
+	long t0 = get_usertime();
+	for (uint32_t i = 0; i < szT; ++i) {
+		T[i] = fpngl_irng64_next64(irng);
+	}
+	long t1 = get_usertime();
+	fpngl_irng64_array64(irng,T,szT);
+	long t2 = get_usertime();
+	printf("Loop with next64:  %ld μs\n",t1-t0);
+	printf("With array64: %ld μs\n",t2-t1);
+	fpngl_irng64_delete(irng);
+	return 0;
 }

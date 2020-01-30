@@ -109,7 +109,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-noinst_PROGRAMS = timing_mt19937v32$(EXEEXT)
+noinst_PROGRAMS = timing_mt19937v32$(EXEEXT) \
+	timing_mt19937v64$(EXEEXT) pi$(EXEEXT)
 subdir = examples
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -133,11 +134,21 @@ am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
 PROGRAMS = $(noinst_PROGRAMS)
+pi_SOURCES = pi.c
+pi_OBJECTS = pi.$(OBJEXT)
+pi_LDADD = $(LDADD)
+am__DEPENDENCIES_1 =
+pi_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
 timing_mt19937v32_SOURCES = timing_mt19937v32.c
 timing_mt19937v32_OBJECTS = timing_mt19937v32.$(OBJEXT)
 timing_mt19937v32_LDADD = $(LDADD)
-am__DEPENDENCIES_1 =
 timing_mt19937v32_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
+timing_mt19937v64_SOURCES = timing_mt19937v64.c
+timing_mt19937v64_OBJECTS = timing_mt19937v64.$(OBJEXT)
+timing_mt19937v64_LDADD = $(LDADD)
+timing_mt19937v64_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
 	$(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -173,8 +184,10 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(libctiming_la_SOURCES) timing_mt19937v32.c
-DIST_SOURCES = $(libctiming_la_SOURCES) timing_mt19937v32.c
+SOURCES = $(libctiming_la_SOURCES) pi.c timing_mt19937v32.c \
+	timing_mt19937v64.c
+DIST_SOURCES = $(libctiming_la_SOURCES) pi.c timing_mt19937v32.c \
+	timing_mt19937v64.c
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -385,9 +398,17 @@ clean-noinstPROGRAMS:
 	echo " rm -f" $$list; \
 	rm -f $$list
 
+pi$(EXEEXT): $(pi_OBJECTS) $(pi_DEPENDENCIES) $(EXTRA_pi_DEPENDENCIES) 
+	@rm -f pi$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(pi_OBJECTS) $(pi_LDADD) $(LIBS)
+
 timing_mt19937v32$(EXEEXT): $(timing_mt19937v32_OBJECTS) $(timing_mt19937v32_DEPENDENCIES) $(EXTRA_timing_mt19937v32_DEPENDENCIES) 
 	@rm -f timing_mt19937v32$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(timing_mt19937v32_OBJECTS) $(timing_mt19937v32_LDADD) $(LIBS)
+
+timing_mt19937v64$(EXEEXT): $(timing_mt19937v64_OBJECTS) $(timing_mt19937v64_DEPENDENCIES) $(EXTRA_timing_mt19937v64_DEPENDENCIES) 
+	@rm -f timing_mt19937v64$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(timing_mt19937v64_OBJECTS) $(timing_mt19937v64_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -396,7 +417,9 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libctiming_la-ctiming.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pi.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timing_mt19937v32.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timing_mt19937v64.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

@@ -77,7 +77,7 @@
 #define UPPER_MASK 0x80000000UL /* most significant w-r bits */
 #define LOWER_MASK 0x7fffffffUL /* least significant r bits */
 
-typedef struct mt19937v32_state_t {
+typedef struct {
 	uint32_t mt[N]; /* the array for the state vector  */
 	int mti;
 } mt19937v32_state_t;

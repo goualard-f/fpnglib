@@ -1,4 +1,4 @@
-/* Macros and configuration material used throughout the source of library.
+/* Generation of 32 bits random integers with the von Neumann/Metropolis algorithm.
 
 	Copyright 2019--2020 University of Nantes, France.
 
@@ -19,27 +19,31 @@
 	see https://www.gnu.org/licenses/. 	
 	
  */
-/*
-	BEWARE: this file must be included by '.c' files only and will not be installed.
-	Include fpnglib/fpngl_config.h if you need some configuration macros in public 
-	header files.
-*/
 
-#ifndef __fpngl_global_h__
-#define __fpngl_global_h__
+#ifndef __fpngl_irng32_vnm_h__
+#define __fpngl_irng32_vnm_h__
 
-#include <config.h>
-
-// Remove the following line when no longer in debugging stage
-#include <fpnglib/debug.h>
-
+#include <fpnglib/fpngl_config.h>
+#include <stdint.h>
+#include <fpnglib/irng32_t.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+	/*
+		Generation of random floating-poing numbers according to the paper 
+		_Various techniques used in connection with random digits_, John von Neumann. 
+		In A.S. Householder, G.E. Forsythe, and H.H. Germond, eds. Monte Carlo Method, 
+		National Bureau of Standards Applied Mathematics Series, vol. 12:pp. 36--38.
+
+		The seed must be greater than 255, and preferably much larger, otherwise
+		the function will only return 0.
+	 */
+	fpngl_irng32_t *fpngl_von_neumann_metropolis(uint32_t seed);
+	
 #ifdef __cplusplus
 }
 #endif
 
-#endif // __fpngl_global_h__
+#endif // __fpngl_irng32_vnm_h__

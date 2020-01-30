@@ -29,6 +29,7 @@
 void* fpngl_irng32_state_internal(fpngl_irng32_t* rng);
 uint32_t (*fpngl_irng32_next32_internal(fpngl_irng32_t *rng))(void*);
 uint64_t (*fpngl_irng32_next64_internal(fpngl_irng32_t *rng))(void*);
+uint64_t (*fpngl_irng32_next_internal(fpngl_irng32_t *rng))(void*);
 uint32_t (*fpngl_irng32_nextk_internal(fpngl_irng32_t *rng))(void*,uint32_t);
 void (*fpngl_irng32_next_array32_internal(fpngl_irng32_t *rng))(void*,uint32_t*,uint32_t);
 void (*fpngl_irng32_next_array64_internal(fpngl_irng32_t *rng))(void*,uint64_t*,uint32_t);
@@ -36,6 +37,7 @@ void (*fpngl_irng32_delete_internal(fpngl_irng32_t *rng))(void*);
 void* fpngl_irng64_state_internal(fpngl_irng64_t* rng);
 uint32_t (*fpngl_irng64_next32_internal(fpngl_irng64_t *rng))(void*);
 uint64_t (*fpngl_irng64_next64_internal(fpngl_irng64_t *rng))(void*);
+uint64_t (*fpngl_irng64_next_internal(fpngl_irng64_t *rng))(void*);
 uint64_t (*fpngl_irng64_nextk_internal(fpngl_irng64_t *rng))(void*,uint32_t);
 void (*fpngl_irng64_next_array32_internal(fpngl_irng64_t *rng))(void*,uint32_t*,uint32_t);
 void (*fpngl_irng64_next_array64_internal(fpngl_irng64_t *rng))(void*,uint64_t*,uint32_t);
@@ -52,6 +54,7 @@ struct fpngl_irng_t {
 	void* state; // State of the RNG
 	uint32_t (*next32)(void*);
 	uint64_t (*next64)(void*);
+	uint64_t (*next)(void*);
 	union {
 		uint32_t (*nextk32)(void *state, uint32_t k);
 		uint64_t (*nextk64)(void *state, uint32_t k);
@@ -76,6 +79,7 @@ fpngl_irng_t *fpngl_irng_new32(fpngl_irng32_t *irng32)
 	irng->state = fpngl_irng32_state_internal(irng32);
 	irng->next32 = fpngl_irng32_next32_internal(irng32);
 	irng->next64 = fpngl_irng32_next64_internal(irng32);
+	irng->next = fpngl_irng32_next_internal(irng32);
 	irng->next_array32 = fpngl_irng32_next_array32_internal(irng32);
 	irng->next_array64 = fpngl_irng32_next_array64_internal(irng32);
 	irng->delete = fpngl_irng32_delete_internal(irng32);
@@ -97,6 +101,7 @@ fpngl_irng_t *fpngl_irng_new64(fpngl_irng64_t *irng64)
 	irng->state = fpngl_irng64_state_internal(irng64);
 	irng->next32 = fpngl_irng64_next32_internal(irng64);
 	irng->next64 = fpngl_irng64_next64_internal(irng64);
+	irng->next = fpngl_irng64_next_internal(irng64);
 	irng->next_array32 = fpngl_irng64_next_array32_internal(irng64);
 	irng->next_array64 = fpngl_irng64_next_array64_internal(irng64);
 	irng->delete = fpngl_irng64_delete_internal(irng64);
@@ -123,6 +128,14 @@ uint64_t fpngl_irng_next64(fpngl_irng_t *rng)
 {
 	return rng->next64(rng->state);
 }
+
+// Return next pseudo-random number cast to 64 bits
+uint64_t fpngl_irng_next(fpngl_irng_t *rng)
+{
+	return rng->next(rng);
+}
+
+
 
 // Return next k bits pseudo-random number
 uint64_t fpngl_irng_nextk(fpngl_irng_t *rng, uint32_t k)

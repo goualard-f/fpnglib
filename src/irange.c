@@ -1,4 +1,4 @@
-/* Macros and configuration material used throughout the source of library.
+/* Manipulation of the domain of the random integers produced.
 
 	Copyright 2019--2020 University of Nantes, France.
 
@@ -19,27 +19,19 @@
 	see https://www.gnu.org/licenses/. 	
 	
  */
-/*
-	BEWARE: this file must be included by '.c' files only and will not be installed.
-	Include fpnglib/fpngl_config.h if you need some configuration macros in public 
-	header files.
-*/
 
-#ifndef __fpngl_global_h__
-#define __fpngl_global_h__
+#include <global.h>
+#include <assert.h>
+#include <fpnglib/irange.h>
 
-#include <config.h>
-
-// Remove the following line when no longer in debugging stage
-#include <fpnglib/debug.h>
-
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#ifdef __cplusplus
+uint32_t fpngl_n_bits32(uint32_t v, uint32_t n)
+{
+	assert(n <= 32);
+	return v >> (32-n);
 }
-#endif
 
-#endif // __fpngl_global_h__
+uint64_t fpngl_n_bits64(uint64_t v, uint32_t n)
+{
+	assert(n <= 64);
+	return v >> (64-n);
+}

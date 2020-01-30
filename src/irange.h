@@ -25,8 +25,8 @@
 	+ Shift to some specific domain [a,b]
  */
 
-#ifndef __uirange_h__
-#define __uirange_h__
+#ifndef __irange_h__
+#define __irange_h__
 
 #include <fpnglib/fpngl_config.h>
 #include <stdint.h>
@@ -51,4 +51,4 @@ uint64_t fpngl_n_bits64(uint64_t v, uint32_t n);
 }
 #endif
 
-#endif // __uirange_h__
+#endif // __irange_h__

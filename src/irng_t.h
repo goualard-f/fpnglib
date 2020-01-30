@@ -51,6 +51,8 @@ extern "C" {
 	uint32_t fpngl_irng_next32(fpngl_irng_t *rng);
 	// Return next 64 bits pseudo-random number
 	uint64_t fpngl_irng_next64(fpngl_irng_t *rng);
+	// Return next pseudo-random number cast to 64 bits
+	uint64_t fpngl_irng_next(fpngl_irng_t *rng);
 	/* Return k random bits. The value of `k` must be in [1,64]. 
 		 Use preferentially fpngl_irng_next32() for k=32 and 
 		 fpngl_irng_next64() for k=64.

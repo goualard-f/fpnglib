@@ -1,4 +1,4 @@
-/* <<DESCRIPTION OF THE HEADER>>
+/* Testing the time needed to fill an array with MT19937v32
 
 	Copyright 2019--2020 University of Nantes, France.
 
@@ -38,6 +38,7 @@ int main(void)
 	fpngl_irng32_array32(irng,T,szT);
 	long t2 = get_usertime();
 	printf("Loop with next32:  %ld μs\n",t1-t0);
-	printf("Loop with array32: %ld μs\n",t2-t1);
+	printf("With array32: %ld μs\n",t2-t1);
+	fpngl_irng32_delete(irng);
 	return 0;
 }

@@ -24,6 +24,9 @@
 #include <stdlib.h>
 #include <fpnglib/irng64_t.h>
 
+typedef struct fpngl_irng_t fpngl_irng_t;
+uint64_t fpngl_irng_next64(fpngl_irng_t *rng);
+
 struct fpngl_irng64_t {
 	uint64_t seed; // The seed used
 	const char *name; // Name of the RNG
@@ -37,6 +40,12 @@ struct fpngl_irng64_t {
 	void (*next_array64)(void *state, uint64_t *T, uint32_t n);
 	void (*delete)(void*); // Destructor
 };
+
+
+static uint64_t next64to64(fpngl_irng_t *rng)
+{
+	return fpngl_irng_next64(rng);
+}
 
 /*
 	That function returns the internal state of the irng32. It is 
@@ -58,6 +67,11 @@ uint64_t (*fpngl_irng64_next64_internal(fpngl_irng64_t *rng))(void*)
 	return rng->next64;
 }
 
+uint64_t (*fpngl_irng64_next_internal(fpngl_irng64_t *rng))(void*)
+{
+	return (uint64_t(*)(void*))next64to64;
+}
+
 uint64_t (*fpngl_irng64_nextk_internal(fpngl_irng64_t *rng))(void*,uint32_t)
 {
 	return rng->nextk;
@@ -77,6 +91,7 @@ void (*fpngl_irng64_delete_internal(fpngl_irng64_t *rng))(void*)
 {
 	return rng->delete;
 }
+
 
 fpngl_irng64_t *fpngl_irng64_new(uint64_t seed,
 																 const char* name,

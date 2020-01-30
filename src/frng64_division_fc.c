@@ -28,6 +28,7 @@
 #include <assert.h>
 #include <fpnglib/frng64_division_fc.h>
 #include <fpnglib/lcg.h>
+#include <fpnglib/debug.h>
 
 // State for a float random generator that divides a random integer by a constant
 typedef struct {
@@ -38,7 +39,7 @@ typedef struct {
 
 static double nextf64(frng_division_state_t *frng)
 {
-	return fpngl_irng_next64(frng->irng)/frng->denominator;
+	return fpngl_irng_next(frng->irng)/frng->denominator;
 }
 
 static void next_arrayf64(frng_division_state_t *frngstate, double *T, uint32_t n)
@@ -74,8 +75,9 @@ fpngl_frng64_t *fpngl_bydivision_fc_new(const char *name,
 	
 	frngstate->irng = irng;
 	frngstate->denominator = denominator; // BEWARE: what if some rounding takes place?
-	assert((uint64_t)frngstate->denominator == denominator);
-
+	if ((uint64_t)frngstate->denominator != denominator) {
+		FPNGL_WARNING("Warning: %lu rounded to %.0f\n",denominator,frngstate->denominator);
+	}
 	return  fpngl_frng64_new(name, frngstate,
 													 (double (*)(void*))nextf64,
 													 (void (*)(void*, double*, uint32_t))next_arrayf64,

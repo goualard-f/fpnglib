@@ -1,4 +1,4 @@
-/* Unit tests for uirange.c
+/* Unit tests for irange.c
 
 	Copyright 2019--2020 University of Nantes, France.
 
@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <check.h>
-#include <fpnglib/uirange.h>
+#include <fpnglib/irange.h>
 
 START_TEST(test_n_bits32)
 {
@@ -42,12 +42,12 @@ START_TEST(test_n_bits64)
 }
 END_TEST
 
-Suite *uirange_suite(void)
+Suite *irange_suite(void)
 {
   Suite *s;
   TCase *tc_core;
   
-  s = suite_create("uirange");
+  s = suite_create("irange");
   
   /* Core test case */
   tc_core = tcase_create("Core");
@@ -65,7 +65,7 @@ int main(void)
   Suite *s;
   SRunner *sr;
   
-  s = uirange_suite();
+  s = irange_suite();
   sr = srunner_create(s);
   
   srunner_run_all(sr, CK_NORMAL);

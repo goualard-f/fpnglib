@@ -23,6 +23,10 @@
 #include <global.h>
 #include <stdlib.h>
 #include <fpnglib/irng32_t.h>
+#include <fpnglib/debug.h>
+
+typedef struct fpngl_irng_t fpngl_irng_t;
+uint32_t fpngl_irng_next32(fpngl_irng_t *rng);
 
 struct fpngl_irng32_t {
 	uint32_t seed; // The seed used
@@ -37,6 +41,11 @@ struct fpngl_irng32_t {
 	void (*next_array64)(void *state, uint64_t *T, uint32_t n);
 	void (*delete)(void*); // Destructor
 };
+
+static uint64_t next32to64(fpngl_irng_t *rng)
+{
+	return (uint64_t)fpngl_irng_next32(rng);
+}
 
 /*
 	That function returns the internal state of the irng32. It is 
@@ -56,6 +65,11 @@ uint32_t (*fpngl_irng32_next32_internal(fpngl_irng32_t *rng))(void*)
 uint64_t (*fpngl_irng32_next64_internal(fpngl_irng32_t *rng))(void*) 
 {
 	return rng->next64;
+}
+
+uint64_t (*fpngl_irng32_next_internal(fpngl_irng32_t *rng))(void*) 
+{
+	return (uint64_t(*)(void*))next32to64;
 }
 
 uint32_t (*fpngl_irng32_nextk_internal(fpngl_irng32_t *rng))(void*,uint32_t)
@@ -92,6 +106,7 @@ fpngl_irng32_t *fpngl_irng32_new(uint32_t seed,
 																 void (*delete)(void*))
 {
 	fpngl_irng32_t *rng = malloc(sizeof(fpngl_irng32_t));
+
 	if (rng == NULL) {
 		return NULL;
 	}
