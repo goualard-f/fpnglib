@@ -55,18 +55,19 @@ void pi_monte_carlo(fpngl_frng64_t *frng)
 
 int main(void)
 {
-	fpngl_irng_t *irng32 = fpngl_irng_new32(fpngl_mt19937v32(314159));
-	fpngl_irng_t *irng64 = fpngl_irng_new64(fpngl_mt19937v64(314159));
+	const uint64_t seed = 314159;
+	fpngl_irng_t *irng32 = fpngl_irng_new32(fpngl_mt19937v32(seed));
+	fpngl_irng_t *irng64 = fpngl_irng_new64(fpngl_mt19937v64(seed));
 	const uint32_t nmethods = 6;
 	fpngl_frng64_t *frngT[6] = {fpngl_bydivision_fc_new("MT19937/32",
 																											irng32,fpngl_irng_max(irng32)),
 															fpngl_bydivision_fc_new("MT19937/64",
 																											irng64,fpngl_irng_max(irng64)),
 															
-															fpngl_matlabp5(42),
-															fpngl_drand48bsd(42),
-															fpngl_mupad(42),
-															fpngl_java(42)
+															fpngl_matlabp5(seed),
+															fpngl_drand48bsd(seed),
+															fpngl_mupad(seed),
+															fpngl_java(seed)
 	};
 
 	for (uint32_t i = 0; i < nmethods; ++i) {
