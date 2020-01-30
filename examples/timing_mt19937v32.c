@@ -1,5 +1,4 @@
-/* Implementation of double precision floating-point number generators
-	 through division of a random integer by another random integer.
+/* <<DESCRIPTION OF THE HEADER>>
 
 	Copyright 2019--2020 University of Nantes, France.
 
@@ -21,28 +20,24 @@
 	
  */
 
-#ifndef __fpngl_frng64_division_ff_h__
-#define __fpngl_frng64_division_ff_h__
+#include <stdio.h>
+#include <stdint.h>
+#include <fpnglib/mt19937ar.h>
+#include "ctiming.h"
 
-#include <fpnglib/fpngl_config.h>
-#include <fpnglib/frng64_t.h>
-#include <fpnglib/irng_t.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-	/*
-		Generation of a random float by division of the result of an integer RNG `f`
-		by another random integer from a second RNG `f`.
-	*/
-	fpngl_frng64_t *fpngl_bydivision_ff_new(uint64_t seed, const char *name,
-																					fpngl_irng_t *irng_num,
-																					fpngl_irng_t *irng_denom);
-
-		
-#ifdef __cplusplus
+int main(void)
+{
+	fpngl_irng32_t *irng = fpngl_mt19937v32(53);
+	const uint32_t szT = 1000000;
+	uint32_t T[szT];
+	long t0 = get_usertime();
+	for (uint32_t i = 0; i < szT; ++i) {
+		T[i] = fpngl_irng32_next32(irng);
+	}
+	long t1 = get_usertime();
+	fpngl_irng32_array32(irng,T,szT);
+	long t2 = get_usertime();
+	printf("Loop with next32:  %ld μs\n",t1-t0);
+	printf("Loop with array32: %ld μs\n",t2-t1);
+	return 0;
 }
-#endif
-
-#endif // __fpngl_frng64_division_ff_h__

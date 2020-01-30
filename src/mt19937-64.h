@@ -28,15 +28,19 @@
 #include <fpnglib/fpngl_config.h>
 #include <stdint.h>
 #include <fpnglib/irng64_t.h>
-#include <fpnglib/irng_t.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-	fpngl_irng64_t *fpngl_new_mt19937v64_64(uint64_t seed);
-	
-	fpngl_irng_t *fpngl_new_mt19937v64(uint64_t seed);
+	// Creating a MT19937-based RNG with a unique integer as seed.
+	fpngl_irng64_t *fpngl_mt19937v64(uint64_t seed);
+
+	// Initialization of MT19937 with an array of integers. The seed is then set to 0
+	// The array used for the initialization cannot be retrieved afterwards.
+	fpngl_irng64_t *fpngl_mt19937v64_by_array(const uint64_t init_key[],
+																						uint64_t key_length);
+
 
 #ifdef __cplusplus
 }

@@ -1,5 +1,4 @@
-/* Implementation of double precision floating-point number generators
-	 through division of a random integer by another random integer.
+/* ctiming -- A small library to profile programs
 
 	Copyright 2019--2020 University of Nantes, France.
 
@@ -21,28 +20,25 @@
 	
  */
 
-#ifndef __fpngl_frng64_division_ff_h__
-#define __fpngl_frng64_division_ff_h__
+#ifndef __ctiming_h__
+#define __ctiming_h__
 
-#include <fpnglib/fpngl_config.h>
-#include <fpnglib/frng64_t.h>
-#include <fpnglib/irng_t.h>
+#include <fpnglib/global.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 	/*
-		Generation of a random float by division of the result of an integer RNG `f`
-		by another random integer from a second RNG `f`.
+		Return the time spent by a program since some epoch.
+		Timing some code is done by calling this function at the beginning and end of the
+		section to be profiled and subtracting the two results. The result is expressed
+		in microseconds.
 	*/
-	fpngl_frng64_t *fpngl_bydivision_ff_new(uint64_t seed, const char *name,
-																					fpngl_irng_t *irng_num,
-																					fpngl_irng_t *irng_denom);
+	long get_usertime(void);
 
-		
 #ifdef __cplusplus
 }
 #endif
 
-#endif // __fpngl_frng64_division_ff_h__
+#endif // __ctiming_h__

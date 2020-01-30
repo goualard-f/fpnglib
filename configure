@@ -3197,7 +3197,7 @@ fi
 
 ac_config_headers="$ac_config_headers config.h src/fpngl_config.h"
 
-ac_config_files="$ac_config_files Makefile fpnglib/Makefile src/Makefile tests/Makefile doc/Makefile"
+ac_config_files="$ac_config_files Makefile fpnglib/Makefile src/Makefile tests/Makefile doc/Makefile examples/Makefile"
 
 
 
@@ -13384,6 +13384,21 @@ _ACEOF
 fi
 
 
+# Check for functions
+for ac_func in getrusage clock
+do :
+  as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
+if eval test \"x\$"$as_ac_var"\" = x"yes"; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+done
+
+
+
 # Checks for header files.
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for ANSI C header files" >&5
 $as_echo_n "checking for ANSI C header files... " >&6; }
@@ -14732,6 +14747,7 @@ do
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
     "tests/Makefile") CONFIG_FILES="$CONFIG_FILES tests/Makefile" ;;
     "doc/Makefile") CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
+    "examples/Makefile") CONFIG_FILES="$CONFIG_FILES examples/Makefile" ;;
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
 

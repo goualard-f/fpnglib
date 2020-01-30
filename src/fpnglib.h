@@ -32,6 +32,6 @@
 #include <fpnglib/irng64_t.h>
 #include <fpnglib/uirange.h>
 #include <fpnglib/utilities.h>
-
+#include <fpnglib/frng64_t.h>
 
 #endif // __fpngl_fpnglib_h__

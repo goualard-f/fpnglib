@@ -28,15 +28,19 @@
 #include <fpnglib/fpngl_config.h>
 #include <stdint.h>
 #include <fpnglib/irng32_t.h>
-#include <fpnglib/irng_t.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-fpngl_irng32_t *fpngl_new_mt19937v32_32(uint32_t seed);
-
-fpngl_irng_t *fpngl_new_mt19937v32(uint64_t seed);
+	// Initialization of MT19937 with an integer. The seed shall not be 0, since
+	// that value is used to signal that MT19937 was initialized with an array and
+	// not a single value.
+	fpngl_irng32_t *fpngl_mt19937v32(uint32_t seed);
+	// Initialization of MT19937 with an array of integers. The seed is then set to 0
+	// The array used for the initialization cannot be retrieved afterwards.
+	fpngl_irng32_t *fpngl_mt19937v32_by_array(const uint32_t init_key[],
+																						uint32_t key_length);
+	
 
 #ifdef __cplusplus
 }

@@ -98,7 +98,7 @@ typedef struct fpngl_mt19937v64_state_t {
 
 
 /* initializes mt[NN] with a seed */
-fpngl_mt19937v64_state_t *fpngl_init_mt19937v64(uint64_t seed)
+static fpngl_mt19937v64_state_t *mt19937v64_init(uint64_t seed)
 {
 	fpngl_mt19937v64_state_t *state = malloc(sizeof(fpngl_mt19937v64_state_t));
 	if (state == NULL) { // Error in allocating memory for the state?
@@ -117,11 +117,11 @@ fpngl_mt19937v64_state_t *fpngl_init_mt19937v64(uint64_t seed)
 /* initialize by an array with array-length */
 /* init_key is the array for initializing keys */
 /* key_length is its length */
-fpngl_mt19937v64_state_t *fpngl_init_mt19937v64_by_array64(uint64_t init_key[],
-																													 uint64_t key_length)
+static fpngl_mt19937v64_state_t *mt19937v64_init_by_array64(const uint64_t init_key[],
+																														uint64_t key_length)
 {
 	uint64_t i = 1, j = 0, k = (NN>key_length ? NN : key_length);
-	fpngl_mt19937v64_state_t *state = fpngl_init_mt19937v64(19650218ULL);
+	fpngl_mt19937v64_state_t *state = mt19937v64_init(19650218ULL);
 
 	for (; k; k--) {
 		state->mt[i] = (state->mt[i] ^ ((state->mt[i-1] ^
@@ -150,14 +150,14 @@ fpngl_mt19937v64_state_t *fpngl_init_mt19937v64_by_array64(uint64_t init_key[],
 	return state;
 }
 
-void fpngl_free_mt19937v64(fpngl_mt19937v64_state_t *state)
+static void mt19937v64_free(fpngl_mt19937v64_state_t *state)
 {
 	free(state);
 }
 
 
 /* generates a random number on [0, 2^64-1]-interval */
-uint64_t fpngl_mt19937v64_next64(fpngl_mt19937v64_state_t *state)
+static uint64_t mt19937v64_next64(fpngl_mt19937v64_state_t *state)
 {
 	int i;
 	uint64_t x;
@@ -188,56 +188,68 @@ uint64_t fpngl_mt19937v64_next64(fpngl_mt19937v64_state_t *state)
 	return x;
 }
 
-
-fpngl_irng64_t *fpngl_new_mt19937v64_64(uint64_t seed)
+static uint32_t mt19937v64_next32(fpngl_mt19937v64_state_t *state)
 {
-	return  fpngl_new_irng64(seed,"mt19937-64",0,0xffffffffffffffff,
-													 fpngl_init_mt19937v64(seed),
-													 (uint64_t (*)(void*))fpngl_mt19937v64_next64,
-													 (void (*)(void*))fpngl_free_mt19937v64);
-}
-
-
-uint32_t fpngl_mt19937v64_next32(fpngl_mt19937v64_state_t *state)
-{
-	uint64_t v = fpngl_mt19937v64_next64(state);
+	uint64_t v = mt19937v64_next64(state);
 	return (uint32_t)(v >> 32);
 }
 
-void fpngl_mt19937v64_array32(fpngl_mt19937v64_state_t *state, uint32_t *T, uint32_t n)
+static void mt19937v64_array32(fpngl_mt19937v64_state_t *state,
+															 uint32_t *T, uint32_t n)
 {
 	// Filling the array two 32 bits values at a time.
 	for (uint64_t *p = (uint64_t*)T; p < (uint64_t*)T+n/2; ++p) { // Default implementation
-		*p = fpngl_mt19937v64_next64(state);
+		*p = mt19937v64_next64(state);
 	}
 	// odd(n) => there is still the last cell to fill
 	if (fpngl_odd(n)) {
-		*(T+n-1)= (uint32_t)(fpngl_mt19937v64_next64(state)>>32);
+		*(T+n-1)= (uint32_t)(mt19937v64_next64(state) >> 32);
 	}
 }
 
-void fpngl_mt19937v64_array64(fpngl_mt19937v64_state_t *state, uint64_t *T, uint32_t n)
+static void mt19937v64_array64(fpngl_mt19937v64_state_t *state,
+															 uint64_t *T, uint32_t n)
 {
 	for (uint32_t i = 0; i < n; ++i) {
-		T[i] = fpngl_mt19937v64_next64(state);
+		T[i] = mt19937v64_next64(state);
 	}
 }
 
-uint64_t fpngl_mt19937v64_nextk(fpngl_mt19937v64_state_t *state, uint32_t k)
+static uint64_t mt19937v64_nextk(fpngl_mt19937v64_state_t *state, uint32_t k)
 {
-	assert(k < 65 && k != 0);
-	return fpngl_mt19937v64_next64(state) >> (64-k);
+	assert(k <= 65 && k != 0);
+	return mt19937v64_next64(state) >> (64-k);
 }
 
 
-fpngl_irng_t *fpngl_new_mt19937v64(uint64_t seed)
+
+
+fpngl_irng64_t *fpngl_mt19937v64(uint64_t seed)
 {
-	return  fpngl_new_irng(seed,"mt19937-64",0,0xffffffffffffffff,
-														fpngl_init_mt19937v64(seed),
-														(uint32_t (*)(void*))fpngl_mt19937v64_next32,
-														(uint64_t (*)(void*))fpngl_mt19937v64_next64,
-														(uint64_t (*)(void*,uint32_t))fpngl_mt19937v64_nextk,
-														(void (*)(void*, uint32_t*,uint32_t))fpngl_mt19937v64_array32,
-														(void (*)(void*, uint64_t*,uint32_t))fpngl_mt19937v64_array64,
-														(void (*)(void*))fpngl_free_mt19937v64);
+	return  fpngl_irng64_new(seed,
+													 "mt19937v64",
+													 0, 0xffffffffffffffff,
+													 mt19937v64_init(seed),
+													 (uint32_t (*)(void*))mt19937v64_next32,
+													 (uint64_t (*)(void*))mt19937v64_next64,
+													 (uint64_t (*)(void*,uint32_t))mt19937v64_nextk,
+													 (void (*)(void*,uint32_t*, uint32_t))mt19937v64_array32,
+													 (void (*)(void*,uint64_t*, uint32_t))mt19937v64_array64,
+													 (void (*)(void*))mt19937v64_free);
+}
+
+fpngl_irng64_t *fpngl_mt19937v64_by_array(const uint64_t init_key[],
+																					uint64_t key_length)
+{
+	return  fpngl_irng64_new(0,
+													 "mt19937v64",
+													 0, 0xffffffffffffffff,
+													 mt19937v64_init_by_array64(init_key,key_length),
+													 (uint32_t (*)(void*))mt19937v64_next32,
+													 (uint64_t (*)(void*))mt19937v64_next64,
+													 (uint64_t (*)(void*,uint32_t))mt19937v64_nextk,
+													 (void (*)(void*,uint32_t*, uint32_t))mt19937v64_array32,
+													 (void (*)(void*,uint64_t*, uint32_t))mt19937v64_array64,
+													 (void (*)(void*))mt19937v64_free);
+
 }

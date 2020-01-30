@@ -35,7 +35,7 @@ struct fpngl_frng64_t {
 	uint64_t (*seed)(void *);
 };
 
-fpngl_frng64_t *fpngl_new_frng64(const char *name,
+fpngl_frng64_t *fpngl_frng64_new(const char *name,
 																 void *state,
 																 double (*nextf64)(void*),
 																 void (*next_arrayf64)(void *state,

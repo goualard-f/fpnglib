@@ -31,13 +31,30 @@ extern "C" {
 #endif
 
 #if !NDEBUG
+	/*
+		Macro to output debugging messages to `stderr` if the library is compiled
+		with debugging information enabled.
+	 */
 # define FPNGL_DEBUG(...)														\
 	do {																							\
 		fprintf(stderr,__VA_ARGS__);										\
 		fflush(stderr);																	\
 	}	while (0)
+
+	/*
+		Macro to output the contents of an integer array to stderr if the 
+		library is compiled	with debugging information enabled.
+	 */
+# define FPNGL_INTARRAY(T,n)											\
+	do {																						\
+	for (uint32_t i_ = 0; i_ < n; ++i_) {						\
+		FPNGL_DEBUG("%x ",T[i_]);											\
+	}																								\
+	FPNGL_DEBUG("\n");															\
+	} while(0)
 #else
 # define FPNGL_DEBUG(...)
+# define FPNGL_INTARRAY(T,n)				
 #endif
 	
 #ifdef __cplusplus

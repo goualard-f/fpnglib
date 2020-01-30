@@ -29,10 +29,23 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+	/* 
+		 Opaque type encapsulating an RNG producing double precision 
+		 floating-point numbers.
+		 Only pointers to the structure can be manipulated by the user.
+	*/
 	typedef struct fpngl_frng64_t fpngl_frng64_t;
 
-	fpngl_frng64_t *fpngl_new_frng64(const char *name,
+	/*
+		Constructor for a double precision fp RNG.
+		One must provide pointers to functions:
+		* nextf64: function returning the next random floating-point number
+		* next_arrayf64: function filling an array with `n` random double 
+		precision numbers.
+		A pointer to the opaque internal state `state` of the underlying RNG
+		must also be provided.
+	 */
+	fpngl_frng64_t *fpngl_frng64_new(const char *name,
 																	 void *state,
 																	 double (*nextf64)(void*),
 																	 void (*next_arrayf64)(void *state,
@@ -40,20 +53,25 @@ extern "C" {
 																	 void (*delete)(void*),
 																	 uint64_t (*seed)(void*));
 	
+	// Reclaim memory used by the opaque representation of the RNG
 	void fpngl_frng64_delete(fpngl_frng64_t *frng);
 
-	uint64_t fpngl_frng64_seed(fpngl_frng64_t *frng);
-
+	// Return the next random double precision number computed with the RNG
 	double fpngl_frng64_nextf64(fpngl_frng64_t *frng);
 
 	/*
 		Fill the array `T` with `n` random floating-point numbers.
 
-		@caution The function may allocate a temporary array of `n` uin64_t integers.
+		@caution Some FRNG may allocate a temporary array of `2n` uin64_t integers.
 	*/
 	void fpngl_frng64_next_arrayf64(fpngl_frng64_t *frng, double *T, uint32_t n);
 
+	// Return the name of the FRNG
 	const char* fpngl_frng64_name(fpngl_frng64_t *frng);
+
+	// Return the seed used by the FRNG. May be `0` if the underlying IRNG
+	// was initialized with an array and not a unique integer.
+	uint64_t fpngl_frng64_seed(fpngl_frng64_t *frng);
 	
 #ifdef __cplusplus
 }

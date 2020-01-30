@@ -1,4 +1,4 @@
-# High-level Makefile
+# Makefile for examples
 #
 #	Copyright 2019--2020 University of Nantes, France.
 #
@@ -18,4 +18,12 @@
 #	GNU Lesser General Public License along with the FPNGlib Library.  If not,
 #	see https://www.gnu.org/licenses/. 	
 
-SUBDIRS = fpnglib src tests doc examples
+noinst_LTLIBRARIES = libctiming.la
+libctiming_la_SOURCES = ctiming.c
+libctiming_la_CPPFLAGS = -I$(top_srcdir)
+
+noinst_PROGRAMS = timing_mt19937v32
+
+LDADD= $(top_builddir)/src/libfpnglib.la -lm -lctiming $(LIBS)
+AM_CFLAGS = -I.. -Wall
+

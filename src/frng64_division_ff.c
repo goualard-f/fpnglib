@@ -56,16 +56,16 @@ static uint64_t frng64_seed(frng_division_state_t *frngstate)
 	return fpngl_irng_seed(frngstate->irngD);
 }
 
-static void delete_frng64(frng_division_state_t *frngstate)
+static void frng64_delete(frng_division_state_t *frngstate)
 {
-	fpngl_delete_irng(frngstate->irngN);
-	fpngl_delete_irng(frngstate->irngD);
+	fpngl_irng_delete(frngstate->irngN);
+	fpngl_irng_delete(frngstate->irngD);
 	free(frngstate);
 }
 
-fpngl_frng64_t *fpngl_new_bydivision_ff(uint64_t seed, const char *name,
-																				fpngl_irng_t *(*irngnew_num)(uint64_t),
-																				fpngl_irng_t *(*irngnew_denom)(uint64_t))
+fpngl_frng64_t *fpngl_bydivision_ff_new(uint64_t seed, const char *name,
+																				fpngl_irng_t *irng_num,
+																				fpngl_irng_t *irng_denom)
 {
 	frng_division_state_t *frngstate = malloc(sizeof(frng_division_state_t));
 	
@@ -73,13 +73,13 @@ fpngl_frng64_t *fpngl_new_bydivision_ff(uint64_t seed, const char *name,
 		return NULL;
 	}
 
-	frngstate->irngN = irngnew_num(seed);
-	frngstate->irngD = irngnew_denom(seed);
+	frngstate->irngN = irng_num;
+	frngstate->irngD = irng_denom;
 
-	return  fpngl_new_frng64(name, frngstate,
+	return  fpngl_frng64_new(name, frngstate,
 													 (double (*)(void*))nextf64,
 													 (void (*)(void*, double*, uint32_t))next_arrayf64,
-													 (void (*)(void*))delete_frng64,
+													 (void (*)(void*))frng64_delete,
 													 (uint64_t (*)(void*))frng64_seed);
 }
 

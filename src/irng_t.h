@@ -29,30 +29,23 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-	
+
+#include <stdbool.h>
+#include <fpnglib/irng32_t.h>
+#include <fpnglib/irng64_t.h>
+
 	typedef struct fpngl_irng_t fpngl_irng_t;
 
-	/*
-		Creating a RNG capable of computing 32 bits and 64 bits random integers.
-		BEWARE: the seed is an uint64_t integer, even for RNGs that should take
-		a 32 bits integer. This is up to the user to provide a correct value for
-		each underlying RNG.
-	 */	
-	fpngl_irng_t *fpngl_new_irng(uint64_t seed,
-															 const char *name,
-															 uint64_t min, uint64_t max,
-															 void *state,
-															 uint32_t (*next32)(void *state),
-															 uint64_t (*next64)(void *state),
-															 uint64_t (*nextk)(void *state, uint32_t k),
-															 void (*next_array32)(void *state,
-																										uint32_t *T, uint32_t n),
-															 void (*next_array64)(void *state,
-																										uint64_t *T, uint32_t n),
-															 void (*delete)(void*));
+	// Create an irng from a 32 bits one. The object pointed is
+	// owned by the new irng created.
+	fpngl_irng_t *fpngl_irng_new32(fpngl_irng32_t *irng32);
+	// Create an irng from a 64 bits one. The object pointed is
+	// owned by the new irng created.
+	fpngl_irng_t *fpngl_irng_new64(fpngl_irng64_t *irng64);
+
 	
 	// Releases all resources acquired by the pseudo-random generator 'rng'
-	void fpngl_delete_irng(fpngl_irng_t* rng);
+	void fpngl_irng_delete(fpngl_irng_t* rng);
 	
 	// Return next 32 bits pseudo-random number
 	uint32_t fpngl_irng_next32(fpngl_irng_t *rng);
@@ -87,6 +80,12 @@ extern "C" {
 	
 	// Return the maximum value the RNG can return
 	uint64_t fpngl_irng_max(fpngl_irng_t *rng);
+
+	// Return `true` if `rng` is a 32 bits one
+	bool fpngl_is_irng32(fpngl_irng_t *rng);
+
+	// Return `true` if `rng` is a 64 bits one
+	bool fpngl_is_irng64(fpngl_irng_t *rng);
 	
 #ifdef __cplusplus
 }

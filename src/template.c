@@ -1,4 +1,4 @@
-/* Debugging facilities for the development of the library itself.
+/* <<DESCRIPTION OF THE HEADER>>
 
 	Copyright 2019--2020 University of Nantes, France.
 
@@ -21,5 +21,4 @@
  */
 
 #include <global.h>
-#include <fpnglib/debug.h>
 

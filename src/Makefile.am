@@ -21,7 +21,7 @@
 AM_CFLAGS = -Wall
 lib_LTLIBRARIES = libfpnglib.la
 libfpnglib_la_SOURCES = fpu.c irng32_t.c irng64_t.c irng_t.c uirange.c \
-	utilities.c debug.c \
+	utilities.c \
 	mt19937ar.c mt19937-64.c lcg.c \
 	frng64_t.c frng64_division_fc.c frng64_division_ff.c \
 	frng64_fields.c

@@ -35,9 +35,11 @@ extern "C" {
 	/*
 		Generation of a random float by division of the result of an integer RNG `f`
 		by a constant `c`.
+		The FRNG created owns the IRNG passed as third parameter and is responsible
+		for its destruction.
 	*/
-	fpngl_frng64_t *fpngl_new_bydivision_fc(uint64_t seed, const char *name,
-																					fpngl_irng_t *(*irngnew)(uint64_t),
+	fpngl_frng64_t *fpngl_bydivision_fc_new(const char *name,
+																					fpngl_irng_t *irng,
 																					uint64_t denominator);
 
 	/*
@@ -48,7 +50,8 @@ extern "C" {
 	/*
     The POSIX drand48() function as implemented in FreeBSD. 
        Returns a floating-point number in ``[0,1)`` with only 48 bits of entropy.
-    *Source*: [IEEE Std 1003.1-2017](http://pubs.opengroup.org/onlinepubs/9699919799/functions/drand48.html) and https://opensource.apple.com/source/Libc/Libc-583/gen/FreeBSD/erand48.c.auto.html
+    *Source*: [IEEE Std 1003.1-2017](http://pubs.opengroup.org/onlinepubs/9699919799/functions/drand48.html) 
+		and https://opensource.apple.com/source/Libc/Libc-583/gen/FreeBSD/erand48.c.auto.html
 	 */
 	fpngl_frng64_t *fpngl_drand48bsd(uint64_t seed);
 

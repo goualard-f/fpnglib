@@ -30,16 +30,65 @@ struct fpngl_irng32_t {
 	uint32_t min;
 	uint32_t max;
 	void* state; // State of the RNG
-	uint32_t (*next32)(void*); // Function returning the next random integer
+	uint32_t (*next32)(void*);
+	uint64_t (*next64)(void*);
+	uint32_t (*nextk)(void *state, uint32_t k);
+	void (*next_array32)(void *state, uint32_t *T, uint32_t n);
+	void (*next_array64)(void *state, uint64_t *T, uint32_t n);
 	void (*delete)(void*); // Destructor
 };
 
+/*
+	That function returns the internal state of the irng32. It is 
+	used only internally in the library. As such, it is not advertized 
+	in the header file.
+ */
+void* fpngl_irng32_state_internal(fpngl_irng32_t* rng)
+{
+	return rng->state;
+}
 
-fpngl_irng32_t *fpngl_new_irng32(uint32_t seed,
+uint32_t (*fpngl_irng32_next32_internal(fpngl_irng32_t *rng))(void*)
+{
+	return rng->next32;
+}
+
+uint64_t (*fpngl_irng32_next64_internal(fpngl_irng32_t *rng))(void*) 
+{
+	return rng->next64;
+}
+
+uint32_t (*fpngl_irng32_nextk_internal(fpngl_irng32_t *rng))(void*,uint32_t)
+{
+	return rng->nextk;
+}
+
+void (*fpngl_irng32_next_array32_internal(fpngl_irng32_t *rng))(void*,uint32_t*,uint32_t)
+{
+	return rng->next_array32;
+}
+
+void (*fpngl_irng32_next_array64_internal(fpngl_irng32_t *rng))(void*,uint64_t*,uint32_t)
+{
+	return rng->next_array64;
+}
+
+void (*fpngl_irng32_delete_internal(fpngl_irng32_t *rng))(void*)
+{
+	return rng->delete;
+}
+
+fpngl_irng32_t *fpngl_irng32_new(uint32_t seed,
 																 const char* name,
 																 uint32_t min, uint32_t max,
 																 void *state,
 																 uint32_t (*next32)(void*),
+																 uint64_t (*next64)(void*),
+																 uint32_t (*nextk)(void *state, uint32_t k),
+																 void (*next_array32)(void *state,
+																											uint32_t *T, uint32_t n),
+																 void (*next_array64)(void *state,
+																											uint64_t *T, uint32_t n),
 																 void (*delete)(void*))
 {
 	fpngl_irng32_t *rng = malloc(sizeof(fpngl_irng32_t));
@@ -52,21 +101,45 @@ fpngl_irng32_t *fpngl_new_irng32(uint32_t seed,
 	rng->max = max;
 	rng->state = state;
 	rng->next32 = next32;
+	rng->next64 = next64;
+	rng->nextk = nextk;
+	rng->next_array32 = next_array32;
+	rng->next_array64 = next_array64;
 	rng->delete = delete;
 	return rng;
 }
 
+
 // Releases all resources acquired by the pseudo-random generator 'rng'
-void fpngl_delete_irng32(fpngl_irng32_t* rng)
+void fpngl_irng32_delete(fpngl_irng32_t* rng)
 {
 	rng->delete(rng->state);
 	free(rng);
 }
 
-// Return next pseudo-random number
 uint32_t fpngl_irng32_next32(fpngl_irng32_t *rng)
 {
 	return rng->next32(rng->state);
+}
+
+uint64_t fpngl_irng32_next64(fpngl_irng32_t *rng)
+{
+	return rng->next64(rng->state);
+}
+
+uint32_t fpngl_irng32_nextk(fpngl_irng32_t *rng, uint32_t k)
+{
+	return rng->nextk(rng->state,k);
+}
+
+void fpngl_irng32_array32(fpngl_irng32_t *rng, uint32_t *T, uint32_t n)
+{
+	rng->next_array32(rng->state,T,n);
+}
+
+void fpngl_irng32_array64(fpngl_irng32_t *rng, uint64_t *T, uint32_t n)
+{
+	rng->next_array64(rng->state,T,n);
 }
 
 // Return the seed used by the RNG
@@ -76,7 +149,7 @@ uint32_t fpngl_irng32_seed(fpngl_irng32_t *rng)
 }
 
 // Return the name of the RNG used
-const char *fpngl_get_irng32_name(fpngl_irng32_t *rng)
+const char *fpngl_irng32_name(fpngl_irng32_t *rng)
 {
 	return rng->name;
 }

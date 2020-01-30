@@ -1,5 +1,4 @@
-/* Implementation of double precision floating-point number generators
-	 through division of a random integer by another random integer.
+/* ctiming -- A small library to profile programs
 
 	Copyright 2019--2020 University of Nantes, France.
 
@@ -21,28 +20,30 @@
 	
  */
 
-#ifndef __fpngl_frng64_division_ff_h__
-#define __fpngl_frng64_division_ff_h__
+#include "ctiming.h"
 
-#include <fpnglib/fpngl_config.h>
-#include <fpnglib/frng64_t.h>
-#include <fpnglib/irng_t.h>
+#if defined(HAVE_GETRUSAGE)
+// ************* getrusage() *****************************************
+#include <sys/time.h>
+#include <sys/resource.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-	/*
-		Generation of a random float by division of the result of an integer RNG `f`
-		by another random integer from a second RNG `f`.
-	*/
-	fpngl_frng64_t *fpngl_bydivision_ff_new(uint64_t seed, const char *name,
-																					fpngl_irng_t *irng_num,
-																					fpngl_irng_t *irng_denom);
-
-		
-#ifdef __cplusplus
+long get_usertime(void)
+{
+	struct rusage timing;
+	getrusage(RUSAGE_SELF,&timing);
+	return timing.ru_utime.tv_sec*1000 + timing.ru_utime.tv_usec/1000;
 }
-#endif
+ 
+#elif defined(HAVE_CLOCK)
+// ************* clock() *****************************************
 
-#endif // __fpngl_frng64_division_ff_h__
+long get_usertime(void)
+{
+	return long((1000.*clock())/CLOCKS_PER_SEC);
+}
+
+#else
+// ************* ??????? *****************************************
+#error "No timing function available."
+
+#endif

@@ -55,15 +55,15 @@ static uint64_t frng64_seed(frng_division_state_t *frngstate)
 	return fpngl_irng_seed(frngstate->irng);
 }
 
-static void delete_frng64(frng_division_state_t *frngstate)
+static void frng64_delete(frng_division_state_t *frngstate)
 {
-	fpngl_delete_irng(frngstate->irng);
+	fpngl_irng_delete(frngstate->irng);
 	free(frngstate);
 }
 
-fpngl_frng64_t *fpngl_new_bydivision(uint64_t seed, const char *name,
-																		 fpngl_irng_t *(*irngnew)(uint64_t),
-																		 uint64_t denominator)
+fpngl_frng64_t *fpngl_bydivision_fc_new(const char *name,
+																				fpngl_irng_t *irng,
+																				uint64_t denominator)
 {
 	assert(denominator != 0);
 	frng_division_state_t *frngstate = malloc(sizeof(frng_division_state_t));
@@ -71,31 +71,35 @@ fpngl_frng64_t *fpngl_new_bydivision(uint64_t seed, const char *name,
 	if (frngstate == NULL) {
 		return NULL;
 	}
-
-	frngstate->irng = irngnew(seed);
+	
+	frngstate->irng = irng;
 	frngstate->denominator = denominator; // BEWARE: what if some rounding takes place?
 	assert((uint64_t)frngstate->denominator == denominator);
 
-	return  fpngl_new_frng64(name, frngstate,
+	return  fpngl_frng64_new(name, frngstate,
 													 (double (*)(void*))nextf64,
 													 (void (*)(void*, double*, uint32_t))next_arrayf64,
-													 (void (*)(void*))delete_frng64,
+													 (void (*)(void*))frng64_delete,
 													 (uint64_t (*)(void*))frng64_seed);
 }
 
 fpngl_frng64_t *fpngl_matlabp5(uint64_t seed)
 {
-	return fpngl_new_bydivision(seed,"matlabp5",fpngl_minstd,1UL<<31);
+	return fpngl_bydivision_fc_new("matlabp5",
+																 fpngl_irng_new64(fpngl_minstd64(seed)),1UL<<31);
 }
 
 fpngl_frng64_t *fpngl_drand48bsd(uint64_t seed)
 {
-	return fpngl_new_bydivision(seed,"drand48bsd",fpngl_drand48_lcg,1UL<<48);
+	return fpngl_bydivision_fc_new("drand48bsd",
+																 fpngl_irng_new64(fpngl_drand48_lcg64(seed)),1UL<<48);
 }
 
 fpngl_frng64_t *fpngl_mupad(uint64_t seed)
 {
-	return fpngl_new_bydivision(seed,"mupad",fpngl_mupad_lcg,0xe8d4a50ff5UL);
+	return fpngl_bydivision_fc_new("mupad",
+																 fpngl_irng_new64(fpngl_mupad_lcg64(seed)),
+																 0xe8d4a50ff5UL);
 }
 
 static double java_nextf64(frng_division_state_t *frng)
@@ -127,13 +131,13 @@ fpngl_frng64_t *fpngl_java(uint64_t seed)
 		return NULL;
 	}
 
-	frngstate->irng = fpngl_drand48_lcg(seed);
-	frngstate->denominator = 1UL<<53; // BEWARE: what if some rounding takes place?
+	frngstate->irng = fpngl_irng_new64(fpngl_drand48_lcg64(seed));
+	frngstate->denominator = 0x1.0p53; 
 
-	return  fpngl_new_frng64("java", frngstate,
+	return  fpngl_frng64_new("java", frngstate,
 													 (double (*)(void*))java_nextf64,
 													 (void (*)(void*, double*, uint32_t))java_next_arrayf64,
-													 (void (*)(void*))delete_frng64,
+													 (void (*)(void*))frng64_delete,
 													 (uint64_t (*)(void*))frng64_seed);
 }
 
