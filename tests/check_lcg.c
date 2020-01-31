@@ -117,7 +117,7 @@ const uint64_t mupad_lcg64_T64[] = {951626101589ULL,
 																	
 
 
-#define TESTING64(name)																		\
+#define TESTING64(name,modulo)														\
 	START_TEST(test_##name##_next64)												\
 	{																												\
 	  fpngl_irng64_t *rng = fpngl_##name(42);								\
@@ -125,7 +125,7 @@ const uint64_t mupad_lcg64_T64[] = {951626101589ULL,
 		ck_assert(fpngl_irng64_seed(rng) == 42);								\
 		ck_assert(!strcmp(fpngl_irng64_name(rng),#name));				\
 		ck_assert(fpngl_irng64_min(rng) == 0);									\
-		ck_assert(fpngl_irng64_max(rng) == 0xffffffffffffffff); \
+		ck_assert(fpngl_irng64_max(rng) == ((modulo)-1));				\
 																													\
 		for (uint32_t i = 0; i < 10; ++i) {										\
 			ck_assert(fpngl_irng64_next64(rng) == name##_T64[i]);	\
@@ -206,7 +206,7 @@ START_TEST(test_lcg64)
 	ck_assert(fpngl_irng64_seed(rng) == 42);
 	ck_assert(!strcmp(fpngl_irng64_name(rng),"lcg64"));
 	ck_assert(fpngl_irng64_min(rng) == 0);
-	ck_assert(fpngl_irng64_max(rng) == 0xffffffffffffffff);
+	ck_assert(fpngl_irng64_max(rng) == (1UL<<31)-2);
 
 	for (uint32_t i = 0; i < 10; ++i) {
 		ck_assert(fpngl_irng64_next64(rng)==minstd64_T64[i]);
@@ -215,11 +215,11 @@ START_TEST(test_lcg64)
 }
 END_TEST
 
-TESTING64(minstd64);
-TESTING64(gnuc_lcg64);
-TESTING64(randu64);
-TESTING64(drand48_lcg64);
-TESTING64(mupad_lcg64);
+TESTING64(minstd64,(1UL << 31)-1);
+TESTING64(gnuc_lcg64,1UL << 31);
+TESTING64(randu64,1UL << 31);
+TESTING64(drand48_lcg64,1UL<<48);
+TESTING64(mupad_lcg64,0xe8d4a50ff5UL);
 TESTING32(minstd64);
 TESTING32(gnuc_lcg64);
 TESTING32(randu64);

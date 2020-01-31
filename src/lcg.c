@@ -102,7 +102,9 @@ static uint64_t lcg64_nextk(fpngl_lcg64_state_t *state, uint32_t k)
 fpngl_irng64_t *fpngl_lcg64_new(uint64_t seed, const char *name,
 																uint64_t m, uint64_t a, uint64_t c)
 {
-	return  fpngl_irng64_new(seed,name,0,0xffffffffffffffff,
+	return  fpngl_irng64_new(seed,name,
+													 0, // Minimum
+													 m-1, // Maximum
 													 init_lcg64(seed,m,a,c),
 													 (uint32_t (*)(void*))lcg64_next32,
 													 (uint64_t (*)(void*))lcg64_next64,
