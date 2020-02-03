@@ -23,7 +23,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <math.h>
-#include <fpnglib/frng64_division_fc.h>
+#include <fpnglib/frng64_division.h>
 #include <fpnglib/frng64_java.h>
 #include <fpnglib/mt19937ar.h>
 #include <fpnglib/mt19937-64.h>
@@ -60,10 +60,10 @@ int main(void)
 	fpngl_irng_t *irng32 = fpngl_irng_new32(fpngl_mt19937v32(seed));
 	fpngl_irng_t *irng64 = fpngl_irng_new64(fpngl_mt19937v64(seed));
 	const uint32_t nmethods = 6;
-	fpngl_frng64_t *frngT[6] = {fpngl_bydivision_fc_new("MT19937/32",
-																											irng32,fpngl_irng_max(irng32)),
-															fpngl_bydivision_fc_new("MT19937/64",
-																											irng64,fpngl_irng_max(irng64)),
+	fpngl_frng64_t *frngT[6] = {fpngl_bydivision_new("MT19937/32",
+																									 irng32,fpngl_irng_max(irng32)),
+															fpngl_bydivision_new("MT19937/64",
+																									 irng64,fpngl_irng_max(irng64)),
 															
 															fpngl_matlabp5(seed),
 															fpngl_drand48bsd(seed),

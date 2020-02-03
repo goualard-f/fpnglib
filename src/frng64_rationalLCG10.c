@@ -28,10 +28,11 @@
 #include <fpnglib/frng64_rationalLCG10.h>
 #include <fpnglib/lcg.h>
 
-static double rationalLCG10_nextf64(fpngl_irng_t *irng)
+static double rationalLCG10_nextf64(fpngl_irng64_t *irng64)
 {
-	uint64_t s = fpngl_irng_next64(irng);
-	uint64_t q = fpngl_irng_next64(irng);
+	uint64_t s = fpngl_irng64_next64(irng64);
+	uint64_t q = fpngl_irng64_next64(irng64);
+	FPNGL_DEBUG("s: %lu / q: %lu\n",s,q);
 	if (s < q) {
 		return s/(double)q;
 	} else {
@@ -39,19 +40,23 @@ static double rationalLCG10_nextf64(fpngl_irng_t *irng)
 	}
 }
 
-static void rationalLCG10_next_arrayf64(fpngl_irng_t *irng,
+static void rationalLCG10_next_arrayf64(fpngl_irng64_t *irng64,
 																				double *T, uint32_t n)
 {
 	for (uint32_t i = 0; i < n; ++i) {
-		T[i] = rationalLCG10_nextf64(irng);
+		T[i] = rationalLCG10_nextf64(irng64);
 	}
 }
 
-fpngl_frng64_t *fpngl_rationalLCG10(fpngl_irng_t *irng, uint64_t seed)
+fpngl_frng64_t *fpngl_rationalLCG10(uint64_t seed)
 {
-	return  fpngl_frng64_new("rationalLCG10", irng,
+	fpngl_irng64_t *irng64 = fpngl_mupad_lcg64(seed);
+	if (irng64 == NULL) {
+		return NULL;
+	}
+	return  fpngl_frng64_new("rationalLCG10", irng64,
 													 (double (*)(void*))rationalLCG10_nextf64,
 													 (void (*)(void*, double*, uint32_t))rationalLCG10_next_arrayf64,
-													 (void (*)(void*))fpngl_irng_delete,
-													 (uint64_t (*)(void*))fpngl_irng_seed);
+													 (void (*)(void*))fpngl_irng64_delete,
+													 (uint64_t (*)(void*))fpngl_irng64_seed);
 }

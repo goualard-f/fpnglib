@@ -26,33 +26,28 @@
 #include <check.h>
 #include <fpnglib/frng64_rationalLCG10.h>
 #include <fpnglib/lcg.h>
-#include <fpnglib/irng_t.h>
 #include "tests_frng64.h"
 
 const uint64_t seed = 42;
 
 const double rationalLCG10_T[] = {0x1.a96998b18febcp-1,
 																	0x1.5d5e1570a72a3p-1,
-																	0x1.7f78a1cc84cf1p-1,
+																	0x1.7f78a1cc84cfp-1,
 																	0x1.b17d2fd688a0fp-1,
 																	0x1.1c2a06ac42122p-3,
 																	0x1.68b27c729d49bp-1,
-																	0x1.97c9bcee6b9c9p-1,
+																	0x1.97c9bcee6b9c8p-1,
 																	0x1.1c406852ba926p-2,
 																	0x1.4dbac208abcc6p-1,
 																	0x1.13a613f9aa628p-3};
 
-fpngl_irng_t *irng;
-
-TESTING_FRNG64(rationalLCG10,seed,irng);
+TESTING_FRNG64(rationalLCG10,seed);
 
 Suite *frng64_rationalLCG10_suite(void)
 {
   Suite *s;
   TCase *tc_core;
 
-	irng = fpngl_irng_new64(fpngl_minstd64(seed));
-	
   s = suite_create("frng64_rationalLCG10");
   
   /* Core test case */
