@@ -1,5 +1,5 @@
-/* Implementation of double precision floating-point number generators
-	 through division of a random integer by another random integer.
+/* Computation of a double precision random number using the RNG
+   by L'Ecuyer and Simard, generalized by Kolonko, Gu and Wu.
 
 	Copyright 2019--2020 University of Nantes, France.
 
@@ -21,28 +21,30 @@
 	
  */
 
-#ifndef __fpngl_frng64_division_ff_h__
-#define __fpngl_frng64_division_ff_h__
+#ifndef __fpngl_frng64_LESKGW_h__
+#define __fpngl_frng64_LESKGW_h__
 
 #include <fpnglib/fpngl_config.h>
 #include <fpnglib/frng64_t.h>
-#include <fpnglib/irng_t.h>
+#include <fpnglib/irng64_t.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 	/*
-		Generation of a random float by division of the result of an integer RNG `f`
-		by another random integer from a second RNG `f`.
-	*/
-	fpngl_frng64_t *fpngl_bydivision_ff_new(uint64_t seed, const char *name,
-																					fpngl_irng_t *irng_num,
-																					fpngl_irng_t *irng_denom);
-
+		Implementation of the method proposed by 
+		[L'Ecuyer and Simard](http://portal.acm.org/citation.cfm?doid=1268776.1268777)
+		as generalized by 
+		[Kolonko, Gu, and Wu](https://ideas.repec.org/a/eee/matcom/v157y2019icp130-142.html)
+		to create a floating-point number in $(0,1)$ from two random integers.
 		
+		The RNG produced owns the IRNG `irng64` and is responsible for its destruction.
+	*/
+	fpngl_frng64_t *fpngl_LESKGW(fpngl_irng64_t *irng64, uint64_t seed);
+	
 #ifdef __cplusplus
 }
 #endif
 
-#endif // __fpngl_frng64_division_ff_h__
+#endif // __fpngl_frng64_LESKGW_h__

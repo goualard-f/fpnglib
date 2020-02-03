@@ -24,6 +24,7 @@
 #include <stdint.h>
 #include <math.h>
 #include <fpnglib/frng64_division_fc.h>
+#include <fpnglib/frng64_java.h>
 #include <fpnglib/mt19937ar.h>
 #include <fpnglib/mt19937-64.h>
 #include <fpnglib/irng_t.h>

@@ -23,7 +23,6 @@
 #include <global.h>
 #include <stdlib.h>
 #include <fpnglib/irng32_t.h>
-#include <fpnglib/debug.h>
 
 typedef struct fpngl_irng_t fpngl_irng_t;
 uint32_t fpngl_irng_next32(fpngl_irng_t *rng);

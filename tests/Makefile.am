@@ -19,8 +19,9 @@
 #	see https://www.gnu.org/licenses/. 	
 
 TESTS = check_constants32 check_constants64 check_fpu check_mt19937v32 check_mt19937v64 \
-	check_irange	check_lcg check_utilities check_frng64_division_fc \
-	check_frng64_division_ff check_vnm
+	check_irange	check_lcg check_utilities check_frng64_division check_frng64_java \
+	check_vnm check_drand48gnu check_frng64_golang \
+	check_frng64_LESKGW check_frng64_rationalLCG10
 check_PROGRAMS = $(TESTS)
 LDADD = $(top_builddir)/src/libfpnglib.la @CHECK_LIBS@ -lm $(LIBS)
 AM_CFLAGS = -I.. -Wall @CHECK_CFLAGS@

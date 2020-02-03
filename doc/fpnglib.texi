@@ -8,31 +8,12 @@
 @c -@setchapternewpage odd
 @c %**end of header
 
-@dircategory Scientific software
-@direntry
-* FPNGlib: (FPNGlib).             The FPNGlib manual
-@end direntry
-
-
-@ifinfo
-This file documents the @value{FPNGlib} library.
-
-Copyright (C) 2019,2020 University of Nantes, France
-
-Permission is granted to copy, distribute and/or modify this document
-under the terms of the GNU Free Documentation License, Version 1.2 or
-any later version published by the Free Software Foundation; with no
-Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.  A
-copy of the license is included in the section entitled ``GNU Free
-Documentation License''.
-@end ifinfo
-
 @titlepage
 @title The FPNGlib Manual
 @subtitle Edition @value{EDITION}, for FPNGlib Version @value{VERSION}
 @subtitle Updated @value{UPDATED}
 @author Fr@'ed@'eric Goualard
-University of Nantes, France
+LS2N UMR CNRS 6004, University of Nantes, France
 
 @vskip 0pt plus 1filll
 Copyright @copyright{} 2019,2020 University of Nantes, France
@@ -54,14 +35,12 @@ by the Foundation.
 
 @contents
 
-@top About FPNGlib
+@chapter About FPNGlib
 
-@ifinfo
-This file documents FPNGlib, a library to draw floating-point numbers at random.
+This file documents FPNGlib, a library primarily aimed at drawing floating-point numbers at random.
 
 More information about the FPNGlib library can be found at the project homepage,
 @uref{https://gitlab.univ-nantes.fr/goualard-f/fpnglib}.
-@end ifinfo
 
 @bye
 

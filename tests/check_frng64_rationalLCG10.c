@@ -1,4 +1,4 @@
-/* Unit tests for irange.c
+/* Unit tests for frng64_rationalLCG10.c
 
 	Copyright 2019--2020 University of Nantes, France.
 
@@ -22,67 +22,42 @@
 
 #include <config.h>
 #include <stdlib.h>
-#include <stdint.h>
+#include <string.h>
 #include <check.h>
-#include <fpnglib/irange.h>
-#include <fpnglib/mt19937ar.h>
+#include <fpnglib/frng64_rationalLCG10.h>
+#include <fpnglib/lcg.h>
+#include <fpnglib/irng_t.h>
+#include "tests_frng64.h"
 
-START_TEST(test_n_bits32)
-{
-	ck_assert(fpngl_n_bits32(0x10000000,7) == 0x8);
-	ck_assert(fpngl_n_bits32(0x80000000,7) == 0x40);
-	ck_assert(fpngl_n_bits32(0xf0000f00,3) == 0x7);
-}
-END_TEST
+const uint64_t seed = 42;
 
-START_TEST(test_n_bits64)
-{
-	ck_assert(fpngl_n_bits64(0x1000000000000000,7) == 0x8);
-	ck_assert(fpngl_n_bits64(0x8000000000000000,7) == 0x40);
-	ck_assert(fpngl_n_bits64(0xf0000f0000000000,3) == 0x7);
-}
-END_TEST
+const double rationalLCG10_T[] = {0x1.a96998b18febcp-1,
+																	0x1.5d5e1570a72a3p-1,
+																	0x1.7f78a1cc84cf1p-1,
+																	0x1.b17d2fd688a0fp-1,
+																	0x1.1c2a06ac42122p-3,
+																	0x1.68b27c729d49bp-1,
+																	0x1.97c9bcee6b9c9p-1,
+																	0x1.1c406852ba926p-2,
+																	0x1.4dbac208abcc6p-1,
+																	0x1.13a613f9aa628p-3};
 
-START_TEST(test_ubound32)
-{
-	fpngl_irng32_t *irng = fpngl_mt19937v32(42);
+fpngl_irng_t *irng;
 
-	for (uint32_t i = 0; i < 100; ++i) {
-		uint32_t v = fpngl_ubound32(irng,2);
-		ck_assert(v == 0 || v == 1);
-	}
-	
-	fpngl_irng32_delete(irng);
-}
-END_TEST
+TESTING_FRNG64(rationalLCG10,seed,irng);
 
-START_TEST(test_range32)
-{
-	fpngl_irng32_t *irng = fpngl_mt19937v32(42);
-
-	for (uint32_t i = 0; i < 10000; ++i) {
-		int32_t v = fpngl_range32(irng,-1,2);
-		ck_assert(v == -1 || v == 0 || v == 1);
-	}
-	
-	fpngl_irng32_delete(irng);
-}
-END_TEST
-
-Suite *irange_suite(void)
+Suite *frng64_rationalLCG10_suite(void)
 {
   Suite *s;
   TCase *tc_core;
-  
-  s = suite_create("irange");
+
+	irng = fpngl_irng_new64(fpngl_minstd64(seed));
+	
+  s = suite_create("frng64_rationalLCG10");
   
   /* Core test case */
   tc_core = tcase_create("Core");
-  
-  tcase_add_test(tc_core, test_n_bits32);
-  tcase_add_test(tc_core, test_n_bits64);
-  tcase_add_test(tc_core, test_ubound32);
-  tcase_add_test(tc_core, test_range32);
+	ADD_TEST_FRNG64(rationalLCG10);
   suite_add_tcase(s, tc_core);
   
   return s;
@@ -94,7 +69,7 @@ int main(void)
   Suite *s;
   SRunner *sr;
   
-  s = irange_suite();
+  s = frng64_rationalLCG10_suite();
   sr = srunner_create(s);
   
   srunner_run_all(sr, CK_NORMAL);

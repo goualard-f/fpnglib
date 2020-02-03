@@ -1,4 +1,5 @@
-/* Unit tests for frng64_division_ff.c
+/* Computation of a double precision random number using the RNG
+   rationalLCG10 by Morgenstern.
 
 	Copyright 2019--2020 University of Nantes, France.
 
@@ -20,48 +21,29 @@
 	
  */
 
-#include <config.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <check.h>
+#ifndef __fpngl_frng64_rationalLCG10_h__
+#define __fpngl_frng64_rationalLCG10_h__
+
+#include <fpnglib/fpngl_config.h>
 #include <fpnglib/frng64_t.h>
-#include <fpnglib/frng64_division_ff.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-START_TEST(test_)
-{
+	/*
+		The function is presented by 
+		[Morgenstern](https://link.springer.com/chapter/10.1007%2F978-3-540-69995-8_90). 
+		It uses two calls to LCG10 (aka `fpngl_mupad64()`) to compute two random integers, 
+		then divides the smallest by the largest to obtain a floating-point number 
+		in `(0,1)`.
+		
+		*/
+	fpngl_frng64_t *fpngl_rationalLCG10(uint64_t seed);
+
+	
+#ifdef __cplusplus
 }
-END_TEST
+#endif
 
-Suite *frng64_division_ff_suite(void)
-{
-  Suite *s;
-  TCase *tc_core;
-  
-  s = suite_create("frng64_division_ff");
-  
-  /* Core test case */
-  tc_core = tcase_create("Core");
-  
-  tcase_add_test(tc_core, test_);
-  suite_add_tcase(s, tc_core);
-  
-  return s;
-}
-
-int main(void)
-{
-  int number_failed;
-  Suite *s;
-  SRunner *sr;
-  
-  s = frng64_division_ff_suite();
-  sr = srunner_create(s);
-  
-  srunner_run_all(sr, CK_NORMAL);
-  number_failed = srunner_ntests_failed(sr);
-  srunner_free(sr);
-  return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
-}
-
+#endif // __fpngl_frng64_rationalLCG10_h__

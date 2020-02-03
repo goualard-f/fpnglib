@@ -1,4 +1,4 @@
-/* Unit tests for frng64_division_fc.c
+/* Unit tests for frng64_java.c
 
 	Copyright 2019--2020 University of Nantes, France.
 
@@ -24,41 +24,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <check.h>
-#include <fpnglib/frng64_t.h>
-#include <fpnglib/frng64_division_fc.h>
-
-const double matlabp5_T[] = {0x1.58accp-12,
-														 0x1.0c96ae3cp-1,
-														 0x1.78896ee4p-1,
-														 0x1.0d9ff7b8p-2,
-														 0x1.8140db5p-2,
-														 0x1.91fe4d9p-3,
-														 0x1.f3a5bdc4p-1,
-														 0x1.064e8f2p-1,
-														 0x1.0f970468p-1,
-														 0x1.0745a648p-2};
-
-const double drand48bsd_T[] = {0x1.ed25bb9bdap-9,
-															 0x1.673c57df37e8p-1,
-															 0x1.d76eb0253ddep-1,
-															 0x1.0fb40218cb9cp-1,
-															 0x1.a6004e99b304p-2,
-															 0x1.196106fb687p-1,
-															 0x1.e46d00805f18p-3,
-															 0x1.7548c18e0364p-1,
-															 0x1.f4afd8b349aap-1,
-															 0x1.b6175a7a32fp-2};
-
-const double mupad_T[] = {0x1.e73b8950c7853p-1,
-													0x1.94d5687fdc7d6p-1,
-													0x1.cfae5e9ba0302p-2,
-													0x1.53c37c3d37d83p-1,
-													0x1.3a3f0b3e4423dp-1,
-													0x1.a392a222d588bp-1,
-													0x1.e56c080a47138p-2,
-													0x1.9afc8d07780bfp-2,
-													0x1.f2c6f8782b675p-4,
-													0x1.c1579efde7d3p-1};
+#include <fpnglib/frng64_java.h>
 
 const double java_T[] = {0x1.ed25d9cf15fp-9,
 												 0x1.d76eb043ed008p-1,
@@ -115,25 +81,17 @@ const double java_T[] = {0x1.ed25d9cf15fp-9,
   tcase_add_test(tc_core, test_##name##_name);					\
   tcase_add_test(tc_core, test_##name##_seed);
 	
-	
-
-TESTING(matlabp5);
-TESTING(drand48bsd);
-TESTING(mupad);
 TESTING(java);
 
-Suite *frng64_division_fc_suite(void)
+Suite *frng64_java_suite(void)
 {
   Suite *s;
   TCase *tc_core;
   
-  s = suite_create("frng64_division_fc");
+  s = suite_create("frng64_java");
   
   /* Core test case */
   tc_core = tcase_create("Core");
-  ADD_TEST(matlabp5);
-  ADD_TEST(drand48bsd);
-	ADD_TEST(mupad);
 	ADD_TEST(java);
   suite_add_tcase(s, tc_core);
   
@@ -146,7 +104,7 @@ int main(void)
   Suite *s;
   SRunner *sr;
   
-  s = frng64_division_fc_suite();
+  s = frng64_java_suite();
   sr = srunner_create(s);
   
   srunner_run_all(sr, CK_NORMAL);

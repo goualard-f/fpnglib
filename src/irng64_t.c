@@ -92,7 +92,6 @@ void (*fpngl_irng64_delete_internal(fpngl_irng64_t *rng))(void*)
 	return rng->delete;
 }
 
-
 fpngl_irng64_t *fpngl_irng64_new(uint64_t seed,
 																 const char* name,
 																 uint64_t min, uint64_t max,

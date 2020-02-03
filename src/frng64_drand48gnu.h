@@ -1,5 +1,5 @@
-/* Generation of random precision floating-point numbers by creating 
-	 independently each field `s` (sign), `e` (exponent) and `f` (fractional part).
+/*  Generation of a random double precision number by using the implementation
+	 of rand48t() in GNU C.
 
 	Copyright 2019--2020 University of Nantes, France.
 
@@ -21,9 +21,26 @@
 	
  */
 
-#include <global.h>
-#include <stdlib.h>
-#include <assert.h>
-#include <fpnglib/frng64_fields.h>
+#ifndef __fpngl_frng64_drand48gnu_h__
+#define __fpngl_frng64_drand48gnu_h__
 
+#include <fpnglib/fpngl_config.h>
+#include <stdint.h>
+#include <fpnglib/frng64_t.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+	/*
+    The POSIX drand48() function as implemented in GNU gcc. 
+		Returns a floating-point number in ``[0,1)`` with only 48 bits of entropy.
+    *Source*: [IEEE Std 1003.1-2017](http://pubs.opengroup.org/onlinepubs/9699919799/functions/drand48.html) and https://github.com/lattera/glibc/blob/master/stdlib/erand48_r.c
+	 */
+	fpngl_frng64_t *fpngl_drand48gnu(uint64_t seed);
+	
+#ifdef __cplusplus
+}
+#endif
+
+#endif // __fpngl_frng64_drand48gnu_h__

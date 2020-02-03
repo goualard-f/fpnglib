@@ -25,6 +25,9 @@
 #include <string.h>
 #include <check.h>
 #include <fpnglib/lcg.h>
+#include "tests_irng64.h"
+
+const uint64_t seed = 42;
 
 const uint64_t minstd64_T64[] = {705894ULL,
 																 1126542223ULL,
@@ -115,95 +118,11 @@ const uint64_t mupad_lcg64_T64[] = {951626101589ULL,
 																		121771784384ULL,
 																		877621620640ULL};
 																	
-
-
-#define TESTING64(name,modulo)														\
-	START_TEST(test_##name##_next64)												\
-	{																												\
-	  fpngl_irng64_t *rng = fpngl_##name(42);								\
-																													\
-		ck_assert(fpngl_irng64_seed(rng) == 42);								\
-		ck_assert(!strcmp(fpngl_irng64_name(rng),#name));				\
-		ck_assert(fpngl_irng64_min(rng) == 0);									\
-		ck_assert(fpngl_irng64_max(rng) == ((modulo)-1));				\
-																													\
-		for (uint32_t i = 0; i < 10; ++i) {										\
-			ck_assert(fpngl_irng64_next64(rng) == name##_T64[i]);	\
-		}																											\
-		fpngl_irng64_delete(rng);															\
-	}																												\
-	END_TEST																								\
-																													\
-	START_TEST(test_##name##_nextk)																				\
-	{																																			\
-		fpngl_irng64_t *rng = fpngl_##name(42);															\
-		uint32_t k = 5;																											\
-		for (uint32_t i = 0; i < 10; ++i,k+=2) {														\
-			ck_assert(fpngl_irng64_nextk(rng,k) == (name##_T64[i] >> (32-k))); \
-		}																																		\
-		fpngl_irng64_delete(rng);																						\
-	}																																			\
-	END_TEST																															\
-	START_TEST(test_##name##_array64)																			\
-	{																																			\
-		fpngl_irng64_t *rng = fpngl_##name(42);															\
-		uint64_t T[10];																											\
-		fpngl_irng64_array64(rng,T,10);																			\
-		for (uint32_t i = 0; i < 10; ++i) {																	\
-			ck_assert(T[i] == name##_T64[i]);																	\
-		}																																		\
-		fpngl_irng64_delete(rng);																						\
-	}																																			\
-	END_TEST
-
-
-
-#define ADD_TEST64(name)														\
-	do {																							\
-		tcase_add_test(tc_core, test_##name##_next64);	\
-		tcase_add_test(tc_core, test_##name##_nextk);		\
-		tcase_add_test(tc_core, test_##name##_array64);	\
-	} while(0)
-
-
-#define TESTING32(name)																									\
-	START_TEST(test_##name##_next32)																			\
-	{																																			\
-		fpngl_irng64_t *rng = fpngl_##name(42);															\
-																																				\
-		for (uint32_t i = 0; i < 10; ++i) {																	\
-			ck_assert(fpngl_irng64_next32(rng) == name##_T32[i]);							\
-		}																																		\
-		fpngl_irng64_delete(rng);																						\
-	}																																			\
-	END_TEST																															\
-																																				\
-	START_TEST(test_##name##_array32)																			\
-	{																																			\
-		fpngl_irng64_t *rng = fpngl_##name(42);															\
-		uint32_t T[10];																											\
-		fpngl_irng64_array32(rng,T,10);																			\
-		uint32_t j = 0;																											\
-		for (uint32_t i = 0; i < 10; i+=2,++j) {														\
-			ck_assert(T[i] == (name##_T64[j] & 0x00000000ffffffff));					\
-			ck_assert(T[i+1] == (name##_T64[j]>> 32));												\
-		}																																		\
-		fpngl_irng64_delete(rng);																						\
-	}																																			\
-	END_TEST
-
-#define ADD_TEST32(name)															\
-	do {																								\
-		tcase_add_test(tc_core, test_##name##_next32);		\
-		tcase_add_test(tc_core, test_##name##_array32);		\
-	} while(0)
-
-
 START_TEST(test_lcg64)
 {
-	fpngl_irng64_t *rng = fpngl_lcg64_new(42,"lcg64",(1UL<<31)-1,16807,0);
+	fpngl_irng64_t *rng = fpngl_lcg64_new(seed,"lcg64",(1UL<<31)-1,16807,0);
 
-	ck_assert(fpngl_irng64_seed(rng) == 42);
+	ck_assert(fpngl_irng64_seed(rng) == seed);
 	ck_assert(!strcmp(fpngl_irng64_name(rng),"lcg64"));
 	ck_assert(fpngl_irng64_min(rng) == 0);
 	ck_assert(fpngl_irng64_max(rng) == (1UL<<31)-2);
@@ -215,14 +134,14 @@ START_TEST(test_lcg64)
 }
 END_TEST
 
-TESTING64(minstd64,(1UL << 31)-1);
-TESTING64(gnuc_lcg64,1UL << 31);
-TESTING64(randu64,1UL << 31);
-TESTING64(drand48_lcg64,1UL<<48);
-TESTING64(mupad_lcg64,0xe8d4a50ff5UL);
-TESTING32(minstd64);
-TESTING32(gnuc_lcg64);
-TESTING32(randu64);
+TESTING_IRNG64(minstd64,(1UL << 31)-1,seed);
+TESTING_IRNG64(gnuc_lcg64,1UL << 31,seed);
+TESTING_IRNG64(randu64,1UL << 31,seed);
+TESTING_IRNG64(drand48_lcg64,1UL<<48,seed);
+TESTING_IRNG64(mupad_lcg64,0xe8d4a50ff5UL,seed);
+TESTING_IRNG64_32(minstd64,seed);
+TESTING_IRNG64_32(gnuc_lcg64,seed);
+TESTING_IRNG64_32(randu64,seed);
 
 Suite *lcg_suite(void)
 {
@@ -235,14 +154,14 @@ Suite *lcg_suite(void)
   tc_core = tcase_create("Core");
   
   tcase_add_test(tc_core, test_lcg64);
-  ADD_TEST64(minstd64);
-  ADD_TEST32(minstd64);
-  ADD_TEST64(gnuc_lcg64);
-  ADD_TEST32(gnuc_lcg64);
-  ADD_TEST64(randu64);
-  ADD_TEST32(randu64);
-  ADD_TEST64(drand48_lcg64);
-  ADD_TEST64(mupad_lcg64);
+  ADD_TEST_IRNG64(minstd64);
+  ADD_TEST_IRNG64_32(minstd64);
+  ADD_TEST_IRNG64(gnuc_lcg64);
+  ADD_TEST_IRNG64_32(gnuc_lcg64);
+  ADD_TEST_IRNG64(randu64);
+  ADD_TEST_IRNG64_32(randu64);
+  ADD_TEST_IRNG64(drand48_lcg64);
+  ADD_TEST_IRNG64(mupad_lcg64);
 	suite_add_tcase(s, tc_core);
   
   return s;

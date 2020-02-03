@@ -30,22 +30,40 @@
 
 #include <fpnglib/fpngl_config.h>
 #include <stdint.h>
+#include <fpnglib/irng32_t.h>
+#include <fpnglib/irng64_t.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/*
-	Return an unsigned integer composed with the `n` highest bits of `v`.
+	/*
+		Return an unsigned integer composed with the `n` highest bits of `v`.
+		
+	*/
+	uint32_t fpngl_n_bits32(uint32_t v, uint32_t n);
+	uint64_t fpngl_n_bits64(uint64_t v, uint32_t n);
 	
- */
-uint32_t fpngl_n_bits32(uint32_t v, uint32_t n);
-uint64_t fpngl_n_bits64(uint64_t v, uint32_t n);
+	/*
+		Return a random integer in the domain [0,a) using the RNG `irng`.
 
-/*
-	Return an integer in the domain [a,b]
- */
-// TODO
+		The algorithm used is the one presented by Lemire in:
+
+		Fast Random Integer Generation in an Interval. Daniel Lemire. 
+		ACM Transactions on Modeling and Computer Simulation, 29(1), 2019,
+		
+		and modified by O'Neill (http://www.pcg-random.org/posts/bounded-rands.html).
+		
+	*/
+	uint32_t fpngl_ubound32(fpngl_irng32_t *irng32, uint32_t a);
+	uint64_t fpngl_ubound64(fpngl_irng64_t *irng64, uint64_t a);
+
+	/*
+		Return a number in the domain `[a, b)`.
+	 */
+	int32_t fpngl_range32(fpngl_irng32_t *irng32, int32_t a, int32_t b);
+	int64_t fpngl_range64(fpngl_irng64_t *irng64, int64_t a, int64_t b);
+
 	
 #ifdef __cplusplus
 }
