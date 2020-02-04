@@ -29,6 +29,10 @@ installation directories are under `/usr/local/`.
 
 To test the library before installing it, just run `make check` from the base directory.
 
+## Examples
+The directory `examples` contains some programs illustrating the proper use of
+the library.
+
 
 ## Contributing
 
