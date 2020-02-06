@@ -111,10 +111,12 @@ TESTS = check_constants32$(EXEEXT) check_constants64$(EXEEXT) \
 	check_fpu$(EXEEXT) check_mt19937v32$(EXEEXT) \
 	check_mt19937v64$(EXEEXT) check_irange$(EXEEXT) \
 	check_lcg$(EXEEXT) check_utilities$(EXEEXT) \
-	check_frng64_division$(EXEEXT) check_frng64_java$(EXEEXT) \
+	check_frng64_division$(EXEEXT) \
+	check_frng64_division_k$(EXEEXT) check_frng64_java$(EXEEXT) \
 	check_vnm$(EXEEXT) check_drand48gnu$(EXEEXT) \
-	check_frng64_golang$(EXEEXT) check_frng64_LESKGW$(EXEEXT) \
-	check_frng64_rationalLCG10$(EXEEXT)
+	check_frng64_golang$(EXEEXT) \
+	check_frng64_lecuyer_simard$(EXEEXT) \
+	check_frng64_rationalLCG10$(EXEEXT) check_frng64_KGW$(EXEEXT)
 check_PROGRAMS = $(am__EXEEXT_1)
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -134,10 +136,12 @@ am__EXEEXT_1 = check_constants32$(EXEEXT) check_constants64$(EXEEXT) \
 	check_fpu$(EXEEXT) check_mt19937v32$(EXEEXT) \
 	check_mt19937v64$(EXEEXT) check_irange$(EXEEXT) \
 	check_lcg$(EXEEXT) check_utilities$(EXEEXT) \
-	check_frng64_division$(EXEEXT) check_frng64_java$(EXEEXT) \
+	check_frng64_division$(EXEEXT) \
+	check_frng64_division_k$(EXEEXT) check_frng64_java$(EXEEXT) \
 	check_vnm$(EXEEXT) check_drand48gnu$(EXEEXT) \
-	check_frng64_golang$(EXEEXT) check_frng64_LESKGW$(EXEEXT) \
-	check_frng64_rationalLCG10$(EXEEXT)
+	check_frng64_golang$(EXEEXT) \
+	check_frng64_lecuyer_simard$(EXEEXT) \
+	check_frng64_rationalLCG10$(EXEEXT) check_frng64_KGW$(EXEEXT)
 check_constants32_SOURCES = check_constants32.c
 check_constants32_OBJECTS = check_constants32.$(OBJEXT)
 check_constants32_LDADD = $(LDADD)
@@ -166,15 +170,20 @@ check_fpu_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
 check_fpu_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(check_fpu_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-check_frng64_LESKGW_SOURCES = check_frng64_LESKGW.c
-check_frng64_LESKGW_OBJECTS = check_frng64_LESKGW.$(OBJEXT)
-check_frng64_LESKGW_LDADD = $(LDADD)
-check_frng64_LESKGW_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+check_frng64_KGW_SOURCES = check_frng64_KGW.c
+check_frng64_KGW_OBJECTS = check_frng64_KGW.$(OBJEXT)
+check_frng64_KGW_LDADD = $(LDADD)
+check_frng64_KGW_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
 	$(am__DEPENDENCIES_1)
 check_frng64_division_SOURCES = check_frng64_division.c
 check_frng64_division_OBJECTS = check_frng64_division.$(OBJEXT)
 check_frng64_division_LDADD = $(LDADD)
 check_frng64_division_DEPENDENCIES =  \
+	$(top_builddir)/src/libfpnglib.la $(am__DEPENDENCIES_1)
+check_frng64_division_k_SOURCES = check_frng64_division_k.c
+check_frng64_division_k_OBJECTS = check_frng64_division_k.$(OBJEXT)
+check_frng64_division_k_LDADD = $(LDADD)
+check_frng64_division_k_DEPENDENCIES =  \
 	$(top_builddir)/src/libfpnglib.la $(am__DEPENDENCIES_1)
 check_frng64_golang_SOURCES = check_frng64_golang.c
 check_frng64_golang_OBJECTS = check_frng64_golang.$(OBJEXT)
@@ -186,6 +195,12 @@ check_frng64_java_OBJECTS = check_frng64_java.$(OBJEXT)
 check_frng64_java_LDADD = $(LDADD)
 check_frng64_java_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
 	$(am__DEPENDENCIES_1)
+check_frng64_lecuyer_simard_SOURCES = check_frng64_lecuyer_simard.c
+check_frng64_lecuyer_simard_OBJECTS =  \
+	check_frng64_lecuyer_simard.$(OBJEXT)
+check_frng64_lecuyer_simard_LDADD = $(LDADD)
+check_frng64_lecuyer_simard_DEPENDENCIES =  \
+	$(top_builddir)/src/libfpnglib.la $(am__DEPENDENCIES_1)
 check_frng64_rationalLCG10_SOURCES = check_frng64_rationalLCG10.c
 check_frng64_rationalLCG10_OBJECTS =  \
 	check_frng64_rationalLCG10.$(OBJEXT)
@@ -257,15 +272,17 @@ am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = check_constants32.c check_constants64.c check_drand48gnu.c \
-	check_fpu.c check_frng64_LESKGW.c check_frng64_division.c \
-	check_frng64_golang.c check_frng64_java.c \
+	check_fpu.c check_frng64_KGW.c check_frng64_division.c \
+	check_frng64_division_k.c check_frng64_golang.c \
+	check_frng64_java.c check_frng64_lecuyer_simard.c \
 	check_frng64_rationalLCG10.c check_irange.c check_lcg.c \
 	check_mt19937v32.c check_mt19937v64.c check_utilities.c \
 	check_vnm.c
 DIST_SOURCES = check_constants32.c check_constants64.c \
-	check_drand48gnu.c check_fpu.c check_frng64_LESKGW.c \
-	check_frng64_division.c check_frng64_golang.c \
-	check_frng64_java.c check_frng64_rationalLCG10.c \
+	check_drand48gnu.c check_fpu.c check_frng64_KGW.c \
+	check_frng64_division.c check_frng64_division_k.c \
+	check_frng64_golang.c check_frng64_java.c \
+	check_frng64_lecuyer_simard.c check_frng64_rationalLCG10.c \
 	check_irange.c check_lcg.c check_mt19937v32.c \
 	check_mt19937v64.c check_utilities.c check_vnm.c
 am__can_run_installinfo = \
@@ -683,13 +700,17 @@ check_fpu$(EXEEXT): $(check_fpu_OBJECTS) $(check_fpu_DEPENDENCIES) $(EXTRA_check
 	@rm -f check_fpu$(EXEEXT)
 	$(AM_V_CCLD)$(check_fpu_LINK) $(check_fpu_OBJECTS) $(check_fpu_LDADD) $(LIBS)
 
-check_frng64_LESKGW$(EXEEXT): $(check_frng64_LESKGW_OBJECTS) $(check_frng64_LESKGW_DEPENDENCIES) $(EXTRA_check_frng64_LESKGW_DEPENDENCIES) 
-	@rm -f check_frng64_LESKGW$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(check_frng64_LESKGW_OBJECTS) $(check_frng64_LESKGW_LDADD) $(LIBS)
+check_frng64_KGW$(EXEEXT): $(check_frng64_KGW_OBJECTS) $(check_frng64_KGW_DEPENDENCIES) $(EXTRA_check_frng64_KGW_DEPENDENCIES) 
+	@rm -f check_frng64_KGW$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(check_frng64_KGW_OBJECTS) $(check_frng64_KGW_LDADD) $(LIBS)
 
 check_frng64_division$(EXEEXT): $(check_frng64_division_OBJECTS) $(check_frng64_division_DEPENDENCIES) $(EXTRA_check_frng64_division_DEPENDENCIES) 
 	@rm -f check_frng64_division$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(check_frng64_division_OBJECTS) $(check_frng64_division_LDADD) $(LIBS)
+
+check_frng64_division_k$(EXEEXT): $(check_frng64_division_k_OBJECTS) $(check_frng64_division_k_DEPENDENCIES) $(EXTRA_check_frng64_division_k_DEPENDENCIES) 
+	@rm -f check_frng64_division_k$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(check_frng64_division_k_OBJECTS) $(check_frng64_division_k_LDADD) $(LIBS)
 
 check_frng64_golang$(EXEEXT): $(check_frng64_golang_OBJECTS) $(check_frng64_golang_DEPENDENCIES) $(EXTRA_check_frng64_golang_DEPENDENCIES) 
 	@rm -f check_frng64_golang$(EXEEXT)
@@ -698,6 +719,10 @@ check_frng64_golang$(EXEEXT): $(check_frng64_golang_OBJECTS) $(check_frng64_gola
 check_frng64_java$(EXEEXT): $(check_frng64_java_OBJECTS) $(check_frng64_java_DEPENDENCIES) $(EXTRA_check_frng64_java_DEPENDENCIES) 
 	@rm -f check_frng64_java$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(check_frng64_java_OBJECTS) $(check_frng64_java_LDADD) $(LIBS)
+
+check_frng64_lecuyer_simard$(EXEEXT): $(check_frng64_lecuyer_simard_OBJECTS) $(check_frng64_lecuyer_simard_DEPENDENCIES) $(EXTRA_check_frng64_lecuyer_simard_DEPENDENCIES) 
+	@rm -f check_frng64_lecuyer_simard$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(check_frng64_lecuyer_simard_OBJECTS) $(check_frng64_lecuyer_simard_LDADD) $(LIBS)
 
 check_frng64_rationalLCG10$(EXEEXT): $(check_frng64_rationalLCG10_OBJECTS) $(check_frng64_rationalLCG10_DEPENDENCIES) $(EXTRA_check_frng64_rationalLCG10_DEPENDENCIES) 
 	@rm -f check_frng64_rationalLCG10$(EXEEXT)
@@ -737,10 +762,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_constants64.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_drand48gnu.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_fpu-check_fpu.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_frng64_LESKGW.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_frng64_KGW.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_frng64_division.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_frng64_division_k.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_frng64_golang.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_frng64_java.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_frng64_lecuyer_simard.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_frng64_rationalLCG10.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_irange.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_lcg.Po@am__quote@
@@ -1046,6 +1073,13 @@ check_frng64_division.log: check_frng64_division$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+check_frng64_division_k.log: check_frng64_division_k$(EXEEXT)
+	@p='check_frng64_division_k$(EXEEXT)'; \
+	b='check_frng64_division_k'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 check_frng64_java.log: check_frng64_java$(EXEEXT)
 	@p='check_frng64_java$(EXEEXT)'; \
 	b='check_frng64_java'; \
@@ -1074,9 +1108,9 @@ check_frng64_golang.log: check_frng64_golang$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-check_frng64_LESKGW.log: check_frng64_LESKGW$(EXEEXT)
-	@p='check_frng64_LESKGW$(EXEEXT)'; \
-	b='check_frng64_LESKGW'; \
+check_frng64_lecuyer_simard.log: check_frng64_lecuyer_simard$(EXEEXT)
+	@p='check_frng64_lecuyer_simard$(EXEEXT)'; \
+	b='check_frng64_lecuyer_simard'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
@@ -1084,6 +1118,13 @@ check_frng64_LESKGW.log: check_frng64_LESKGW$(EXEEXT)
 check_frng64_rationalLCG10.log: check_frng64_rationalLCG10$(EXEEXT)
 	@p='check_frng64_rationalLCG10$(EXEEXT)'; \
 	b='check_frng64_rationalLCG10'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+check_frng64_KGW.log: check_frng64_KGW$(EXEEXT)
+	@p='check_frng64_KGW$(EXEEXT)'; \
+	b='check_frng64_KGW'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

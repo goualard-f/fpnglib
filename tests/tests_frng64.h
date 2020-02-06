@@ -43,7 +43,9 @@ START_TEST(test_##name##_nextf64)																 \
 {																																 \
 	fpngl_frng64_t *frng = fpngl_##name(__VA_ARGS__ __VA_OPT__(,) seed);	\
 	for (uint32_t i = 0; i < 10; ++i) {														 \
+	printf(">i:%lu\n",i);\
 		ck_assert(fpngl_frng64_nextf64(frng) == name##_T[i]);				 \
+		printf("<i:\n");\
 	}																															 \
 	fpngl_frng64_delete(frng);																		 \
 }																																 \

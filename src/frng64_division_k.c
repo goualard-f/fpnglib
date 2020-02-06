@@ -25,19 +25,26 @@
 #include <stdlib.h>
 #include <math.h>
 #include <assert.h>
-#include <fpnglib/frng64_division.h>
+#include <fpnglib/frng64_division_k.h>
 #include <fpnglib/lcg.h>
 
 // State for a float random generator that divides a random integer by a constant
 typedef struct {
 	fpngl_irng_t *irng;
+	uint64_t mask;
 	double denominator;
 } frng_division_state_t;
 
 
 static double nextf64(frng_division_state_t *frng)
 {
-	return fpngl_irng_next(frng->irng)/frng->denominator;
+	/* 
+		 Keeping only the `k` lowest bits. 
+		 Note : we keep the `k` lowest bits (which may be low quality) instead of
+		 the `k` highest bits because the random integer produced may be a 
+		 `uint32_t` cast to an `uint64_t`, and we would get only zeros in that case.
+	*/
+	return (fpngl_irng_next(frng->irng) & frng->mask)/frng->denominator;
 }
 
 static void next_arrayf64(frng_division_state_t *frngstate, double *T, uint32_t n)
@@ -45,7 +52,7 @@ static void next_arrayf64(frng_division_state_t *frngstate, double *T, uint32_t 
 	// Casting double* T to uint64_t *T to avoid creating a temp
 	fpngl_irng_array64(frngstate->irng,(uint64_t*)T,n);
 	for (uint32_t i = 0; i < n ; ++i) {
-		T[i] = ((uint64_t*)T)[i]/frngstate->denominator;
+		T[i] = (((uint64_t*)T)[i] & frngstate->mask)/frngstate->denominator;
 	}
 }
 
@@ -60,11 +67,13 @@ static void frng64_delete(frng_division_state_t *frngstate)
 	free(frngstate);
 }
 
-fpngl_frng64_t *fpngl_bydivision_new(const char *name,
-																		 fpngl_irng_t *irng,
-																		 uint64_t denominator)
+fpngl_frng64_t *fpngl_bydivision_k_new(const char *name,
+																			 fpngl_irng_t *irng,
+																			 uint32_t k,
+																			 uint64_t denominator)
 {
 	assert(denominator != 0);
+	assert(k >= 1 && k <= 64);
 	frng_division_state_t *frngstate = malloc(sizeof(frng_division_state_t));
 	
 	if (frngstate == NULL) {
@@ -72,6 +81,7 @@ fpngl_frng64_t *fpngl_bydivision_new(const char *name,
 	}
 	
 	frngstate->irng = irng;
+	frngstate->mask = (1UL << k) - 1;
 	frngstate->denominator = denominator; // BEWARE: what if some rounding takes place?
 	if ((uint64_t)frngstate->denominator != denominator) {
 		FPNGL_WARNING("Warning: %lu rounded to %.0f\n",denominator,frngstate->denominator);
@@ -83,22 +93,10 @@ fpngl_frng64_t *fpngl_bydivision_new(const char *name,
 													 (uint64_t (*)(void*))frng64_seed);
 }
 
-fpngl_frng64_t *fpngl_matlabp5(uint64_t seed)
+fpngl_frng64_t *fpngl_div53(fpngl_irng_t *irng, uint64_t seed)
 {
-	return fpngl_bydivision_new("matlabp5",
-															fpngl_irng_new64(fpngl_minstd64(seed)),1UL<<31);
+	assert(fpngl_irng_seed(irng) == seed);
+	return fpngl_bydivision_k_new("div53",irng, 53, 1UL << 53);									
 }
 
-fpngl_frng64_t *fpngl_drand48bsd(uint64_t seed)
-{
-	return fpngl_bydivision_new("drand48bsd",
-															fpngl_irng_new64(fpngl_drand48_lcg64(seed)),1UL<<48);
-}
-
-fpngl_frng64_t *fpngl_mupad(uint64_t seed)
-{
-	return fpngl_bydivision_new("mupad",
-															fpngl_irng_new64(fpngl_mupad_lcg64(seed)),
-															0xe8d4a50ff5UL);
-}
 

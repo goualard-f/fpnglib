@@ -25,61 +25,39 @@
 #include <string.h>
 #include <check.h>
 #include <fpnglib/frng64_t.h>
-#include <fpnglib/frng64_division.h>
+#include <fpnglib/frng64_division_k.h>
 #include <fpnglib/lcg.h>
 #include "tests_frng64.h"
 
 const uint64_t seed = 42;
 
-const double matlabp5_T[] = {0x1.58accp-12,
-														 0x1.0c96ae3cp-1,
-														 0x1.78896ee4p-1,
-														 0x1.0d9ff7b8p-2,
-														 0x1.8140db5p-2,
-														 0x1.91fe4d9p-3,
-														 0x1.f3a5bdc4p-1,
-														 0x1.064e8f2p-1,
-														 0x1.0f970468p-1,
-														 0x1.0745a648p-2};
+const double div53_T[] = {0x1.5003fp-32,
+													0x1.f802f4p-30,
+													0x1.1b811b8p-27,
+													0x1.1b80d4ap-25,
+													0x1.09c89f78p-23,
+													0x1.bcd1de68p-23,
+													0x1.14dd9b38p-23,
+													0x1.b3a1a35p-24,
+													0x1.5f1a74f8p-23,
+													0x1.248ebddp-24};
 
-const double drand48bsd_T[] = {0x1.ed25bb9bdap-9,
-															 0x1.673c57df37e8p-1,
-															 0x1.d76eb0253ddep-1,
-															 0x1.0fb40218cb9cp-1,
-															 0x1.a6004e99b304p-2,
-															 0x1.196106fb687p-1,
-															 0x1.e46d00805f18p-3,
-															 0x1.7548c18e0364p-1,
-															 0x1.f4afd8b349aap-1,
-															 0x1.b6175a7a32fp-2};
+fpngl_irng_t *irngdiv53;
 
-const double mupad_T[] = {0x1.e73b8950c7853p-1,
-													0x1.94d5687fdc7d6p-1,
-													0x1.cfae5e9ba0302p-2,
-													0x1.53c37c3d37d83p-1,
-													0x1.3a3f0b3e4423dp-1,
-													0x1.a392a222d588bp-1,
-													0x1.e56c080a47138p-2,
-													0x1.9afc8d07780bfp-2,
-													0x1.f2c6f8782b675p-4,
-													0x1.c1579efde7d3p-1};
-
-TESTING_FRNG64(matlabp5,seed);
-TESTING_FRNG64(drand48bsd,seed);
-TESTING_FRNG64(mupad,seed);
+TESTING_FRNG64(div53,seed,irngdiv53);
 
 Suite *frng64_division_suite(void)
 {
   Suite *s;
   TCase *tc_core;
 
+	irngdiv53 = fpngl_irng_new64(fpngl_randu64(seed));
+	
   s = suite_create("frng64_division");
   
   /* Core test case */
   tc_core = tcase_create("Core");
-  ADD_TEST_FRNG64(matlabp5);
-  ADD_TEST_FRNG64(drand48bsd);
-	ADD_TEST_FRNG64(mupad);
+  ADD_TEST_FRNG64(div53);
   suite_add_tcase(s, tc_core);
   
   return s;

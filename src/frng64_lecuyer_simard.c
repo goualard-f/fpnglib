@@ -1,5 +1,5 @@
 /* Computation of a double precision random number using the RNG
-   by L'Ecuyer and Simard, generalized by Kolonko, Gu and Wu.
+   by L'Ecuyer and Simard.
 
 	Copyright 2019--2020 University of Nantes, France.
 
@@ -25,59 +25,59 @@
 #include <assert.h>
 #include <math.h>
 #include <stdlib.h>
-#include <fpnglib/frng64_LESKGW.h>
+#include <fpnglib/frng64_lecuyer_simard.h>
 #include <fpnglib/irange.h>
 
 typedef struct {
-	fpngl_irng64_t *irng64;
+	fpngl_irng_t *irng;
 	double M; // maximum value for irng64 plus one;
 	double sqM; // Square of the maximum value for irng64 plus one
-} leskgw_state_t;
+} les_state_t;
 
-static double LESKGW_nextf64(leskgw_state_t *state)
+static double LES_nextf64(les_state_t *state)
 {
-	uint64_t v1 = fpngl_irng64_next64(state->irng64);
-	uint64_t v2 = fpngl_irng64_next64(state->irng64);
+	uint64_t v1 = fpngl_irng_next64(state->irng);
+	uint64_t v2 = fpngl_irng_next64(state->irng);
 	return v1/state->M + v2/state->sqM;
 }
 
-static void LESKGW_next_arrayf64(leskgw_state_t *state,
+static void LES_next_arrayf64(les_state_t *state,
 																 double *T, uint32_t n)
 {
 	for (uint32_t i = 0; i < n; ++i) {
-		T[i] = LESKGW_nextf64(state);
+		T[i] = LES_nextf64(state);
 	}
 }
 
-static uint64_t LESKGW_seed(leskgw_state_t *state)
+static uint64_t LES_seed(les_state_t *state)
 {
-	return fpngl_irng64_seed(state->irng64);
+	return fpngl_irng_seed(state->irng);
 }
 
-static void LESKGW_delete(leskgw_state_t *state)
+static void LES_delete(les_state_t *state)
 {
-	fpngl_irng64_delete(state->irng64);
+	fpngl_irng_delete(state->irng);
 	free(state);
 }
 
 
-fpngl_frng64_t *fpngl_LESKGW(fpngl_irng64_t *irng64, uint64_t seed)
+fpngl_frng64_t *fpngl_lecuyer_simard(fpngl_irng_t *irng, uint64_t seed)
 {
-	leskgw_state_t *state = malloc(sizeof(leskgw_state_t));
+	les_state_t *state = malloc(sizeof(les_state_t));
 	if (state == NULL) {
 		return NULL;
 	}
-	state->irng64 = irng64;
-	// Warning: fpngl_irng64_max(irng64)+1.0 must be representable
+	state->irng = irng;
+	// Warning: fpngl_irng_max(irng)+1.0 must be representable
 	// as a double precision number.
-	state->M = fpngl_irng64_max(irng64)+1.0;
-	// Warning: (fpngl_irng64_max(irng64)+1.0)^2 must be representable
+	state->M = fpngl_irng_max(irng)+1.0;
+	// Warning: (fpngl_irng_max(irng)+1.0)^2 must be representable
 	// as a double precision number.
 	state->sqM = state->M*state->M;
 	
-	return  fpngl_frng64_new("LESKGW", state,
-													 (double (*)(void*))LESKGW_nextf64,
-													 (void (*)(void*, double*, uint32_t))LESKGW_next_arrayf64,
-													 (void (*)(void*))LESKGW_delete,
-													 (uint64_t (*)(void*))LESKGW_seed);
+	return  fpngl_frng64_new("lecuyer_simard", state,
+													 (double (*)(void*))LES_nextf64,
+													 (void (*)(void*, double*, uint32_t))LES_next_arrayf64,
+													 (void (*)(void*))LES_delete,
+													 (uint64_t (*)(void*))LES_seed);
 }

@@ -1,4 +1,4 @@
-/* Unit tests for frng64_LESKGW.c
+/* Unit tests for frng64_KGW.c
 
 	Copyright 2019--2020 University of Nantes, France.
 
@@ -24,39 +24,39 @@
 #include <stdlib.h>
 #include <string.h>
 #include <check.h>
-#include <fpnglib/frng64_LESKGW.h>
+#include <stdio.h>
+#include <fpnglib/frng64_KGW.h>
 #include <fpnglib/lcg.h>
 #include "tests_frng64.h"
 
 const uint64_t seed = 42;
 
-const double LESKGW_T[] = {0x1.5003f00fc017ap-10,
-													 0x1.1b811b88dc06ap-5,
-													 0x1.09c89f7b79a3cp-1,
-													 0x1.14dd9b39b3a1ap-1,
-													 0x1.5f1a74f9248ecp-1,
-													 0x1.15be1cbabbe4bp-1,
-													 0x1.bffc09e293a84p-3,
-													 0x1.fec7163a251a8p-1,
-													 0x1.e93f1fe9b73acp-3,
-													 0x1.f93c0f73f6486p-2};
+const double KGW_T[] = {0x1.555755525559dp-3,
+												0x1.00003fffd0002p-2,
+												0x1.31eca7c176739p-1,
+												0x1.92ccf14f49d89p-1,
+												0x1.aaa0033de6a46p-2,
+												0x1.965c18a8e6148p-1,
+												0x1.78f5c0504cd5cp-1,
+												0x1.133574e48fdb5p-1,
+												0x1.92d94001ecb3p-2,
+												0x1.fe1333f4d026ap-1};
 
-fpngl_irng64_t *irng64;
+fpngl_irng_t *irng;
 
-TESTING_FRNG64(LESKGW,seed,irng64);
+TESTING_FRNG64(KGW,seed,irng);
 
-Suite *frng64_LESKGW_suite(void)
+Suite *frng64_KGW_suite(void)
 {
   Suite *s;
   TCase *tc_core;
 
-	irng64 = fpngl_randu64(seed);
-	
-  s = suite_create("frng64_LESKGW");
+	irng = fpngl_irng_new64(fpngl_randu64(seed));
+  s = suite_create("frng64_KGW");
   
   /* Core test case */
   tc_core = tcase_create("Core");
-	ADD_TEST_FRNG64(LESKGW);
+	ADD_TEST_FRNG64(KGW);
   suite_add_tcase(s, tc_core);
   
   return s;
@@ -68,7 +68,7 @@ int main(void)
   Suite *s;
   SRunner *sr;
   
-  s = frng64_LESKGW_suite();
+  s = frng64_KGW_suite();
   sr = srunner_create(s);
   
   srunner_run_all(sr, CK_NORMAL);

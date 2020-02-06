@@ -23,9 +23,10 @@ lib_LTLIBRARIES = libfpnglib.la
 libfpnglib_la_SOURCES = fpu.c irng32_t.c irng64_t.c irng_t.c irange.c \
 	utilities.c \
 	mt19937ar.c mt19937-64.c lcg.c \
-	frng64_t.c frng64_division.c \
+	frng64_t.c frng64_division.c frng64_division_k.c \
 	frng64_drand48gnu.c frng64_java.c frng64_golang.c \
-	frng64_LESKGW.c frng64_rationalLCG10.c \
+	frng64_lecuyer_simard.c frng64_rationalLCG10.c \
+	frng64_KGW.c \
 	irng32_vnm.c
 
 libfpnglib_la_CPPFLAGS = -I$(top_srcdir)/src
@@ -33,8 +34,9 @@ pkginclude_HEADERS = fpngl_config.h constants32.h constants64.h fpnglib.h fpu.h 
 	irng32_t.h irng64_t.h irng_t.h irange.h utilities.h debug.h\
 	mt19937ar.h mt19937-64.h \
 	lcg.h \
-	frng64_t.h frng64_division.h \
+	frng64_t.h frng64_division.h frng64_division_k.h \
 	frng64_drand48gnu.h frng64_java.h frng64_golang.h \
-	frng64_LESKGW.h frng64_rationalLCG10.h\
+	frng64_lecuyer_simard.h frng64_rationalLCG10.h \
+	frng64_KGW.h \
 	irng32_vnm.h
 libfpnglib_la_LDFLAGS = -version-info $(LT_VERSION_INFO)
