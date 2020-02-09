@@ -22,7 +22,6 @@
 
 #include <global.h>
 #include <stdlib.h>
-#include <assert.h>
 #include <fpnglib/lcg.h>
 #include <fpnglib/utilities.h>
 

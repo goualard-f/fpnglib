@@ -19,13 +19,15 @@
 #	see https://www.gnu.org/licenses/. 	
 
 TESTS = check_constants32 check_constants64 check_fpu check_mt19937v32 check_mt19937v64 \
-	check_irange	check_lcg check_utilities check_frng64_division check_frng64_division_k \
+	check_irange	check_lcg check_utilities check_uistack check_walker_vose \
+	check_frng64_division check_frng64_division_k \
 	check_frng64_java \
 	check_vnm check_drand48gnu check_frng64_golang \
 	check_frng64_lecuyer_simard check_frng64_rationalLCG10 \
-	check_frng64_KGW
+	check_frng64_KGW check_frng64_fog97 check_frng64_fog05
 check_PROGRAMS = $(TESTS)
 LDADD = $(top_builddir)/src/libfpnglib.la @CHECK_LIBS@ -lm $(LIBS)
 AM_CFLAGS = -I.. -Wall @CHECK_CFLAGS@
 
 check_fpu_CFLAGS = -frounding-math -I.. -Wall @CHECK_CFLAGS@ -Wno-unused-but-set-variable
+

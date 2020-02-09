@@ -24,7 +24,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <check.h>
-#include <fpnglib/debug.h>
 #include <fpnglib/irng64_t.h>
 #include <fpnglib/frng64_drand48gnu.h>
 

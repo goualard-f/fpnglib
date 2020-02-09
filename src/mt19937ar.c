@@ -67,7 +67,6 @@
 
 #include <global.h>
 #include <stdlib.h>
-#include <assert.h>
 #include <fpnglib/mt19937ar.h>
 
 /* Period parameters */  

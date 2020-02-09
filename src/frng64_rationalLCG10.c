@@ -22,7 +22,6 @@
  */
 
 #include <global.h>
-#include <assert.h>
 #include <math.h>
 #include <stdlib.h>
 #include <fpnglib/frng64_rationalLCG10.h>
@@ -32,7 +31,6 @@ static double rationalLCG10_nextf64(fpngl_irng64_t *irng64)
 {
 	uint64_t s = fpngl_irng64_next64(irng64);
 	uint64_t q = fpngl_irng64_next64(irng64);
-	FPNGL_DEBUG("s: %lu / q: %lu\n",s,q);
 	if (s < q) {
 		return s/(double)q;
 	} else {

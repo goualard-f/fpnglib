@@ -28,23 +28,24 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <fpnglib/mt19937ar.h>
+#include <fpnglib/irng_t.h>
 #include <fpnglib/irange.h>
 
 const uint32_t seed = 42;
 const uint64_t niters = 1000000000;
 
-fpngl_irng32_t *irng32a;
-fpngl_irng32_t *irng32b;
+fpngl_irng_t *irnga;
+fpngl_irng_t *irngb;
 
 uint32_t fair(void)
 {
-	return fpngl_ubound32(irng32a,2);
+	return fpngl_ubound32(irnga,2);
 }
 
 
 uint32_t biased(void)
 {
-	return fpngl_ubound32(irng32b,3) % 2;
+	return fpngl_ubound32(irngb,3) % 2;
 }
 
 int main(void)
@@ -52,8 +53,8 @@ int main(void)
 	uint64_t fairT[2] = {0, 0};
 	uint64_t biasedT[2] = {0, 0};
 
-	irng32a = fpngl_mt19937v32(seed);
-	irng32b = fpngl_mt19937v32(seed);
+	irnga = fpngl_irng_new32(fpngl_mt19937v32(seed));
+	irngb = fpngl_irng_new32(fpngl_mt19937v32(seed));
 	
 	for (uint64_t i = 0; i < niters; ++i) {
 		++fairT[fair()];
@@ -62,6 +63,6 @@ int main(void)
 	printf("Percentage of zeros (fair):\t %f\n",100*(fairT[0]/(double)niters));
 	printf("Percentage of zeros (biased):\t %f\n",100*(biasedT[0]/(double)niters));
 	
-	fpngl_irng32_delete(irng32a);
-	fpngl_irng32_delete(irng32b);
+	fpngl_irng_delete(irnga);
+	fpngl_irng_delete(irngb);
 }

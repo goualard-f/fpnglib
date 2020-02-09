@@ -28,7 +28,6 @@
 #include <fpnglib/irng_t.h>
 #include <fpnglib/irng32_t.h>
 #include <fpnglib/mt19937ar.h>
-#include <fpnglib/debug.h>
 
 // Ten first numbers generated with an array seed of {0x123, 0x234, 0x345, 0x456}
 const uint32_t mt19937v32_array[10] = {1067595299UL,

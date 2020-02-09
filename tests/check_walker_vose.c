@@ -1,4 +1,4 @@
-/* Unit tests for irange.c
+/* Unit tests for walker_vose.c
 
 	Copyright 2019--2020 University of Nantes, France.
 
@@ -22,67 +22,48 @@
 
 #include <config.h>
 #include <stdlib.h>
-#include <stdint.h>
 #include <check.h>
-#include <fpnglib/irange.h>
+#include <fpnglib/debug.h>
+#include <fpnglib/discrete_distribution.h>
 #include <fpnglib/mt19937ar.h>
 
-START_TEST(test_n_bits32)
-{
-	ck_assert(fpngl_n_bits32(0x10000000,7) == 0x8);
-	ck_assert(fpngl_n_bits32(0x80000000,7) == 0x40);
-	ck_assert(fpngl_n_bits32(0xf0000f00,3) == 0x7);
-}
-END_TEST
+const uint32_t seed = 42;
 
-START_TEST(test_n_bits64)
+START_TEST(test_distribution)
 {
-	ck_assert(fpngl_n_bits64(0x1000000000000000,7) == 0x8);
-	ck_assert(fpngl_n_bits64(0x8000000000000000,7) == 0x40);
-	ck_assert(fpngl_n_bits64(0xf0000f0000000000,3) == 0x7);
-}
-END_TEST
+	const double P[4] = {0.5, 0.125, 0.25, 0.125}; 
+	const uint32_t ndraws = 10;
 
-START_TEST(test_ubound32)
-{
-	fpngl_irng_t *irng = fpngl_irng_new32(fpngl_mt19937v32(42));
+	fpngl_irng_t *irng = fpngl_irng_new32(fpngl_mt19937v32(seed));
+	fpngl_ddistribution_t *dd = fpngl_ddistribution_new(irng, P, 4);
+	uint32_t occurrences[4] = { 0, 0, 0, 0};
 
-	for (uint32_t i = 0; i < 100; ++i) {
-		uint32_t v = fpngl_ubound32(irng,2);
-		ck_assert(v == 0 || v == 1);
+	for (uint32_t i = 0; i < ndraws; ++i) {
+		uint32_t drawn = fpngl_ddistribution_next32(dd);
+		FPNGL_DEBUG("Drawn: %u\n",drawn);
+		++occurrences[drawn];
 	}
-	
-	fpngl_irng_delete(irng);
-}
-END_TEST
 
-START_TEST(test_range32)
-{
-	fpngl_irng_t *irng = fpngl_irng_new32(fpngl_mt19937v32(42));
-
-	for (uint32_t i = 0; i < 10000; ++i) {
-		int32_t v = fpngl_range32(irng,-1,2);
-		ck_assert(v == -1 || v == 0 || v == 1);
+	for (uint32_t j = 0; j < 4; ++j) {
+		//ck_assert_double_eq_tol(P[j],occurrences[j]/(double)ndraws);
+		FPNGL_DEBUG("%g ",occurrences[j]/(double)ndraws);
 	}
-	
-	fpngl_irng_delete(irng);
+	FPNGL_DEBUG("\n");
+	fpngl_ddistribution_delete(dd);
 }
 END_TEST
 
-Suite *irange_suite(void)
+Suite *walker_vose_suite(void)
 {
   Suite *s;
   TCase *tc_core;
   
-  s = suite_create("irange");
+  s = suite_create("walker_vose");
   
   /* Core test case */
   tc_core = tcase_create("Core");
   
-  tcase_add_test(tc_core, test_n_bits32);
-  tcase_add_test(tc_core, test_n_bits64);
-  tcase_add_test(tc_core, test_ubound32);
-  tcase_add_test(tc_core, test_range32);
+  tcase_add_test(tc_core, test_distribution);
   suite_add_tcase(s, tc_core);
   
   return s;
@@ -94,7 +75,7 @@ int main(void)
   Suite *s;
   SRunner *sr;
   
-  s = irange_suite();
+  s = walker_vose_suite();
   sr = srunner_create(s);
   
   srunner_run_all(sr, CK_NORMAL);

@@ -24,7 +24,6 @@
 #include <global.h>
 #include <stdlib.h>
 #include <math.h>
-#include <assert.h>
 #include <fpnglib/frng64_division.h>
 #include <fpnglib/lcg.h>
 

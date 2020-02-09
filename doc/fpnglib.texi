@@ -35,12 +35,26 @@ by the Foundation.
 
 @contents
 
-@chapter About FPNGlib
+@chapter What is FPNGlib?
 
+FPNGlib is a C library 
 This file documents FPNGlib, a library primarily aimed at drawing floating-point numbers at random.
 
 More information about the FPNGlib library can be found at the project homepage,
 @uref{https://gitlab.univ-nantes.fr/goualard-f/fpnglib}.
+
+The FPNGlib library contains code from third parties, specifically:
+@itemize @bullet
+@item @url{https://maths-people.anu.edu.au/~brent/random.html,xorgens 3.06} by Richard Brent, licenced under the @url{http://www.gnu.org/copyleft/gpl.html,GNU General Public License};
+@item Both 64 bits and 32 bits versions of the @url{http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html,Mersenne twister}, by Takuji Nishimura and Makoto Matsumoto, whose licenses can be found in files @file{src/mt19937-64.c} and @file{src/mt19937ar.c}.
+@end itemize
+
+
+@chapter Uniform Random Generators
+
+@section Integer Random Generators
+
+@section Floating-Point Numbers Random Generators
 
 @bye
 

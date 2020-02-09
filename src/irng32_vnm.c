@@ -21,7 +21,6 @@
  */
 
 #include <global.h>
-#include <assert.h>
 #include <stdlib.h>
 #include <fpnglib/irng32_vnm.h>
 

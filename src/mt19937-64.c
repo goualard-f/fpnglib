@@ -79,7 +79,6 @@
 
 #include <global.h>
 #include <stdlib.h>
-#include <assert.h>
 #include <fpnglib/mt19937-64.h>
 #include <fpnglib/utilities.h>
 

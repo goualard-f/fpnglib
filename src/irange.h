@@ -30,8 +30,7 @@
 
 #include <fpnglib/fpngl_config.h>
 #include <stdint.h>
-#include <fpnglib/irng32_t.h>
-#include <fpnglib/irng64_t.h>
+#include <fpnglib/irng_t.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -55,14 +54,14 @@ extern "C" {
 		and modified by O'Neill (http://www.pcg-random.org/posts/bounded-rands.html).
 		
 	*/
-	uint32_t fpngl_ubound32(fpngl_irng32_t *irng32, uint32_t a);
-	uint64_t fpngl_ubound64(fpngl_irng64_t *irng64, uint64_t a);
+	uint32_t fpngl_ubound32(fpngl_irng_t *irng, uint32_t a);
+	uint64_t fpngl_ubound64(fpngl_irng_t *irng, uint64_t a);
 
 	/*
 		Return a number in the domain `[a, b)`.
 	 */
-	int32_t fpngl_range32(fpngl_irng32_t *irng32, int32_t a, int32_t b);
-	int64_t fpngl_range64(fpngl_irng64_t *irng64, int64_t a, int64_t b);
+	int32_t fpngl_range32(fpngl_irng_t *irng, int32_t a, int32_t b);
+	int64_t fpngl_range64(fpngl_irng_t *irng, int64_t a, int64_t b);
 
 	
 #ifdef __cplusplus

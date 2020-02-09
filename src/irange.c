@@ -21,7 +21,6 @@
  */
 
 #include <global.h>
-#include <assert.h>
 #include <fpnglib/irange.h>
 
 uint32_t fpngl_n_bits32(uint32_t v, uint32_t n)
@@ -36,9 +35,9 @@ uint64_t fpngl_n_bits64(uint64_t v, uint32_t n)
 	return v >> (64-n);
 }
 
-uint32_t fpngl_ubound32(fpngl_irng32_t *irng32, uint32_t a)
+uint32_t fpngl_ubound32(fpngl_irng_t *irng, uint32_t a)
 {
-	uint32_t x = fpngl_irng32_next32(irng32);
+	uint32_t x = fpngl_irng_next32(irng);
 	uint64_t m = (uint64_t)x * (uint64_t)a;
 	uint32_t l = (uint32_t)m;
 	if (l < a) {
@@ -50,7 +49,7 @@ uint32_t fpngl_ubound32(fpngl_irng32_t *irng32, uint32_t a)
 			}
 		}
 		while (l < t) {
-			x = fpngl_irng32_next32(irng32);
+			x = fpngl_irng_next32(irng);
 			m = (uint64_t)x * (uint64_t)a;
 			l = (uint32_t)m;
 		}
@@ -58,20 +57,20 @@ uint32_t fpngl_ubound32(fpngl_irng32_t *irng32, uint32_t a)
 	return m >> 32;
 }
 
-uint64_t fpngl_ubound64(fpngl_irng64_t *irng64, uint64_t a)
+uint64_t fpngl_ubound64(fpngl_irng_t *irng, uint64_t a)
 {
 	// TODO
 	assert(0);
 	return 0;
 }
 
-int32_t fpngl_range32(fpngl_irng32_t *irng32, int32_t a, int32_t b)
+int32_t fpngl_range32(fpngl_irng_t *irng, int32_t a, int32_t b)
 {
 	int32_t k = b-a;
-	return fpngl_ubound32(irng32,k) + a;
+	return fpngl_ubound32(irng,k) + a;
 }
 
-int64_t fpngl_range64(fpngl_irng64_t *irng64, int64_t a, int64_t b)
+int64_t fpngl_range64(fpngl_irng_t *irng64, int64_t a, int64_t b)
 {
 	// TODO
 	assert(0);

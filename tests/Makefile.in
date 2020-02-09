@@ -111,12 +111,14 @@ TESTS = check_constants32$(EXEEXT) check_constants64$(EXEEXT) \
 	check_fpu$(EXEEXT) check_mt19937v32$(EXEEXT) \
 	check_mt19937v64$(EXEEXT) check_irange$(EXEEXT) \
 	check_lcg$(EXEEXT) check_utilities$(EXEEXT) \
+	check_uistack$(EXEEXT) check_walker_vose$(EXEEXT) \
 	check_frng64_division$(EXEEXT) \
 	check_frng64_division_k$(EXEEXT) check_frng64_java$(EXEEXT) \
 	check_vnm$(EXEEXT) check_drand48gnu$(EXEEXT) \
 	check_frng64_golang$(EXEEXT) \
 	check_frng64_lecuyer_simard$(EXEEXT) \
-	check_frng64_rationalLCG10$(EXEEXT) check_frng64_KGW$(EXEEXT)
+	check_frng64_rationalLCG10$(EXEEXT) check_frng64_KGW$(EXEEXT) \
+	check_frng64_fog97$(EXEEXT) check_frng64_fog05$(EXEEXT)
 check_PROGRAMS = $(am__EXEEXT_1)
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -136,12 +138,14 @@ am__EXEEXT_1 = check_constants32$(EXEEXT) check_constants64$(EXEEXT) \
 	check_fpu$(EXEEXT) check_mt19937v32$(EXEEXT) \
 	check_mt19937v64$(EXEEXT) check_irange$(EXEEXT) \
 	check_lcg$(EXEEXT) check_utilities$(EXEEXT) \
+	check_uistack$(EXEEXT) check_walker_vose$(EXEEXT) \
 	check_frng64_division$(EXEEXT) \
 	check_frng64_division_k$(EXEEXT) check_frng64_java$(EXEEXT) \
 	check_vnm$(EXEEXT) check_drand48gnu$(EXEEXT) \
 	check_frng64_golang$(EXEEXT) \
 	check_frng64_lecuyer_simard$(EXEEXT) \
-	check_frng64_rationalLCG10$(EXEEXT) check_frng64_KGW$(EXEEXT)
+	check_frng64_rationalLCG10$(EXEEXT) check_frng64_KGW$(EXEEXT) \
+	check_frng64_fog97$(EXEEXT) check_frng64_fog05$(EXEEXT)
 check_constants32_SOURCES = check_constants32.c
 check_constants32_OBJECTS = check_constants32.$(OBJEXT)
 check_constants32_LDADD = $(LDADD)
@@ -185,6 +189,16 @@ check_frng64_division_k_OBJECTS = check_frng64_division_k.$(OBJEXT)
 check_frng64_division_k_LDADD = $(LDADD)
 check_frng64_division_k_DEPENDENCIES =  \
 	$(top_builddir)/src/libfpnglib.la $(am__DEPENDENCIES_1)
+check_frng64_fog05_SOURCES = check_frng64_fog05.c
+check_frng64_fog05_OBJECTS = check_frng64_fog05.$(OBJEXT)
+check_frng64_fog05_LDADD = $(LDADD)
+check_frng64_fog05_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
+check_frng64_fog97_SOURCES = check_frng64_fog97.c
+check_frng64_fog97_OBJECTS = check_frng64_fog97.$(OBJEXT)
+check_frng64_fog97_LDADD = $(LDADD)
+check_frng64_fog97_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
 check_frng64_golang_SOURCES = check_frng64_golang.c
 check_frng64_golang_OBJECTS = check_frng64_golang.$(OBJEXT)
 check_frng64_golang_LDADD = $(LDADD)
@@ -227,6 +241,11 @@ check_mt19937v64_OBJECTS = check_mt19937v64.$(OBJEXT)
 check_mt19937v64_LDADD = $(LDADD)
 check_mt19937v64_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
 	$(am__DEPENDENCIES_1)
+check_uistack_SOURCES = check_uistack.c
+check_uistack_OBJECTS = check_uistack.$(OBJEXT)
+check_uistack_LDADD = $(LDADD)
+check_uistack_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
 check_utilities_SOURCES = check_utilities.c
 check_utilities_OBJECTS = check_utilities.$(OBJEXT)
 check_utilities_LDADD = $(LDADD)
@@ -236,6 +255,11 @@ check_vnm_SOURCES = check_vnm.c
 check_vnm_OBJECTS = check_vnm.$(OBJEXT)
 check_vnm_LDADD = $(LDADD)
 check_vnm_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
+check_walker_vose_SOURCES = check_walker_vose.c
+check_walker_vose_OBJECTS = check_walker_vose.$(OBJEXT)
+check_walker_vose_LDADD = $(LDADD)
+check_walker_vose_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
 	$(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -273,18 +297,21 @@ am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = check_constants32.c check_constants64.c check_drand48gnu.c \
 	check_fpu.c check_frng64_KGW.c check_frng64_division.c \
-	check_frng64_division_k.c check_frng64_golang.c \
-	check_frng64_java.c check_frng64_lecuyer_simard.c \
-	check_frng64_rationalLCG10.c check_irange.c check_lcg.c \
-	check_mt19937v32.c check_mt19937v64.c check_utilities.c \
-	check_vnm.c
+	check_frng64_division_k.c check_frng64_fog05.c \
+	check_frng64_fog97.c check_frng64_golang.c check_frng64_java.c \
+	check_frng64_lecuyer_simard.c check_frng64_rationalLCG10.c \
+	check_irange.c check_lcg.c check_mt19937v32.c \
+	check_mt19937v64.c check_uistack.c check_utilities.c \
+	check_vnm.c check_walker_vose.c
 DIST_SOURCES = check_constants32.c check_constants64.c \
 	check_drand48gnu.c check_fpu.c check_frng64_KGW.c \
 	check_frng64_division.c check_frng64_division_k.c \
+	check_frng64_fog05.c check_frng64_fog97.c \
 	check_frng64_golang.c check_frng64_java.c \
 	check_frng64_lecuyer_simard.c check_frng64_rationalLCG10.c \
 	check_irange.c check_lcg.c check_mt19937v32.c \
-	check_mt19937v64.c check_utilities.c check_vnm.c
+	check_mt19937v64.c check_uistack.c check_utilities.c \
+	check_vnm.c check_walker_vose.c
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -712,6 +739,14 @@ check_frng64_division_k$(EXEEXT): $(check_frng64_division_k_OBJECTS) $(check_frn
 	@rm -f check_frng64_division_k$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(check_frng64_division_k_OBJECTS) $(check_frng64_division_k_LDADD) $(LIBS)
 
+check_frng64_fog05$(EXEEXT): $(check_frng64_fog05_OBJECTS) $(check_frng64_fog05_DEPENDENCIES) $(EXTRA_check_frng64_fog05_DEPENDENCIES) 
+	@rm -f check_frng64_fog05$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(check_frng64_fog05_OBJECTS) $(check_frng64_fog05_LDADD) $(LIBS)
+
+check_frng64_fog97$(EXEEXT): $(check_frng64_fog97_OBJECTS) $(check_frng64_fog97_DEPENDENCIES) $(EXTRA_check_frng64_fog97_DEPENDENCIES) 
+	@rm -f check_frng64_fog97$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(check_frng64_fog97_OBJECTS) $(check_frng64_fog97_LDADD) $(LIBS)
+
 check_frng64_golang$(EXEEXT): $(check_frng64_golang_OBJECTS) $(check_frng64_golang_DEPENDENCIES) $(EXTRA_check_frng64_golang_DEPENDENCIES) 
 	@rm -f check_frng64_golang$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(check_frng64_golang_OBJECTS) $(check_frng64_golang_LDADD) $(LIBS)
@@ -744,6 +779,10 @@ check_mt19937v64$(EXEEXT): $(check_mt19937v64_OBJECTS) $(check_mt19937v64_DEPEND
 	@rm -f check_mt19937v64$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(check_mt19937v64_OBJECTS) $(check_mt19937v64_LDADD) $(LIBS)
 
+check_uistack$(EXEEXT): $(check_uistack_OBJECTS) $(check_uistack_DEPENDENCIES) $(EXTRA_check_uistack_DEPENDENCIES) 
+	@rm -f check_uistack$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(check_uistack_OBJECTS) $(check_uistack_LDADD) $(LIBS)
+
 check_utilities$(EXEEXT): $(check_utilities_OBJECTS) $(check_utilities_DEPENDENCIES) $(EXTRA_check_utilities_DEPENDENCIES) 
 	@rm -f check_utilities$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(check_utilities_OBJECTS) $(check_utilities_LDADD) $(LIBS)
@@ -751,6 +790,10 @@ check_utilities$(EXEEXT): $(check_utilities_OBJECTS) $(check_utilities_DEPENDENC
 check_vnm$(EXEEXT): $(check_vnm_OBJECTS) $(check_vnm_DEPENDENCIES) $(EXTRA_check_vnm_DEPENDENCIES) 
 	@rm -f check_vnm$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(check_vnm_OBJECTS) $(check_vnm_LDADD) $(LIBS)
+
+check_walker_vose$(EXEEXT): $(check_walker_vose_OBJECTS) $(check_walker_vose_DEPENDENCIES) $(EXTRA_check_walker_vose_DEPENDENCIES) 
+	@rm -f check_walker_vose$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(check_walker_vose_OBJECTS) $(check_walker_vose_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -765,6 +808,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_frng64_KGW.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_frng64_division.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_frng64_division_k.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_frng64_fog05.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_frng64_fog97.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_frng64_golang.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_frng64_java.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_frng64_lecuyer_simard.Po@am__quote@
@@ -773,8 +818,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_lcg.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_mt19937v32.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_mt19937v64.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_uistack.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_utilities.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_vnm.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_walker_vose.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -1066,6 +1113,20 @@ check_utilities.log: check_utilities$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+check_uistack.log: check_uistack$(EXEEXT)
+	@p='check_uistack$(EXEEXT)'; \
+	b='check_uistack'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+check_walker_vose.log: check_walker_vose$(EXEEXT)
+	@p='check_walker_vose$(EXEEXT)'; \
+	b='check_walker_vose'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 check_frng64_division.log: check_frng64_division$(EXEEXT)
 	@p='check_frng64_division$(EXEEXT)'; \
 	b='check_frng64_division'; \
@@ -1125,6 +1186,20 @@ check_frng64_rationalLCG10.log: check_frng64_rationalLCG10$(EXEEXT)
 check_frng64_KGW.log: check_frng64_KGW$(EXEEXT)
 	@p='check_frng64_KGW$(EXEEXT)'; \
 	b='check_frng64_KGW'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+check_frng64_fog97.log: check_frng64_fog97$(EXEEXT)
+	@p='check_frng64_fog97$(EXEEXT)'; \
+	b='check_frng64_fog97'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+check_frng64_fog05.log: check_frng64_fog05$(EXEEXT)
+	@p='check_frng64_fog05$(EXEEXT)'; \
+	b='check_frng64_fog05'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

@@ -1,4 +1,4 @@
-/* Macros and configuration material used throughout the source of library.
+/* Common types used in the library
 
 	Copyright 2019--2020 University of Nantes, France.
 
@@ -19,30 +19,44 @@
 	see https://www.gnu.org/licenses/. 	
 	
  */
-/*
-	BEWARE: this file must be included by '.c' files only and will not be installed.
-	Include fpnglib/fpngl_config.h if you need some configuration macros in public 
-	header files.
-*/
 
-#ifndef __fpngl_global_h__
-#define __fpngl_global_h__
+#ifndef __fpngl_types_h__
+#define __fpngl_types_h__
 
-#include <config.h>
-
-#ifndef NDEBUG
-#  include <fpnglib/debug.h>
-#endif
-
-#include <assert.h>
+#include <fpnglib/fpngl_config.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+	/*
+		Type used to access the fields of a double precision number.
+	 */
+	typedef union {
+		double d;
+		uint64_t ui;
+	} fpngl_uintf64_t;
+
+	/*
+		Type used to access the fields of a single precision number.
+	 */
+	typedef union {
+		float f;
+		uint32_t ui;
+	} fpngl_uintf32_t;
+
+	// Sign expected for a random floating-point number.
+	typedef enum {
+			 fpngl_positive,
+			 fpngl_negative,
+			 fpngl_whatever
+  } fpngl_sign_t;
+
+	typedef struct fpngl_fp_distribution_t fpngl_fp_distribution_t;
 	
 #ifdef __cplusplus
 }
 #endif
 
-#endif // __fpngl_global_h__
+#endif // __fpngl_types_h__

@@ -1,4 +1,4 @@
-/* Encapsulation of an RNG able to produce double precision floats
+/* Encapsulation of an RNG able to produce single precision floats
 
 	Copyright 2019--2020 University of Nantes, France.
 
@@ -22,62 +22,62 @@
 
 #include <global.h>
 #include <stdlib.h>
-#include <fpnglib/frng64_t.h>
+#include <fpnglib/frng32_t.h>
 
 
-struct fpngl_frng64_t {
+struct fpngl_frng32_t {
 	void *state;
 	const char *name;
-	double (*nextf64)(void*);
-	void (*next_arrayf64)(void *state, double *T, uint32_t n);
+	float(*nextf32)(void*);
+	void (*next_arrayf32)(void *state, float *T, uint32_t n);
 	void (*delete)(void*);
-	uint64_t (*seed)(void *);
+	uint32_t (*seed)(void *);
 };
 
-fpngl_frng64_t *fpngl_frng64_new(const char *name,
+fpngl_frng32_t *fpngl_frng32_new(const char *name,
 																 void *state,
-																 double (*nextf64)(void*),
-																 void (*next_arrayf64)(void *state,
-																											 double *T, uint32_t n),
+																 float (*nextf32)(void*),
+																 void (*next_arrayf32)(void *state,
+																											 float *T, uint32_t n),
 																 void (*delete)(void*),
-																 uint64_t (*seed)(void*))
+																 uint32_t (*seed)(void*))
 {
-	fpngl_frng64_t *rng = malloc(sizeof(fpngl_frng64_t));
+	fpngl_frng32_t *rng = malloc(sizeof(fpngl_frng32_t));
 	if (rng == NULL) {
 		return NULL;
 	}
 	rng->state = state;
 	rng->name = name;
-	rng->nextf64 = nextf64;
-	rng->next_arrayf64 = next_arrayf64;
+	rng->nextf32 = nextf32;
+	rng->next_arrayf32 = next_arrayf32;
 	rng->delete = delete;
 	rng->seed = seed;
 	return rng;
 }
 
-const char *fpngl_frng64_name(fpngl_frng64_t *frng)
+const char *fpngl_frng32_name(fpngl_frng32_t *frng)
 {
 	return frng->name;
 }
 
-void fpngl_frng64_delete(fpngl_frng64_t *frng)
+void fpngl_frng32_delete(fpngl_frng32_t *frng)
 {
 	frng->delete(frng->state);
 	free(frng);
 }
 
-uint64_t fpngl_frng64_seed(fpngl_frng64_t *frng)
+uint32_t fpngl_frng32_seed(fpngl_frng32_t *frng)
 {
 	return frng->seed(frng->state);
 }
 
 
-double fpngl_frng64_nextf64(fpngl_frng64_t *frng)
+float fpngl_frng32_nextf32(fpngl_frng32_t *frng)
 {
-	return frng->nextf64(frng->state);
+	return frng->nextf32(frng->state);
 }
 
-void fpngl_frng64_next_arrayf64(fpngl_frng64_t *frng, double *T, uint32_t n)
+void fpngl_frng32_next_arrayf32(fpngl_frng32_t *frng, float *T, uint32_t n)
 {
-	frng->next_arrayf64(frng->state,T,n);
+	frng->next_arrayf32(frng->state,T,n);
 }

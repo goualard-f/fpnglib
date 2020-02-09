@@ -52,7 +52,8 @@ Suite *frng64_KGW_suite(void)
   TCase *tc_core;
 
 	irng = fpngl_irng_new64(fpngl_randu64(seed));
-  s = suite_create("frng64_KGW");
+
+	s = suite_create("frng64_KGW");
   
   /* Core test case */
   tc_core = tcase_create("Core");
@@ -68,7 +69,7 @@ int main(void)
   Suite *s;
   SRunner *sr;
   
-  s = frng64_KGW_suite();
+	s = frng64_KGW_suite();
   sr = srunner_create(s);
   
   srunner_run_all(sr, CK_NORMAL);

@@ -1,4 +1,4 @@
-/* Floating-point number generation (double precision format)
+/* Creation of double precision floating-point number with some properties
 
 	Copyright 2019 University of Nantes, France.
 
@@ -20,45 +20,41 @@
 	
  */
 
-#ifndef __fpngl_fp_double_h__
-#define __fpngl_fp_double_h__
+#ifndef __fpngl_float64_h__
+#define __fpngl_float64_h__
 
+#include <fpnglib/fpngl_config.h>
 #include <stdint.h>
-#include <fpnglib/fp.h>
-#include <fpnglib/random.h>
+#include <fpnglib/irng_t.h>
+#include <fpnglib/types.h>
+
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-  typedef union {
-	 double d;
-	 uint64_t i;
-  } fpngl_dui_t;
-
- 
-  /*
+	
+	/*
 	 Return a double precision number that is 'n' floating-point numbers after 'v'.
 	 
 	 The parameter n must be in the interval [1, 0x7fe0000000000000].
   */
-  double fpngl_d_next(double v, uint64_t n);
+  double fpngl_nextafter64(double v, uint64_t n);
   
   /*
 	 Return a double precision that is 'n' floating-point numbers before 'v'.
   */
-  double fpngl_d_previous(double v, uint64_t n);
+  double fpngl_previous64(double v, uint64_t n);
   
   // Return a random denormal double precision number
-  double fpngl_d_create_denormal(fpngl_rng_t *rng);
+  double fpngl_denormal64(fpngl_irng_t *rng);
   // Return +0.0 or -0.0 randomly with even probability
-  double fpngl_d_create_zero(fpngl_rng_t *rng);
+  double fpngl_zero64(fpngl_irng_t *rng);
   // Return +oo or -oo randomly with even probability
-  double fpngl_d_create_inf(fpngl_rng_t *rng);
+  double fpngl_inf64(fpngl_irng_t *rng);
   // Return a normal double precision number in [fngl_d_lambda,fpngl_d_max]
-  double fpngl_d_create_normal(fpngl_rng_t *rng);
+  double fpngl_normal64(fpngl_irng_t *rng);
   // Return a nan
-  double fpngl_d_create_nan(fpngl_rng_t *rng);
+  double fpngl_nan64(fpngl_irng_t *rng);
 
   /*
 	 create_double -- Returns a double precision number
@@ -79,11 +75,12 @@ extern "C" {
   WARNING: For better performances, the consistency of the defining
   values are not checked.
 */
-  double fpngl_d_create_by_field(fpngl_rng_t *rng,
-											fpngl_sign_t s, uint32_t minexp, uint32_t maxexp, 
-											uint64_t minfrac, uint64_t maxfrac, 
-											uint64_t andmask,
-											uint64_t ormask);
+  double fpngl_float64(fpngl_irng_t *rng,
+											 fpngl_sign_t s,
+											 uint32_t minexp, uint32_t maxexp, 
+											 uint64_t minfrac, uint64_t maxfrac, 
+											 uint64_t andmask,
+											 uint64_t ormask);
   
 
   /*
@@ -91,7 +88,7 @@ extern "C" {
 	 { zero, denormalized, normalized, infinite, nan }
 	 with a probability according to fpd.
   */
-  double fpngl_d_create_by_distrib(fpngl_fp_distribution_t *fpd);
+  double fpngl_float64_distrib(fpngl_distribution_t *fpd);
 
   /*
   Computes the number of floats (bounds included) from a to b.
@@ -99,7 +96,7 @@ extern "C" {
   Return 1 if a == b
   \pre a must be smaller or equal to b
 */
-uint64_t fpngl_d_unfp(double a, double b);
+uint64_t fpngl_distance_float64(double a, double b);
 
 /*
   Computes the number of floats (bounds included) from a to b.
@@ -107,12 +104,11 @@ uint64_t fpngl_d_unfp(double a, double b);
   Return 0 if either a or b are infinites or NaNs.
   Return 1 if a == b
 */
-int64_t fpngl_d_nfp(double a, double b);
-  
+int64_t fpngl_signed_distance_float64(double a, double b);
 
-  
+ 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // __fpngl_fp_double_h__
+#endif // __fpngl_float64_h__

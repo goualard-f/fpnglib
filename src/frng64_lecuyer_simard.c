@@ -22,7 +22,6 @@
  */
 
 #include <global.h>
-#include <assert.h>
 #include <math.h>
 #include <stdlib.h>
 #include <fpnglib/frng64_lecuyer_simard.h>

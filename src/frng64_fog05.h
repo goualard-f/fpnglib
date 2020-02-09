@@ -1,4 +1,5 @@
-/* Macros and configuration material used throughout the source of library.
+/*  Generation of a random double precision number according to
+	 the method by [Agner Fog](https://digitalcommons.wayne.edu/jmasm/vol14/iss1/23/).
 
 	Copyright 2019--2020 University of Nantes, France.
 
@@ -19,30 +20,32 @@
 	see https://www.gnu.org/licenses/. 	
 	
  */
-/*
-	BEWARE: this file must be included by '.c' files only and will not be installed.
-	Include fpnglib/fpngl_config.h if you need some configuration macros in public 
-	header files.
-*/
 
-#ifndef __fpngl_global_h__
-#define __fpngl_global_h__
+#ifndef __fpngl_frng64_fog05_h__
+#define __fpngl_frng64_fog05_h__
 
-#include <config.h>
-
-#ifndef NDEBUG
-#  include <fpnglib/debug.h>
-#endif
-
-#include <assert.h>
+#include <fpnglib/fpngl_config.h>
+#include <stdint.h>
+#include <fpnglib/frng64_t.h>
+#include <fpnglib/irng_t.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+	/*
+		Same as Method fpngl_fog97(), except that we generate 53 random bits and we use 
+		the 53rd to choose whether to subtract either $1$ or $1-\delta$ 
+		(with $\delta=2^{-53}$ for `double`) from the random floating-point number 
+		obtained in $[1,2)$. 
+		The methods may generate all the floating-points numbers of the 
+		form $k\times 2^{-53}$, for $k\in\{0,\dots,2^{53}-1\}$, and removes the bias 
+		concerning the LSB being always 0.
+	 */
+	fpngl_frng64_t *fpngl_fog05(fpngl_irng_t *irng, uint64_t seed);
 	
 #ifdef __cplusplus
 }
 #endif
 
-#endif // __fpngl_global_h__
+#endif // __fpngl_frng64_fog05_h__

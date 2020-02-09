@@ -22,7 +22,6 @@
  */
 
 #include <global.h>
-#include <assert.h>
 #include <math.h>
 #include <stdlib.h>
 #include <fpnglib/frng64_lecuyer_simard.h>
@@ -39,7 +38,6 @@ static double KGW_nextf64(kgw_state_t *state)
 {
 	uint64_t x1 = fpngl_irng_next64(state->irng);
 	uint64_t x2 = fpngl_irng_next64(state->irng);
-	FPNGL_DEBUG("V: %lu %lu\n",x1,x2);
 	if (x1 == x2) {
 		if (x1 <= state->truncHM-1) {
 			return state->eps0;
@@ -54,9 +52,9 @@ static double KGW_nextf64(kgw_state_t *state)
 		return state->eps1;
 	}
 	if (x1 >= x2) {
-		return x2/x1;
+		return x2/(double)x1;
 	} else {
-		return x1/x2;
+		return x1/(double)x2;
 	}
 }
 

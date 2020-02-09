@@ -1,6 +1,6 @@
-/* Floating-point number generation (double precision format)
+/* Creation of double precision floating-point number with some properties
 
-	Copyright 2019 University of Nantes, France.
+	Copyright 2019--2020 University of Nantes, France.
 
 	This file is part of the FPNGlib library.
 
@@ -20,71 +20,75 @@
 	
  */
 
+#include <global.h>
 #include <math.h>
-#include <fpnglib/constants.h>
-#include <fpnglib/fp_double.h>
+#include <fpnglib/constants64.h>
+#include <fpnglib/float64.h>
+#include <fpnglib/irange.h>
+#include <fpnglib/types.h>
 
 // Random sign
-static inline unsigned long int randsign(fpngl_rng_t *rng)
+static inline uint64_t randsign(fpngl_irng_t *rng)
 {
-  return fpngl_rand(rng) % 2;
+  return fpngl_ubound32(rng,2);
 }
 
 // Random exponent
-static inline unsigned long int randexp(fpngl_rng_t *rng)
+static inline uint64_t randexp(fpngl_irng_t *rng)
 {
-  return fpngl_rand(rng) % 2048;
+  return fpngl_ubound32(rng,2048);
 }
 
 // Random exponent in the domain [min, max]
-static inline unsigned long int randexp2(fpngl_rng_t *rng, uint32_t min, uint32_t max)
+static inline uint64_t randexp2(fpngl_irng_t *rng, uint32_t min, uint32_t max)
 {
-  return fpngl_rand(rng) % (max - min + 1) + min;
+  return fpngl_range32(rng,(int32_t)min,(int32_t)(max+1));
 }
 
 // Random exponent (normal or denormal, but not infinite)
-static inline unsigned long int randnumexp(fpngl_rng_t *rng)
+static inline uint64_t randnumexp(fpngl_irng_t *rng)
 {
-  return fpngl_rand(rng) % 2047;
+  return fpngl_ubound32(rng,2047);
 }
 
 // Random normal exponent
-static inline unsigned long int randnormexp(fpngl_rng_t *rng)
+static inline uint64_t randnormexp(fpngl_irng_t *rng)
 {
-  return fpngl_rand(rng) % 2046 + 1;
+  return fpngl_ubound32(rng,2046) + 1;
 }
 
 // Random fractional part (52 bits)
-static inline unsigned long int randfrac(fpngl_rng_t *rng)
+static inline uint64_t randfrac(fpngl_irng_t *rng)
 {
-  return fpngl_rand(rng) % 0x10000000000000;
+  return fpngl_n_bits64(fpngl_irng_next64(rng),52);
 }
 
 // Random fractional part in the domain [min, max]
-static inline unsigned long int randfrac2(fpngl_rng_t *rng, uint64_t min, uint64_t max)
+static inline uint64_t randfrac2(fpngl_irng_t *rng, uint64_t min, uint64_t max)
 {
-  return fpngl_rand(rng) % (max - min + 1) + min;
+  return fpngl_range64(rng,min,max+1);
 }
 
 
-double fpngl_d_next(double v, uint64_t n)
+double fpngl_nextafter64(double v, uint64_t n)
 {
+	assert(n >= 1 && n <= 0x7fe0000000000000);
   if (isnan(v)) {
 	 return v;
   }
   if (n == 1) {
-	 return nextafter(v,fpngl_d_infinity);
+	 return nextafter(v,fpngl_infinity64);
   }
   if (n == 0) {
 	 return v;
   }
-  fpngl_dui_t vi = {.d = v};
+  fpngl_uintf64_t vi = {.d = v};
   if (v > 0) { // We shall not enter that branch if v == 0.0
 	 if (0x7ff0000000000000 - n > vi.i) { // We will not go beyond +oo when adding n to v?
 		vi.i+=n;
 		return vi.d;
 	 } else {
-		return fpngl_d_infinity;
+		return fpngl_infinity64;
 	 }
   } else { // v < 0?
 	 vi.i &= 0x7fffffffffffffff; // vi.i <- abs(vi.i)
@@ -98,47 +102,47 @@ double fpngl_d_next(double v, uint64_t n)
   }
 }
 
-double fpngl_d_previous(double v, uint64_t n)
+double fpngl_previous64(double v, uint64_t n)
 {
   if (isnan(v)) {
 	 return v;
   }
   if (n == 1) {
-	 return nextafter(v,-fpngl_d_infinity);
+	 return nextafter(v,-fpngl_infinity64);
   }
   if (n == 0) {
 	 return v;
   }
-  return -fpngl_d_next(-v,n);
+  return -fpngl_nextafter64(-v,n);
 }
 
-double fpngl_d_create_denormal(fpngl_rng_t *rng)
+double fpngl_denormal64(fpngl_irng_t *rng)
 {
-  fpngl_dui_t dui;
+  fpngl_uintf64_t dui;
   
-  unsigned long int sign = randsign(rng);
-  unsigned long int exponent = 0; // Characteristics of denormal numbers
-  unsigned long int fract = randfrac(rng);
+  uint64_t sign = randsign(rng);
+  uint64_t exponent = 0; // Characteristics of denormal numbers
+  uint64_t fract = randfrac(rng);
   
   dui.i = (sign << 63) | (exponent << 52) | fract;
   return dui.d;
 }
 
 
-double fpngl_d_create_zero(fpngl_rng_t *rng)
+double fpngl_zero64(fpngl_irng_t *rng)
 {
   return (randsign(rng)-1)*0.0;
 }
 
 
-double fpngl_d_create_inf(fpngl_rng_t *rng)
+double fpngl_inf64(fpngl_irng_t *rng)
 {
-  return (randsign(rng)) ? fpngl_d_infinity : -fpngl_d_infinity;
+  return (randsign(rng)) ? fpngl_infinity64 : -fpngl_infinity64;
 }
 
-double fpngl_d_create_normal(fpngl_rng_t *rng)
+double fpngl_normal64(fpngl_irng_t *rng)
 {
-  fpngl_dui_t di;
+  fpngl_uintf64_t di;
   uint64_t sign = randsign(rng);
   uint64_t exponent = randnormexp(rng); // Exponent shall not be zero or 
                                         // 2047 to avoid denormal and 
@@ -150,9 +154,9 @@ double fpngl_d_create_normal(fpngl_rng_t *rng)
   return di.d;
 }
 
-double fpngl_d_create_nan(fpngl_rng_t *rng)
+double fpngl_nan64(fpngl_irng_t *rng)
 {
-  fpngl_dui_t di;
+  fpngl_uintf64_t di;
   uint64_t sign = randsign(rng);
   uint64_t fract = randfrac(rng);
   
@@ -161,13 +165,14 @@ double fpngl_d_create_nan(fpngl_rng_t *rng)
   
 }
 
-double fpngl_d_create_by_field(fpngl_rng_t *rng,
-										 fpngl_sign_t s, uint32_t minexp, uint32_t maxexp, 
+double fpngl_float64(fpngl_irng_t *rng,
+										 fpngl_sign_t s,
+										 uint32_t minexp, uint32_t maxexp, 
 										 uint64_t minfrac, uint64_t maxfrac, 
 										 uint64_t andmask,
 										 uint64_t ormask)
 {
-  fpngl_dui_t di;
+  fpngl_uintf64_t di;
 
   uint64_t sign;
   switch (s) {
@@ -190,16 +195,22 @@ double fpngl_d_create_by_field(fpngl_rng_t *rng,
 }
 
 
-double fpngl_d_create_by_distrib(fpngl_fp_distribution_t *fpd)
+double fpngl_float64_distrib(fpngl_fp_distribution_t *fpd)
 {
-  typedef double (*realfun)(fpngl_rng_t *);
-  static realfun createv[] = {fpngl_d_create_zero, fpngl_d_create_denormal,
-										fpngl_d_create_normal, fpngl_d_create_inf,
-										fpngl_d_create_nan };
+	/*
+  typedef double (*realfun)(fpngl_irng_t *);
+  static realfun createv[] = { fpngl_zero64,
+															 fpngl_denormal64,
+															 fpngl_normal64,
+															 fpngl_inf64,
+															 fpngl_nan64 };
   return createv[fpngl_fp_distribution_value(fpd)](fpngl_get_rng(fpd));
+	*/
+	assert(0);
+	return 0.0;
 }
 
-uint64_t fpngl_d_unfp(double a, double b)
+uint64_t fpngl_distance_float64(double a, double b)
 {
   if (isinf(a) || isinf(b) || isnan(a) || isnan(b)) {
 	 return 0; // Error
@@ -209,8 +220,8 @@ uint64_t fpngl_d_unfp(double a, double b)
 	 return 1;
   }
   
-  fpngl_dui_t dia = {.d = fabs(a)};
-  fpngl_dui_t dib = {.d = fabs(b)};
+  fpngl_uintf64_t dia = {.d = fabs(a)};
+  fpngl_uintf64_t dib = {.d = fabs(b)};
   
   if (a <= 0.0 && b >= 0.0) { // The tests have to be not strict to take into account -0.0
 	 return dia.i + dib.i + 1;
@@ -223,7 +234,7 @@ uint64_t fpngl_d_unfp(double a, double b)
   }
 }
 
-int64_t fpngl_d_nfp(double a, double b)
+int64_t fpngl_signed_distance_float64(double a, double b)
 {
   if (a > b) {
 	 return -fpngl_d_unfp(b,a);

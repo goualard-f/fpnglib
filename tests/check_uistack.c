@@ -1,4 +1,4 @@
-/* Unit tests for irange.c
+/* Unit tests for uistack.c
 
 	Copyright 2019--2020 University of Nantes, France.
 
@@ -22,67 +22,54 @@
 
 #include <config.h>
 #include <stdlib.h>
-#include <stdint.h>
 #include <check.h>
-#include <fpnglib/irange.h>
-#include <fpnglib/mt19937ar.h>
+#include <fpnglib/uistack.h>
 
-START_TEST(test_n_bits32)
+START_TEST(test_push_pop_simple)
 {
-	ck_assert(fpngl_n_bits32(0x10000000,7) == 0x8);
-	ck_assert(fpngl_n_bits32(0x80000000,7) == 0x40);
-	ck_assert(fpngl_n_bits32(0xf0000f00,3) == 0x7);
-}
-END_TEST
-
-START_TEST(test_n_bits64)
-{
-	ck_assert(fpngl_n_bits64(0x1000000000000000,7) == 0x8);
-	ck_assert(fpngl_n_bits64(0x8000000000000000,7) == 0x40);
-	ck_assert(fpngl_n_bits64(0xf0000f0000000000,3) == 0x7);
-}
-END_TEST
-
-START_TEST(test_ubound32)
-{
-	fpngl_irng_t *irng = fpngl_irng_new32(fpngl_mt19937v32(42));
-
-	for (uint32_t i = 0; i < 100; ++i) {
-		uint32_t v = fpngl_ubound32(irng,2);
-		ck_assert(v == 0 || v == 1);
+	fpngl_uistack_t *stack = fpngl_uistack_new();
+	ck_assert(fpngl_uistack_empty(stack));
+	for (int32_t i = 0; i < 10; ++i) {
+		fpngl_uistack_push(stack,i+17);
 	}
-	
-	fpngl_irng_delete(irng);
-}
-END_TEST
-
-START_TEST(test_range32)
-{
-	fpngl_irng_t *irng = fpngl_irng_new32(fpngl_mt19937v32(42));
-
-	for (uint32_t i = 0; i < 10000; ++i) {
-		int32_t v = fpngl_range32(irng,-1,2);
-		ck_assert(v == -1 || v == 0 || v == 1);
+	ck_assert(!fpngl_uistack_empty(stack));
+	for (int32_t i = 9; i >= 0; --i) {
+		ck_assert(fpngl_uistack_pop(stack) == i+17);
 	}
-	
-	fpngl_irng_delete(irng);
+	ck_assert(fpngl_uistack_empty(stack));
+	fpngl_uistack_delete(stack);
 }
 END_TEST
 
-Suite *irange_suite(void)
+
+START_TEST(test_push_pop_realloc)
+{
+	fpngl_uistack_t *stack = fpngl_uistack_new();
+	ck_assert(fpngl_uistack_empty(stack));
+	for (int32_t i = 0; i < 40; ++i) {
+		fpngl_uistack_push(stack,i+17);
+	}
+	ck_assert(!fpngl_uistack_empty(stack));
+	for (int32_t i = 39; i >= 0; --i) {
+		ck_assert(fpngl_uistack_pop(stack) == i+17);
+	}
+	ck_assert(fpngl_uistack_empty(stack));
+	fpngl_uistack_delete(stack);
+}
+END_TEST
+
+Suite *uistack_suite(void)
 {
   Suite *s;
   TCase *tc_core;
   
-  s = suite_create("irange");
+  s = suite_create("uistack");
   
   /* Core test case */
   tc_core = tcase_create("Core");
   
-  tcase_add_test(tc_core, test_n_bits32);
-  tcase_add_test(tc_core, test_n_bits64);
-  tcase_add_test(tc_core, test_ubound32);
-  tcase_add_test(tc_core, test_range32);
+  tcase_add_test(tc_core, test_push_pop_simple);
+  tcase_add_test(tc_core, test_push_pop_realloc);
   suite_add_tcase(s, tc_core);
   
   return s;
@@ -94,7 +81,7 @@ int main(void)
   Suite *s;
   SRunner *sr;
   
-  s = irange_suite();
+  s = uistack_suite();
   sr = srunner_create(s);
   
   srunner_run_all(sr, CK_NORMAL);
