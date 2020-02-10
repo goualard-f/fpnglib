@@ -157,9 +157,10 @@ am_libfpnglib_la_OBJECTS = libfpnglib_la-fpu.lo \
 	libfpnglib_la-irng32_t.lo libfpnglib_la-irng64_t.lo \
 	libfpnglib_la-irng_t.lo libfpnglib_la-irange.lo \
 	libfpnglib_la-utilities.lo libfpnglib_la-uistack.lo \
-	libfpnglib_la-walker_vose.lo libfpnglib_la-mt19937ar.lo \
-	libfpnglib_la-mt19937-64.lo libfpnglib_la-lcg.lo \
-	libfpnglib_la-frng64_t.lo libfpnglib_la-frng64_division.lo \
+	libfpnglib_la-walker_vose.lo libfpnglib_la-float64.lo \
+	libfpnglib_la-mt19937ar.lo libfpnglib_la-mt19937-64.lo \
+	libfpnglib_la-lcg.lo libfpnglib_la-frng64_t.lo \
+	libfpnglib_la-frng64_division.lo \
 	libfpnglib_la-frng64_division_k.lo \
 	libfpnglib_la-frng64_drand48gnu.lo \
 	libfpnglib_la-frng64_java.lo libfpnglib_la-frng64_golang.lo \
@@ -366,7 +367,7 @@ top_srcdir = @top_srcdir@
 AM_CFLAGS = -Wall -O3
 lib_LTLIBRARIES = libfpnglib.la
 libfpnglib_la_SOURCES = fpu.c irng32_t.c irng64_t.c irng_t.c irange.c \
-	utilities.c uistack.c walker_vose.c \
+	utilities.c uistack.c walker_vose.c float64.c \
 	mt19937ar.c mt19937-64.c lcg.c \
 	frng64_t.c frng64_division.c frng64_division_k.c \
 	frng64_drand48gnu.c frng64_java.c frng64_golang.c \
@@ -378,7 +379,15 @@ libfpnglib_la_SOURCES = fpu.c irng32_t.c irng64_t.c irng_t.c irange.c \
 libfpnglib_la_CPPFLAGS = -I$(top_srcdir)/src
 pkginclude_HEADERS = fpngl_config.h constants32.h constants64.h fpnglib.h fpu.h \
 	irng32_t.h irng64_t.h irng_t.h irange.h utilities.h debug.h uistack.h\
-	discrete_distribution.h
+	discrete_distribution.h float64.h \
+	mt19937ar.h mt19937-64.h \
+	lcg.h \
+	frng64_t.h frng64_division.h frng64_division_k.h \
+	frng64_drand48gnu.h frng64_java.h frng64_golang.h \
+	frng64_lecuyer_simard.h frng64_rationalLCG10.h \
+	frng64_KGW.h frng64_fog97.h frng64_fog05.h \
+	frng32_t.h \
+	irng32_vnm.h
 
 libfpnglib_la_LDFLAGS = -version-info $(LT_VERSION_INFO)
 all: fpngl_config.h
@@ -471,6 +480,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfpnglib_la-float64.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfpnglib_la-fpu.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfpnglib_la-frng32_t.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfpnglib_la-frng64_KGW.Plo@am__quote@
@@ -572,6 +582,13 @@ libfpnglib_la-walker_vose.lo: walker_vose.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='walker_vose.c' object='libfpnglib_la-walker_vose.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libfpnglib_la-walker_vose.lo `test -f 'walker_vose.c' || echo '$(srcdir)/'`walker_vose.c
+
+libfpnglib_la-float64.lo: float64.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libfpnglib_la-float64.lo -MD -MP -MF $(DEPDIR)/libfpnglib_la-float64.Tpo -c -o libfpnglib_la-float64.lo `test -f 'float64.c' || echo '$(srcdir)/'`float64.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libfpnglib_la-float64.Tpo $(DEPDIR)/libfpnglib_la-float64.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='float64.c' object='libfpnglib_la-float64.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libfpnglib_la-float64.lo `test -f 'float64.c' || echo '$(srcdir)/'`float64.c
 
 libfpnglib_la-mt19937ar.lo: mt19937ar.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libfpnglib_la-mt19937ar.lo -MD -MP -MF $(DEPDIR)/libfpnglib_la-mt19937ar.Tpo -c -o libfpnglib_la-mt19937ar.lo `test -f 'mt19937ar.c' || echo '$(srcdir)/'`mt19937ar.c
@@ -922,14 +939,6 @@ uninstall-am: uninstall-libLTLIBRARIES uninstall-pkgincludeHEADERS
 
 .PRECIOUS: Makefile
 
-	mt19937ar.h mt19937-64.h \
-	lcg.h \
-	frng64_t.h frng64_division.h frng64_division_k.h \
-	frng64_drand48gnu.h frng64_java.h frng64_golang.h \
-	frng64_lecuyer_simard.h frng64_rationalLCG10.h \
-	frng64_KGW.h frng64_fog97.h frng64_fog05.h \
-	frng32_t.h \
-	irng32_vnm.h
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

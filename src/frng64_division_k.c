@@ -98,4 +98,10 @@ fpngl_frng64_t *fpngl_div53(fpngl_irng_t *irng, uint64_t seed)
 	return fpngl_bydivision_k_new("div53",irng, 53, 1UL << 53);									
 }
 
+fpngl_frng64_t *fpngl_div32(fpngl_irng_t *irng, uint64_t seed)
+{
+	assert(fpngl_irng_seed(irng) == seed);
+	return fpngl_bydivision_k_new("div32",irng, 32, 1UL << 32);									
+}
+
 

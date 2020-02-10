@@ -56,6 +56,12 @@ extern "C" {
 	 */
 	fpngl_frng64_t *fpngl_div53(fpngl_irng_t *irng, uint64_t seed);
 
+	/*
+		Draw a double precision number  at random in the domain 
+		``\{0\}\cup[2^{-32} ,1-2^{-32}]``.
+	 */
+	fpngl_frng64_t *fpngl_div32(fpngl_irng_t *irng, uint64_t seed);
+
 #ifdef __cplusplus
 }
 #endif

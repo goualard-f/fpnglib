@@ -28,7 +28,6 @@
 */
 
 #include <global.h>
-#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 #include <fpnglib/discrete_distribution.h>
@@ -49,19 +48,19 @@ fpngl_ddistribution_t *fpngl_ddistribution_new(fpngl_irng_t *rng,
 {
 	fpngl_ddistribution_t *dist = malloc(sizeof(fpngl_ddistribution_t));
 	dist->irng = rng;
-	dist->frng = fpngl_div53(rng,fpngl_irng_seed(rng));
+	dist->frng = fpngl_div32(rng,fpngl_irng_seed(rng));
 	dist->alias = calloc(szP,sizeof(uint32_t));
 	dist->probability = calloc(szP,sizeof(double));
 	dist->n = szP;
-	double average = 1.0/szP;
 	double *probabilities = calloc(szP,sizeof(double));
 	assert(szP < (1UL << 30)); // uistack cannot contain more than 2^30 elements
-	memcpy(probabilities,P,szP*sizeof(double));
+
 	fpngl_uistack_t *small = fpngl_uistack_new();
 	fpngl_uistack_t *large = fpngl_uistack_new();
 
 	for (uint32_t i = 0; i < szP; ++i) {
-		if (probabilities[i] >= average) {
+		probabilities[i] = P[i]*szP;
+		if (probabilities[i] >= 1.0) {
 			fpngl_uistack_push(large,i);
 		} else {
 			fpngl_uistack_push(small,i);
@@ -71,11 +70,11 @@ fpngl_ddistribution_t *fpngl_ddistribution_new(fpngl_irng_t *rng,
 	while (!fpngl_uistack_empty(small) && !fpngl_uistack_empty(large)) {
 		uint32_t less = fpngl_uistack_pop(small);
 		uint32_t more = fpngl_uistack_pop(large);
-		dist->probability[less] = probabilities[less]*szP;
+		dist->probability[less] = probabilities[less];
 		dist->alias[less] = more;
 
-		probabilities[more] = (probabilities[more] + probabilities[less]) - average;
-		if (probabilities[more] >= average) {
+		probabilities[more] = probabilities[more] + probabilities[less] - 1.0;
+		if (probabilities[more] >= 1.0) {
 			fpngl_uistack_push(large,more);
 		} else {
 			fpngl_uistack_push(small,more);
@@ -88,7 +87,10 @@ fpngl_ddistribution_t *fpngl_ddistribution_new(fpngl_irng_t *rng,
 	while (!fpngl_uistack_empty(large)) {
 		dist->probability[fpngl_uistack_pop(large)] = 1.0;
 	}
+	fpngl_uistack_delete(small);
+	fpngl_uistack_delete(large);
 	free(probabilities);
+
 	return dist;
 }
 	
@@ -103,11 +105,28 @@ void fpngl_ddistribution_delete(fpngl_ddistribution_t* dd)
 
 uint32_t fpngl_ddistribution_next32(fpngl_ddistribution_t *dd)
 {
-	assert(dd != NULL);
+#if 0
 	uint32_t column = fpngl_ubound32(dd->irng,dd->n);
 	double d = fpngl_frng64_nextf64(dd->frng);
-	bool coinToss = d < dd->probability[column];
-	FPNGL_DEBUG("G/P: %g %g\n",d,dd->probability[column]);
-	FPNGL_DEBUG("C/T: %u %d\n",column,coinToss);
-	return (coinToss) ? column : dd->alias[column];
+	return (d < dd->probability[column]) ? column : dd->alias[column];
+#endif
+	// Code taken from GSL 2.6 (gsl_ran_discrete() in randist/discrete.c)
+	double u = fpngl_frng64_nextf64(dd->frng) * dd->n;
+	uint32_t c = u;
+	u -= c;
+	double f = dd->probability[c];
+	if (f == 1.0) {
+		return c;
+	}
+	if (u < f) {
+		return c;
+	} else {
+		return dd->alias[c];
+	}
+}
+
+fpngl_irng_t *fpngl_ddistribution_rng(fpngl_ddistribution_t *dd)
+{
+	assert(dd != NULL);
+	return dd->irng;
 }

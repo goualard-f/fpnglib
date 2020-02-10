@@ -84,19 +84,19 @@ double fpngl_nextafter64(double v, uint64_t n)
   }
   fpngl_uintf64_t vi = {.d = v};
   if (v > 0) { // We shall not enter that branch if v == 0.0
-	 if (0x7ff0000000000000 - n > vi.i) { // We will not go beyond +oo when adding n to v?
-		vi.i+=n;
+	 if (0x7ff0000000000000 - n > vi.ui) { // We will not go beyond +oo when adding n to v?
+		vi.ui += n;
 		return vi.d;
 	 } else {
 		return fpngl_infinity64;
 	 }
   } else { // v < 0?
-	 vi.i &= 0x7fffffffffffffff; // vi.i <- abs(vi.i)
-	 if (vi.i >= n) { // We will not create a positive number by adding n to v?
-		vi.i-=n;
+	 vi.ui &= 0x7fffffffffffffff; // vi.i <- abs(vi.i)
+	 if (vi.ui >= n) { // We will not create a positive number by adding n to v?
+		vi.ui -= n;
 		return -vi.d;
 	 } else {
-		vi.i=(n-vi.i);
+		vi.ui=(n - vi.ui);
 		return vi.d;
 	 }
   }
@@ -124,7 +124,7 @@ double fpngl_denormal64(fpngl_irng_t *rng)
   uint64_t exponent = 0; // Characteristics of denormal numbers
   uint64_t fract = randfrac(rng);
   
-  dui.i = (sign << 63) | (exponent << 52) | fract;
+  dui.ui = (sign << 63) | (exponent << 52) | fract;
   return dui.d;
 }
 
@@ -150,7 +150,7 @@ double fpngl_normal64(fpngl_irng_t *rng)
 
   uint64_t fract = randfrac(rng);
   
-  di.i = (sign << 63) | (exponent << 52) | fract;
+  di.ui = (sign << 63) | (exponent << 52) | fract;
   return di.d;
 }
 
@@ -160,7 +160,7 @@ double fpngl_nan64(fpngl_irng_t *rng)
   uint64_t sign = randsign(rng);
   uint64_t fract = randfrac(rng);
   
-  di.i = (sign << 63) | ((uint64_t)0x7ff << 52) | fract;
+  di.ui = (sign << 63) | ((uint64_t)0x7ff << 52) | fract;
   return di.d;
   
 }
@@ -190,24 +190,21 @@ double fpngl_float64(fpngl_irng_t *rng,
   uint64_t exponent = randexp2(rng,minexp,maxexp);
   uint64_t fract = randfrac2(rng,minfrac,maxfrac);
   
-  di.i = (((sign << 63) | (exponent << 52) | fract) & andmask) | ormask; 
+  di.ui = (((sign << 63) | (exponent << 52) | fract) & andmask) | ormask; 
   return di.d;
 }
 
 
-double fpngl_float64_distrib(fpngl_fp_distribution_t *fpd)
+double fpngl_float64_distrib(fpngl_ddistribution_t *fpd)
 {
-	/*
-  typedef double (*realfun)(fpngl_irng_t *);
-  static realfun createv[] = { fpngl_zero64,
-															 fpngl_denormal64,
-															 fpngl_normal64,
-															 fpngl_inf64,
-															 fpngl_nan64 };
-  return createv[fpngl_fp_distribution_value(fpd)](fpngl_get_rng(fpd));
-	*/
-	assert(0);
-	return 0.0;
+	typedef double (*realfun_t)(fpngl_irng_t *);
+  static realfun_t createv[] = { fpngl_zero64,
+																 fpngl_denormal64,
+																 fpngl_normal64,
+																 fpngl_inf64,
+																 fpngl_nan64 };
+  return createv[fpngl_ddistribution_next32(fpd)](fpngl_ddistribution_rng(fpd));
+
 }
 
 uint64_t fpngl_distance_float64(double a, double b)
@@ -224,12 +221,12 @@ uint64_t fpngl_distance_float64(double a, double b)
   fpngl_uintf64_t dib = {.d = fabs(b)};
   
   if (a <= 0.0 && b >= 0.0) { // The tests have to be not strict to take into account -0.0
-	 return dia.i + dib.i + 1;
+	 return dia.ui + dib.ui + 1;
   } else {
 	 if (a >= 0.0) {
-		return dib.i - dia.i + 1;
+		return dib.ui - dia.ui + 1;
 	 } else {
-		return dia.i - dib.i + 1;
+		return dia.ui - dib.ui + 1;
 	 }
   }
 }
@@ -237,8 +234,8 @@ uint64_t fpngl_distance_float64(double a, double b)
 int64_t fpngl_signed_distance_float64(double a, double b)
 {
   if (a > b) {
-	 return -fpngl_d_unfp(b,a);
+	 return -fpngl_distance_float64(b,a);
   } else {
-	 return fpngl_d_unfp(a,b);
+	 return fpngl_distance_float64(a,b);
   }
 }

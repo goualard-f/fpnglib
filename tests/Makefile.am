@@ -20,6 +20,7 @@
 
 TESTS = check_constants32 check_constants64 check_fpu check_mt19937v32 check_mt19937v64 \
 	check_irange	check_lcg check_utilities check_uistack check_walker_vose \
+	check_float64 \
 	check_frng64_division check_frng64_division_k \
 	check_frng64_java \
 	check_vnm check_drand48gnu check_frng64_golang \

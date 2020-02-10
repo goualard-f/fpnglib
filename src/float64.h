@@ -27,7 +27,7 @@
 #include <stdint.h>
 #include <fpnglib/irng_t.h>
 #include <fpnglib/types.h>
-
+#include <fpnglib/discrete_distribution.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -88,7 +88,7 @@ extern "C" {
 	 { zero, denormalized, normalized, infinite, nan }
 	 with a probability according to fpd.
   */
-  double fpngl_float64_distrib(fpngl_distribution_t *fpd);
+  double fpngl_float64_distrib(fpngl_ddistribution_t *fpd);
 
   /*
   Computes the number of floats (bounds included) from a to b.

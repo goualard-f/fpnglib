@@ -43,6 +43,7 @@ extern "C" {
 		 \return NULL if the result cannot be allocated
 		 The fpngl_ddistribution_t object owns the rng and is responsible for
 		 its destruction.
+		 @precondition \sum P = 1
   */
 	fpngl_ddistribution_t *fpngl_ddistribution_new(fpngl_irng_t *rng,
 																								 const double P[], uint32_t szP);
@@ -53,6 +54,9 @@ extern "C" {
 
   // Return a random value according to the distribution in `dd`.
   uint32_t fpngl_ddistribution_next32(fpngl_ddistribution_t *dd);
+
+	// Return the RNG used internally.
+	fpngl_irng_t *fpngl_ddistribution_rng(fpngl_ddistribution_t *dd);
 
 #ifdef __cplusplus
 }

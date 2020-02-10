@@ -112,7 +112,7 @@ TESTS = check_constants32$(EXEEXT) check_constants64$(EXEEXT) \
 	check_mt19937v64$(EXEEXT) check_irange$(EXEEXT) \
 	check_lcg$(EXEEXT) check_utilities$(EXEEXT) \
 	check_uistack$(EXEEXT) check_walker_vose$(EXEEXT) \
-	check_frng64_division$(EXEEXT) \
+	check_float64$(EXEEXT) check_frng64_division$(EXEEXT) \
 	check_frng64_division_k$(EXEEXT) check_frng64_java$(EXEEXT) \
 	check_vnm$(EXEEXT) check_drand48gnu$(EXEEXT) \
 	check_frng64_golang$(EXEEXT) \
@@ -139,7 +139,7 @@ am__EXEEXT_1 = check_constants32$(EXEEXT) check_constants64$(EXEEXT) \
 	check_mt19937v64$(EXEEXT) check_irange$(EXEEXT) \
 	check_lcg$(EXEEXT) check_utilities$(EXEEXT) \
 	check_uistack$(EXEEXT) check_walker_vose$(EXEEXT) \
-	check_frng64_division$(EXEEXT) \
+	check_float64$(EXEEXT) check_frng64_division$(EXEEXT) \
 	check_frng64_division_k$(EXEEXT) check_frng64_java$(EXEEXT) \
 	check_vnm$(EXEEXT) check_drand48gnu$(EXEEXT) \
 	check_frng64_golang$(EXEEXT) \
@@ -165,6 +165,11 @@ check_drand48gnu_SOURCES = check_drand48gnu.c
 check_drand48gnu_OBJECTS = check_drand48gnu.$(OBJEXT)
 check_drand48gnu_LDADD = $(LDADD)
 check_drand48gnu_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
+check_float64_SOURCES = check_float64.c
+check_float64_OBJECTS = check_float64.$(OBJEXT)
+check_float64_LDADD = $(LDADD)
+check_float64_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
 	$(am__DEPENDENCIES_1)
 check_fpu_SOURCES = check_fpu.c
 check_fpu_OBJECTS = check_fpu-check_fpu.$(OBJEXT)
@@ -296,18 +301,19 @@ am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = check_constants32.c check_constants64.c check_drand48gnu.c \
-	check_fpu.c check_frng64_KGW.c check_frng64_division.c \
-	check_frng64_division_k.c check_frng64_fog05.c \
-	check_frng64_fog97.c check_frng64_golang.c check_frng64_java.c \
+	check_float64.c check_fpu.c check_frng64_KGW.c \
+	check_frng64_division.c check_frng64_division_k.c \
+	check_frng64_fog05.c check_frng64_fog97.c \
+	check_frng64_golang.c check_frng64_java.c \
 	check_frng64_lecuyer_simard.c check_frng64_rationalLCG10.c \
 	check_irange.c check_lcg.c check_mt19937v32.c \
 	check_mt19937v64.c check_uistack.c check_utilities.c \
 	check_vnm.c check_walker_vose.c
 DIST_SOURCES = check_constants32.c check_constants64.c \
-	check_drand48gnu.c check_fpu.c check_frng64_KGW.c \
-	check_frng64_division.c check_frng64_division_k.c \
-	check_frng64_fog05.c check_frng64_fog97.c \
-	check_frng64_golang.c check_frng64_java.c \
+	check_drand48gnu.c check_float64.c check_fpu.c \
+	check_frng64_KGW.c check_frng64_division.c \
+	check_frng64_division_k.c check_frng64_fog05.c \
+	check_frng64_fog97.c check_frng64_golang.c check_frng64_java.c \
 	check_frng64_lecuyer_simard.c check_frng64_rationalLCG10.c \
 	check_irange.c check_lcg.c check_mt19937v32.c \
 	check_mt19937v64.c check_uistack.c check_utilities.c \
@@ -723,6 +729,10 @@ check_drand48gnu$(EXEEXT): $(check_drand48gnu_OBJECTS) $(check_drand48gnu_DEPEND
 	@rm -f check_drand48gnu$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(check_drand48gnu_OBJECTS) $(check_drand48gnu_LDADD) $(LIBS)
 
+check_float64$(EXEEXT): $(check_float64_OBJECTS) $(check_float64_DEPENDENCIES) $(EXTRA_check_float64_DEPENDENCIES) 
+	@rm -f check_float64$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(check_float64_OBJECTS) $(check_float64_LDADD) $(LIBS)
+
 check_fpu$(EXEEXT): $(check_fpu_OBJECTS) $(check_fpu_DEPENDENCIES) $(EXTRA_check_fpu_DEPENDENCIES) 
 	@rm -f check_fpu$(EXEEXT)
 	$(AM_V_CCLD)$(check_fpu_LINK) $(check_fpu_OBJECTS) $(check_fpu_LDADD) $(LIBS)
@@ -804,6 +814,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_constants32.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_constants64.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_drand48gnu.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_float64.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_fpu-check_fpu.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_frng64_KGW.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_frng64_division.Po@am__quote@
@@ -1123,6 +1134,13 @@ check_uistack.log: check_uistack$(EXEEXT)
 check_walker_vose.log: check_walker_vose$(EXEEXT)
 	@p='check_walker_vose$(EXEEXT)'; \
 	b='check_walker_vose'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+check_float64.log: check_float64$(EXEEXT)
+	@p='check_float64$(EXEEXT)'; \
+	b='check_float64'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

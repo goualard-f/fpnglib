@@ -21,7 +21,7 @@
 AM_CFLAGS = -Wall -O3
 lib_LTLIBRARIES = libfpnglib.la
 libfpnglib_la_SOURCES = fpu.c irng32_t.c irng64_t.c irng_t.c irange.c \
-	utilities.c uistack.c walker_vose.c \
+	utilities.c uistack.c walker_vose.c float64.c \
 	mt19937ar.c mt19937-64.c lcg.c \
 	frng64_t.c frng64_division.c frng64_division_k.c \
 	frng64_drand48gnu.c frng64_java.c frng64_golang.c \
@@ -33,7 +33,7 @@ libfpnglib_la_SOURCES = fpu.c irng32_t.c irng64_t.c irng_t.c irange.c \
 libfpnglib_la_CPPFLAGS = -I$(top_srcdir)/src
 pkginclude_HEADERS = fpngl_config.h constants32.h constants64.h fpnglib.h fpu.h \
 	irng32_t.h irng64_t.h irng_t.h irange.h utilities.h debug.h uistack.h\
-	discrete_distribution.h
+	discrete_distribution.h float64.h \
 	mt19937ar.h mt19937-64.h \
 	lcg.h \
 	frng64_t.h frng64_division.h frng64_division_k.h \
