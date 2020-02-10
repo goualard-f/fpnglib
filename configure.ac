@@ -24,6 +24,8 @@ AC_INIT([fpnglib],m4_esyscmd([tr -d '\n' < VERSION]),[frederic.goualard@univ-nan
 dnl For Automake
 AM_INIT_AUTOMAKE([gnu 1.7 dist-bzip2])
 
+AX_CHECK_ENABLE_DEBUG([yes])
+
 PKG_CHECK_MODULES([CHECK], [check >= 0.11.0])
 
 AC_CONFIG_SRCDIR([src/fpu.h])
@@ -76,7 +78,7 @@ AC_TYPE_INT32_T
 AC_TYPE_UINT32_T
 AC_TYPE_INT64_T
 AC_TYPE_UINT64_T
-
+AC_CHECK_TYPE(__uint128_t,[AC_DEFINE(HAVE_UINT128_T,1,[Define this to 1 if the type __uint128_t is available])])
 # Set default CFLAGS to nothing to avoid -O2 optimization in tests
 CFLAGS=
 

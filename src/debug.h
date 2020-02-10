@@ -63,9 +63,9 @@ extern "C" {
 	FPNGL_DEBUG("\n");															\
 	} while(0)
 #else
-# define FPNGL_DEBUG(...)
-# define FPNGL_WARNING(...)
-# define FPNGL_INTARRAY(T,n)				
+# define FPNGL_DEBUG(...) do {} while (0)
+# define FPNGL_WARNING(...) do {} while (0)
+# define FPNGL_INTARRAY(T,n) do {} while (0)
 #endif
 	
 #ifdef __cplusplus

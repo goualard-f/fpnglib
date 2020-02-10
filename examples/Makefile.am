@@ -27,3 +27,4 @@ noinst_PROGRAMS = timing_mt19937v32 timing_mt19937v64 pi flipping ddistribution
 LDADD= $(top_builddir)/src/libfpnglib.la -lm -lctiming $(LIBS)
 AM_CFLAGS = -I.. -Wall -O3
 
+$(noinst_PROGRAMS): libctiming.la

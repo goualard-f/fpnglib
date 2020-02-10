@@ -27,6 +27,7 @@
 #include <fpnglib/irange.h>
 #include <fpnglib/types.h>
 
+
 // Random sign
 static inline uint64_t randsign(fpngl_irng_t *rng)
 {
@@ -192,6 +193,13 @@ double fpngl_float64(fpngl_irng_t *rng,
   
   di.ui = (((sign << 63) | (exponent << 52) | fract) & andmask) | ormask; 
   return di.d;
+}
+
+
+fpngl_ddistribution_t *fpngl_class_float64_new(fpngl_irng_t *irng,
+																							 const double P[static 5])
+{
+	return fpngl_ddistribution_new(irng,P,5);
 }
 
 

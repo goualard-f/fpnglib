@@ -59,9 +59,23 @@ uint32_t fpngl_ubound32(fpngl_irng_t *irng, uint32_t a)
 
 uint64_t fpngl_ubound64(fpngl_irng_t *irng, uint64_t a)
 {
-	// TODO
-	assert(0);
-	return 0;
+	uint64_t x = fpngl_irng_next64(irng);
+#if HAVE_UINT128_T
+	// Code from: https://lemire.me/blog/2019/06/06/nearly-divisionless-random-integer-generation-on-various-systems/
+  __uint128_t m = (__uint128_t)x * ( __uint128_t )a;
+  uint64_t l = (uint64_t)m;
+  if (l < a) {
+    uint64_t t = -a % a;
+    while (l < t) {
+      x = fpngl_irng_next64(irng);
+      m = (__uint128_t)x * (__uint128_t)a;
+      l = (uint64_t)m;
+    }
+  }
+  return m >> 64;
+#else
+	return x % a; // BEWARE: biased version!
+#endif
 }
 
 int32_t fpngl_range32(fpngl_irng_t *irng, int32_t a, int32_t b)
@@ -70,10 +84,9 @@ int32_t fpngl_range32(fpngl_irng_t *irng, int32_t a, int32_t b)
 	return fpngl_ubound32(irng,k) + a;
 }
 
-int64_t fpngl_range64(fpngl_irng_t *irng64, int64_t a, int64_t b)
+int64_t fpngl_range64(fpngl_irng_t *irng, int64_t a, int64_t b)
 {
-	// TODO
-	assert(0);
-	return 0;
+	int64_t k = b-a;
+	return fpngl_ubound64(irng,k) + a;
 }
 

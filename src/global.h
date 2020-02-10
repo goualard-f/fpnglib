@@ -30,9 +30,8 @@
 
 #include <config.h>
 
-#ifndef NDEBUG
-#  include <fpnglib/debug.h>
-#endif
+#include <fpnglib/debug.h>
+
 
 #include <assert.h>
 

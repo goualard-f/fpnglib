@@ -81,8 +81,11 @@ extern "C" {
 											 uint64_t minfrac, uint64_t maxfrac, 
 											 uint64_t andmask,
 											 uint64_t ormask);
-  
 
+	// Create a probability distribution for the five classes of floats:
+	// { zero, denormalized, normalized, infinite, nan }
+	fpngl_ddistribution_t *fpngl_class_float64_new(fpngl_irng_t *irng,
+																								 const double P[static 5]);
   /*
 	 Return a floating-point number from one of the four classes:
 	 { zero, denormalized, normalized, infinite, nan }

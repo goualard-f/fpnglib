@@ -26,6 +26,7 @@
 #include <check.h>
 #include <fpnglib/irange.h>
 #include <fpnglib/mt19937ar.h>
+#include <fpnglib/mt19937-64.h>
 
 START_TEST(test_n_bits32)
 {
@@ -56,12 +57,38 @@ START_TEST(test_ubound32)
 }
 END_TEST
 
+START_TEST(test_ubound64)
+{
+	fpngl_irng_t *irng = fpngl_irng_new64(fpngl_mt19937v64(42));
+
+	for (uint32_t i = 0; i < 100; ++i) {
+		uint64_t v = fpngl_ubound64(irng,2);
+		ck_assert(v == 0 || v == 1);
+	}
+	
+	fpngl_irng_delete(irng);
+}
+END_TEST
+
 START_TEST(test_range32)
 {
 	fpngl_irng_t *irng = fpngl_irng_new32(fpngl_mt19937v32(42));
 
 	for (uint32_t i = 0; i < 10000; ++i) {
 		int32_t v = fpngl_range32(irng,-1,2);
+		ck_assert(v == -1 || v == 0 || v == 1);
+	}
+	
+	fpngl_irng_delete(irng);
+}
+END_TEST
+
+START_TEST(test_range64)
+{
+	fpngl_irng_t *irng = fpngl_irng_new64(fpngl_mt19937v64(42));
+
+	for (uint32_t i = 0; i < 10000; ++i) {
+		int64_t v = fpngl_range64(irng,-1,2);
 		ck_assert(v == -1 || v == 0 || v == 1);
 	}
 	
@@ -83,6 +110,8 @@ Suite *irange_suite(void)
   tcase_add_test(tc_core, test_n_bits64);
   tcase_add_test(tc_core, test_ubound32);
   tcase_add_test(tc_core, test_range32);
+  tcase_add_test(tc_core, test_ubound64);
+  tcase_add_test(tc_core, test_range64);
   suite_add_tcase(s, tc_core);
   
   return s;
