@@ -22,8 +22,8 @@
  */
 
 /*
-	This implementation of the Walker/Vose algoritm is a C reimplementation of
-	the java version by Keith Schwarz:
+	This implementation of the Walker/Vose algoritm is mostly a 
+	C reimplementation of	the java version by Keith Schwarz:
 	https://www.keithschwarz.com/interesting/code/?dir=alias-method
 */
 

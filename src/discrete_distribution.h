@@ -36,13 +36,16 @@
 extern "C" {
 #endif
 
+	// Double precision discrete distribution
 	typedef struct fpngl_ddistribution_t fpngl_ddistribution_t;
 	
   /* 
 		 Create a structure to handle sampling from a discrete distribution.
 		 \return NULL if the result cannot be allocated
+
 		 The fpngl_ddistribution_t object owns the rng and is responsible for
 		 its destruction.
+
 		 @precondition \sum P = 1
   */
 	fpngl_ddistribution_t *fpngl_ddistribution_new(fpngl_irng_t *rng,

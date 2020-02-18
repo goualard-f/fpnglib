@@ -1,4 +1,4 @@
-/* Program example simulating the flipping of a coin
+/* Program example simulating the flipping of a coin.
 
 	Copyright 2019--2020 University of Nantes, France.
 
@@ -20,11 +20,6 @@
 	
  */
 
-/*
-	Showing the bias introduced by using the modulo to draw integers in a specific 
-	range.
- */
-
 #include <stdio.h>
 #include <stdint.h>
 #include <fpnglib/mt19937ar.h>
@@ -32,37 +27,29 @@
 #include <fpnglib/irange.h>
 
 const uint32_t seed = 42;
-const uint64_t niters = 1000000000;
+const uint64_t niters = 10000000;
 
-fpngl_irng_t *irnga;
-fpngl_irng_t *irngb;
-
-uint32_t fair(void)
+uint32_t fair(fpngl_irng_t *irng)
 {
-	return fpngl_ubound32(irnga,2);
+	return fpngl_ubound32(irng,2);
 }
 
 
-uint32_t biased(void)
+uint32_t biased(fpngl_irng_t *irng)
 {
-	return fpngl_ubound32(irngb,3) % 2;
+	return fpngl_ubound32(irng,3) % 2;
 }
 
 int main(void)
 {
-	uint64_t fairT[2] = {0, 0};
-	uint64_t biasedT[2] = {0, 0};
-
-	irnga = fpngl_irng_new32(fpngl_mt19937v32(seed));
-	irngb = fpngl_irng_new32(fpngl_mt19937v32(seed));
+	uint64_t head_or_tail[2] = {0, 0};
+	
+	fpngl_irng_t *irng = fpngl_irng_new32(fpngl_mt19937v32(seed));
 	
 	for (uint64_t i = 0; i < niters; ++i) {
-		++fairT[fair()];
-		++biasedT[biased()];
+		++head_or_tail[fpngl_ubound32(irng,2)];
 	}
-	printf("Percentage of zeros (fair):\t %f\n",100*(fairT[0]/(double)niters));
-	printf("Percentage of zeros (biased):\t %f\n",100*(biasedT[0]/(double)niters));
+	printf("heads: %.2f%%\n",100*(head_or_tail[0]/(double)niters));
 	
-	fpngl_irng_delete(irnga);
-	fpngl_irng_delete(irngb);
+	fpngl_irng_delete(irng);
 }
