@@ -74,13 +74,9 @@ The FPNGlib library uses the @emph{autotools} (@url{https://www.gnu.org/software
 
 The library is entirely written in the ISO/IEC 9899:1999 C language. Therefore, it requires a decently recent C compiler such as any GNU C Compiler v.@tie{}4.5 or higher.
 
-<<<<<<< HEAD
-In order to test the library, you will also need to install @command{check} v. 0.11.0 or higher (@url{https://libcheck.github.io/check/}) beforehand. 
-=======
 In order to test the library, you will need to install @command{check} v. 0.11.0 or higher (@url{https://libcheck.github.io/check/}) beforehand. If your compiler does not support
 the macro @code{__VA_OPT__}, some tests will not be performed. That macro should be
 available in GCC version 8 and above, and in Clang version 6 and above.
->>>>>>> e042294179795a4e909f837d966a2fc7cd2d7815
 
 Before compiling the library, you need to configure it. It is done by calling the command @command{./configure} in the root directory of FPNGlib. The command accepts many options, among them:
 
