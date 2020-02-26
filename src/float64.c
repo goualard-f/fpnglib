@@ -173,7 +173,7 @@ double fpngl_float64(fpngl_irng_t *rng,
 										 uint64_t andmask,
 										 uint64_t ormask)
 {
-  fpngl_uintf64_t di;
+   fpngl_uintf64_t di;
 
   uint64_t sign;
   switch (s) {
