@@ -18,7 +18,7 @@
 #	GNU Lesser General Public License along with the FPNGlib Library.  If not,
 #	see https://www.gnu.org/licenses/. 	
 
-AM_CFLAGS = -Wall -O3
+AM_CFLAGS = -Wall -O3 -std=c99 
 lib_LTLIBRARIES = libfpnglib.la
 libfpnglib_la_SOURCES = fpu.c irng32_t.c irng64_t.c irng_t.c irange.c \
 	utilities.c uistack.c walker_vose.c float64.c \

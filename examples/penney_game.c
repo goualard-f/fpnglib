@@ -78,7 +78,8 @@ int main(void)
 	while (!end) {
 		char sequence[4];
 		printf("Your sequence H/T (or E to stop)? ");
-		scanf("%3s",sequence);
+		// `(void)!` construct to avoid `unused result` warning by gcc
+		(void)!scanf("%3s",sequence);
 		end = (!strcmp(sequence,"E"));
 		if (!end) {
 			penney(sequence,irng);

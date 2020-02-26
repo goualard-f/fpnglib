@@ -110,23 +110,25 @@ host_triplet = @host@
 TESTS = check_constants32$(EXEEXT) check_constants64$(EXEEXT) \
 	check_fpu$(EXEEXT) check_mt19937v32$(EXEEXT) \
 	check_mt19937v64$(EXEEXT) check_irange$(EXEEXT) \
-	check_lcg$(EXEEXT) check_utilities$(EXEEXT) \
-	check_uistack$(EXEEXT) check_walker_vose$(EXEEXT) \
-	check_float64$(EXEEXT) check_frng64_division$(EXEEXT) \
-	check_frng64_division_k$(EXEEXT) check_frng64_java$(EXEEXT) \
-	check_vnm$(EXEEXT) check_drand48gnu$(EXEEXT) \
-	check_frng64_golang$(EXEEXT) \
-	check_frng64_lecuyer_simard$(EXEEXT) \
-	check_frng64_rationalLCG10$(EXEEXT) check_frng64_KGW$(EXEEXT) \
-	check_frng64_fog97$(EXEEXT) check_frng64_fog05$(EXEEXT)
-check_PROGRAMS = $(am__EXEEXT_1)
+	check_utilities$(EXEEXT) check_uistack$(EXEEXT) \
+	check_walker_vose$(EXEEXT) $(am__EXEEXT_1) \
+	check_float64$(EXEEXT) check_frng64_java$(EXEEXT) \
+	check_vnm$(EXEEXT) check_drand48gnu$(EXEEXT)
+check_PROGRAMS = $(am__EXEEXT_2)
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_check_enable_debug.m4 \
+<<<<<<< HEAD
 	$(top_srcdir)/m4/ax_gcc_builtin.m4 $(top_srcdir)/m4/libtool.m4 \
 	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
 	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
 	$(top_srcdir)/configure.ac
+=======
+	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
+	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
+	$(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/m4/va_opt_check.m4 $(top_srcdir)/configure.ac
+>>>>>>> e042294179795a4e909f837d966a2fc7cd2d7815
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
@@ -135,18 +137,22 @@ CONFIG_HEADER = $(top_builddir)/config.h \
 	$(top_builddir)/src/fpngl_config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am__EXEEXT_1 = check_constants32$(EXEEXT) check_constants64$(EXEEXT) \
+@HAVE_VA_OPT_TRUE@am__EXEEXT_1 = check_lcg$(EXEEXT) \
+@HAVE_VA_OPT_TRUE@	check_frng64_division$(EXEEXT) \
+@HAVE_VA_OPT_TRUE@	check_frng64_division_k$(EXEEXT) \
+@HAVE_VA_OPT_TRUE@	check_frng64_fog05$(EXEEXT) \
+@HAVE_VA_OPT_TRUE@	check_frng64_fog97$(EXEEXT) \
+@HAVE_VA_OPT_TRUE@	check_frng64_golang$(EXEEXT) \
+@HAVE_VA_OPT_TRUE@	check_frng64_KGW$(EXEEXT) \
+@HAVE_VA_OPT_TRUE@	check_frng64_lecuyer_simard$(EXEEXT) \
+@HAVE_VA_OPT_TRUE@	check_frng64_rationalLCG10$(EXEEXT)
+am__EXEEXT_2 = check_constants32$(EXEEXT) check_constants64$(EXEEXT) \
 	check_fpu$(EXEEXT) check_mt19937v32$(EXEEXT) \
 	check_mt19937v64$(EXEEXT) check_irange$(EXEEXT) \
-	check_lcg$(EXEEXT) check_utilities$(EXEEXT) \
-	check_uistack$(EXEEXT) check_walker_vose$(EXEEXT) \
-	check_float64$(EXEEXT) check_frng64_division$(EXEEXT) \
-	check_frng64_division_k$(EXEEXT) check_frng64_java$(EXEEXT) \
-	check_vnm$(EXEEXT) check_drand48gnu$(EXEEXT) \
-	check_frng64_golang$(EXEEXT) \
-	check_frng64_lecuyer_simard$(EXEEXT) \
-	check_frng64_rationalLCG10$(EXEEXT) check_frng64_KGW$(EXEEXT) \
-	check_frng64_fog97$(EXEEXT) check_frng64_fog05$(EXEEXT)
+	check_utilities$(EXEEXT) check_uistack$(EXEEXT) \
+	check_walker_vose$(EXEEXT) $(am__EXEEXT_1) \
+	check_float64$(EXEEXT) check_frng64_java$(EXEEXT) \
+	check_vnm$(EXEEXT) check_drand48gnu$(EXEEXT)
 check_constants32_SOURCES = check_constants32.c
 check_constants32_OBJECTS = check_constants32.$(OBJEXT)
 check_constants32_LDADD = $(LDADD)
@@ -672,8 +678,15 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+@HAVE_VA_OPT_FALSE@CONDTESTS = 
+
+# Tests performed only if the compiler supports the __VA_OPT__ macro.
+@HAVE_VA_OPT_TRUE@CONDTESTS = check_lcg check_frng64_division check_frng64_division_k check_frng64_fog05 \
+@HAVE_VA_OPT_TRUE@	check_frng64_fog97 check_frng64_golang check_frng64_KGW check_frng64_lecuyer_simard \
+@HAVE_VA_OPT_TRUE@	check_frng64_rationalLCG10 
+
 LDADD = $(top_builddir)/src/libfpnglib.la @CHECK_LIBS@ -lm $(LIBS)
-AM_CFLAGS = -I.. -Wall @CHECK_CFLAGS@
+AM_CFLAGS = -I.. -std=c99 -Wall @CHECK_CFLAGS@
 check_fpu_CFLAGS = -frounding-math -I.. -Wall @CHECK_CFLAGS@ -Wno-unused-but-set-variable
 all: all-am
 
@@ -1111,13 +1124,6 @@ check_irange.log: check_irange$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-check_lcg.log: check_lcg$(EXEEXT)
-	@p='check_lcg$(EXEEXT)'; \
-	b='check_lcg'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
 check_utilities.log: check_utilities$(EXEEXT)
 	@p='check_utilities$(EXEEXT)'; \
 	b='check_utilities'; \
@@ -1139,9 +1145,9 @@ check_walker_vose.log: check_walker_vose$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-check_float64.log: check_float64$(EXEEXT)
-	@p='check_float64$(EXEEXT)'; \
-	b='check_float64'; \
+check_lcg.log: check_lcg$(EXEEXT)
+	@p='check_lcg$(EXEEXT)'; \
+	b='check_lcg'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
@@ -1156,6 +1162,55 @@ check_frng64_division.log: check_frng64_division$(EXEEXT)
 check_frng64_division_k.log: check_frng64_division_k$(EXEEXT)
 	@p='check_frng64_division_k$(EXEEXT)'; \
 	b='check_frng64_division_k'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+check_frng64_fog05.log: check_frng64_fog05$(EXEEXT)
+	@p='check_frng64_fog05$(EXEEXT)'; \
+	b='check_frng64_fog05'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+check_frng64_fog97.log: check_frng64_fog97$(EXEEXT)
+	@p='check_frng64_fog97$(EXEEXT)'; \
+	b='check_frng64_fog97'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+check_frng64_golang.log: check_frng64_golang$(EXEEXT)
+	@p='check_frng64_golang$(EXEEXT)'; \
+	b='check_frng64_golang'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+check_frng64_KGW.log: check_frng64_KGW$(EXEEXT)
+	@p='check_frng64_KGW$(EXEEXT)'; \
+	b='check_frng64_KGW'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+check_frng64_lecuyer_simard.log: check_frng64_lecuyer_simard$(EXEEXT)
+	@p='check_frng64_lecuyer_simard$(EXEEXT)'; \
+	b='check_frng64_lecuyer_simard'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+check_frng64_rationalLCG10.log: check_frng64_rationalLCG10$(EXEEXT)
+	@p='check_frng64_rationalLCG10$(EXEEXT)'; \
+	b='check_frng64_rationalLCG10'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+check_float64.log: check_float64$(EXEEXT)
+	@p='check_float64$(EXEEXT)'; \
+	b='check_float64'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
@@ -1177,48 +1232,6 @@ check_vnm.log: check_vnm$(EXEEXT)
 check_drand48gnu.log: check_drand48gnu$(EXEEXT)
 	@p='check_drand48gnu$(EXEEXT)'; \
 	b='check_drand48gnu'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-check_frng64_golang.log: check_frng64_golang$(EXEEXT)
-	@p='check_frng64_golang$(EXEEXT)'; \
-	b='check_frng64_golang'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-check_frng64_lecuyer_simard.log: check_frng64_lecuyer_simard$(EXEEXT)
-	@p='check_frng64_lecuyer_simard$(EXEEXT)'; \
-	b='check_frng64_lecuyer_simard'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-check_frng64_rationalLCG10.log: check_frng64_rationalLCG10$(EXEEXT)
-	@p='check_frng64_rationalLCG10$(EXEEXT)'; \
-	b='check_frng64_rationalLCG10'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-check_frng64_KGW.log: check_frng64_KGW$(EXEEXT)
-	@p='check_frng64_KGW$(EXEEXT)'; \
-	b='check_frng64_KGW'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-check_frng64_fog97.log: check_frng64_fog97$(EXEEXT)
-	@p='check_frng64_fog97$(EXEEXT)'; \
-	b='check_frng64_fog97'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
-check_frng64_fog05.log: check_frng64_fog05$(EXEEXT)
-	@p='check_frng64_fog05$(EXEEXT)'; \
-	b='check_frng64_fog05'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

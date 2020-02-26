@@ -636,6 +636,8 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
+HAVE_VA_OPT_FALSE
+HAVE_VA_OPT_TRUE
 CPP
 LT_SYS_LIBRARY_PATH
 OTOOL64
@@ -13906,6 +13908,56 @@ fi
 # Set default CFLAGS to nothing to avoid -O2 optimization in tests
 CFLAGS=
 
+# Testing whether the __VA_OPT__ macro is supported.
+# Define the conditional HAVE_VA_OPT that can be tested in Makefile.am
+ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether __VA_OPT__ macro is supported" >&5
+$as_echo_n "checking whether __VA_OPT__ macro is supported... " >&6; }
+if test "$cross_compiling" = yes; then :
+  { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "cannot run test program while cross compiling
+See \`config.log' for more details" "$LINENO" 5; }
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#define PP_THIRD_ARG(a,b,c,...) c
+#define VA_OPT_SUPPORTED_I(...) PP_THIRD_ARG(__VA_OPT__(,),0,1,)
+#define VA_OPT_SUPPORTED VA_OPT_SUPPORTED_I(?)
+int main(void) { return VA_OPT_SUPPORTED;}
+_ACEOF
+if ac_fn_c_try_run "$LINENO"; then :
+  have_va_opt=yes;{ $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  have_va_opt=no;{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
+  conftest.$ac_objext conftest.beam conftest.$ac_ext
+fi
+
+ if test x${have_va_opt} = xyes; then
+  HAVE_VA_OPT_TRUE=
+  HAVE_VA_OPT_FALSE='#'
+else
+  HAVE_VA_OPT_TRUE='#'
+  HAVE_VA_OPT_FALSE=
+fi
+
+ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+
+
 
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to enable assertions" >&5
 $as_echo_n "checking whether to enable assertions... " >&6; }
@@ -14065,6 +14117,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${am__fastdepCC_TRUE}" && test -z "${am__fastdepCC_FALSE}"; then
   as_fn_error $? "conditional \"am__fastdepCC\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${HAVE_VA_OPT_TRUE}" && test -z "${HAVE_VA_OPT_FALSE}"; then
+  as_fn_error $? "conditional \"HAVE_VA_OPT\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 

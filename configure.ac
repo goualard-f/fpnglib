@@ -84,6 +84,10 @@ AC_CHECK_TYPE(__uint128_t,[AC_DEFINE(HAVE_UINT128_T,1,[Define this to 1 if the t
 # Set default CFLAGS to nothing to avoid -O2 optimization in tests
 CFLAGS=
 
+# Testing whether the __VA_OPT__ macro is supported.
+# Define the conditional HAVE_VA_OPT that can be tested in Makefile.am
+VA_OPT_CHECK
+
 AC_HEADER_ASSERT
 # Checks for library functions.
 
