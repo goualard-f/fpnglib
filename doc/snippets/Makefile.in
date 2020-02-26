@@ -14,7 +14,7 @@
 
 @SET_MAKE@
 
-# Makefile for examples
+# Makefile to test the snippets of code presented in the documentation
 #
 #	Copyright 2019--2020 University of Nantes, France.
 #
@@ -33,7 +33,6 @@
 #	You should have received copies of the GNU General Public License and the
 #	GNU Lesser General Public License along with the FPNGlib Library.  If not,
 #	see https://www.gnu.org/licenses/. 	
-
 
 VPATH = @srcdir@
 am__is_gnu_make = { \
@@ -109,12 +108,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-noinst_PROGRAMS = timing_mt19937v32$(EXEEXT) \
-	timing_mt19937v64$(EXEEXT) pi$(EXEEXT) biased$(EXEEXT) \
-	ddistribution$(EXEEXT) coin$(EXEEXT) penney_game$(EXEEXT) \
-	isimple$(EXEEXT) fsimple$(EXEEXT) biased_dice$(EXEEXT) \
-	dice$(EXEEXT)
-subdir = examples
+noinst_PROGRAMS = significand$(EXEEXT) exponent$(EXEEXT)
+subdir = doc/snippets
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_check_enable_debug.m4 \
 	$(top_srcdir)/m4/ax_gcc_builtin.m4 $(top_srcdir)/m4/libtool.m4 \
@@ -129,70 +124,21 @@ CONFIG_HEADER = $(top_builddir)/config.h \
 	$(top_builddir)/src/fpngl_config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-LTLIBRARIES = $(noinst_LTLIBRARIES)
-libctiming_la_LIBADD =
-am_libctiming_la_OBJECTS = libctiming_la-ctiming.lo
-libctiming_la_OBJECTS = $(am_libctiming_la_OBJECTS)
+PROGRAMS = $(noinst_PROGRAMS)
+exponent_SOURCES = exponent.c
+exponent_OBJECTS = exponent.$(OBJEXT)
+exponent_LDADD = $(LDADD)
+am__DEPENDENCIES_1 =
+exponent_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
-PROGRAMS = $(noinst_PROGRAMS)
-biased_SOURCES = biased.c
-biased_OBJECTS = biased.$(OBJEXT)
-biased_LDADD = $(LDADD)
-am__DEPENDENCIES_1 =
-biased_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
-	$(am__DEPENDENCIES_1)
-biased_dice_SOURCES = biased_dice.c
-biased_dice_OBJECTS = biased_dice.$(OBJEXT)
-biased_dice_LDADD = $(LDADD)
-biased_dice_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
-	$(am__DEPENDENCIES_1)
-coin_SOURCES = coin.c
-coin_OBJECTS = coin.$(OBJEXT)
-coin_LDADD = $(LDADD)
-coin_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
-	$(am__DEPENDENCIES_1)
-ddistribution_SOURCES = ddistribution.c
-ddistribution_OBJECTS = ddistribution.$(OBJEXT)
-ddistribution_LDADD = $(LDADD)
-ddistribution_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
-	$(am__DEPENDENCIES_1)
-dice_SOURCES = dice.c
-dice_OBJECTS = dice.$(OBJEXT)
-dice_LDADD = $(LDADD)
-dice_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
-	$(am__DEPENDENCIES_1)
-fsimple_SOURCES = fsimple.c
-fsimple_OBJECTS = fsimple.$(OBJEXT)
-fsimple_LDADD = $(LDADD)
-fsimple_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
-	$(am__DEPENDENCIES_1)
-isimple_SOURCES = isimple.c
-isimple_OBJECTS = isimple.$(OBJEXT)
-isimple_LDADD = $(LDADD)
-isimple_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
-	$(am__DEPENDENCIES_1)
-penney_game_SOURCES = penney_game.c
-penney_game_OBJECTS = penney_game.$(OBJEXT)
-penney_game_LDADD = $(LDADD)
-penney_game_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
-	$(am__DEPENDENCIES_1)
-pi_SOURCES = pi.c
-pi_OBJECTS = pi.$(OBJEXT)
-pi_LDADD = $(LDADD)
-pi_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
-	$(am__DEPENDENCIES_1)
-timing_mt19937v32_SOURCES = timing_mt19937v32.c
-timing_mt19937v32_OBJECTS = timing_mt19937v32.$(OBJEXT)
-timing_mt19937v32_LDADD = $(LDADD)
-timing_mt19937v32_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
-	$(am__DEPENDENCIES_1)
-timing_mt19937v64_SOURCES = timing_mt19937v64.c
-timing_mt19937v64_OBJECTS = timing_mt19937v64.$(OBJEXT)
-timing_mt19937v64_LDADD = $(LDADD)
-timing_mt19937v64_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+significand_SOURCES = significand.c
+significand_OBJECTS = significand.$(OBJEXT)
+significand_LDADD = $(LDADD)
+significand_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
 	$(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -228,12 +174,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(libctiming_la_SOURCES) biased.c biased_dice.c coin.c \
-	ddistribution.c dice.c fsimple.c isimple.c penney_game.c pi.c \
-	timing_mt19937v32.c timing_mt19937v64.c
-DIST_SOURCES = $(libctiming_la_SOURCES) biased.c biased_dice.c coin.c \
-	ddistribution.c dice.c fsimple.c isimple.c penney_game.c pi.c \
-	timing_mt19937v32.c timing_mt19937v64.c
+SOURCES = exponent.c significand.c
+DIST_SOURCES = exponent.c significand.c
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -382,11 +324,8 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-noinst_LTLIBRARIES = libctiming.la
-libctiming_la_SOURCES = ctiming.c
-libctiming_la_CPPFLAGS = -I$(top_srcdir)
-LDADD = $(top_builddir)/src/libfpnglib.la -lm -lctiming $(LIBS)
-AM_CFLAGS = -I.. -Wall -O3
+LDADD = $(top_builddir)/src/libfpnglib.la -lm $(LIBS)
+AM_CFLAGS = -I.. -Wall
 all: all-am
 
 .SUFFIXES:
@@ -400,9 +339,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu examples/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu doc/snippets/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu examples/Makefile
+	  $(AUTOMAKE) --gnu doc/snippets/Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
 	  *config.status*) \
@@ -421,20 +360,6 @@ $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
 
-clean-noinstLTLIBRARIES:
-	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
-	@list='$(noinst_LTLIBRARIES)'; \
-	locs=`for p in $$list; do echo $$p; done | \
-	      sed 's|^[^/]*$$|.|; s|/[^/]*$$||; s|$$|/so_locations|' | \
-	      sort -u`; \
-	test -z "$$locs" || { \
-	  echo rm -f $${locs}; \
-	  rm -f $${locs}; \
-	}
-
-libctiming.la: $(libctiming_la_OBJECTS) $(libctiming_la_DEPENDENCIES) $(EXTRA_libctiming_la_DEPENDENCIES) 
-	$(AM_V_CCLD)$(LINK)  $(libctiming_la_OBJECTS) $(libctiming_la_LIBADD) $(LIBS)
-
 clean-noinstPROGRAMS:
 	@list='$(noinst_PROGRAMS)'; test -n "$$list" || exit 0; \
 	echo " rm -f" $$list; \
@@ -444,49 +369,13 @@ clean-noinstPROGRAMS:
 	echo " rm -f" $$list; \
 	rm -f $$list
 
-biased$(EXEEXT): $(biased_OBJECTS) $(biased_DEPENDENCIES) $(EXTRA_biased_DEPENDENCIES) 
-	@rm -f biased$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(biased_OBJECTS) $(biased_LDADD) $(LIBS)
+exponent$(EXEEXT): $(exponent_OBJECTS) $(exponent_DEPENDENCIES) $(EXTRA_exponent_DEPENDENCIES) 
+	@rm -f exponent$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(exponent_OBJECTS) $(exponent_LDADD) $(LIBS)
 
-biased_dice$(EXEEXT): $(biased_dice_OBJECTS) $(biased_dice_DEPENDENCIES) $(EXTRA_biased_dice_DEPENDENCIES) 
-	@rm -f biased_dice$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(biased_dice_OBJECTS) $(biased_dice_LDADD) $(LIBS)
-
-coin$(EXEEXT): $(coin_OBJECTS) $(coin_DEPENDENCIES) $(EXTRA_coin_DEPENDENCIES) 
-	@rm -f coin$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(coin_OBJECTS) $(coin_LDADD) $(LIBS)
-
-ddistribution$(EXEEXT): $(ddistribution_OBJECTS) $(ddistribution_DEPENDENCIES) $(EXTRA_ddistribution_DEPENDENCIES) 
-	@rm -f ddistribution$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(ddistribution_OBJECTS) $(ddistribution_LDADD) $(LIBS)
-
-dice$(EXEEXT): $(dice_OBJECTS) $(dice_DEPENDENCIES) $(EXTRA_dice_DEPENDENCIES) 
-	@rm -f dice$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(dice_OBJECTS) $(dice_LDADD) $(LIBS)
-
-fsimple$(EXEEXT): $(fsimple_OBJECTS) $(fsimple_DEPENDENCIES) $(EXTRA_fsimple_DEPENDENCIES) 
-	@rm -f fsimple$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(fsimple_OBJECTS) $(fsimple_LDADD) $(LIBS)
-
-isimple$(EXEEXT): $(isimple_OBJECTS) $(isimple_DEPENDENCIES) $(EXTRA_isimple_DEPENDENCIES) 
-	@rm -f isimple$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(isimple_OBJECTS) $(isimple_LDADD) $(LIBS)
-
-penney_game$(EXEEXT): $(penney_game_OBJECTS) $(penney_game_DEPENDENCIES) $(EXTRA_penney_game_DEPENDENCIES) 
-	@rm -f penney_game$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(penney_game_OBJECTS) $(penney_game_LDADD) $(LIBS)
-
-pi$(EXEEXT): $(pi_OBJECTS) $(pi_DEPENDENCIES) $(EXTRA_pi_DEPENDENCIES) 
-	@rm -f pi$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(pi_OBJECTS) $(pi_LDADD) $(LIBS)
-
-timing_mt19937v32$(EXEEXT): $(timing_mt19937v32_OBJECTS) $(timing_mt19937v32_DEPENDENCIES) $(EXTRA_timing_mt19937v32_DEPENDENCIES) 
-	@rm -f timing_mt19937v32$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(timing_mt19937v32_OBJECTS) $(timing_mt19937v32_LDADD) $(LIBS)
-
-timing_mt19937v64$(EXEEXT): $(timing_mt19937v64_OBJECTS) $(timing_mt19937v64_DEPENDENCIES) $(EXTRA_timing_mt19937v64_DEPENDENCIES) 
-	@rm -f timing_mt19937v64$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(timing_mt19937v64_OBJECTS) $(timing_mt19937v64_LDADD) $(LIBS)
+significand$(EXEEXT): $(significand_OBJECTS) $(significand_DEPENDENCIES) $(EXTRA_significand_DEPENDENCIES) 
+	@rm -f significand$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(significand_OBJECTS) $(significand_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -494,18 +383,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/biased.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/biased_dice.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/coin.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ddistribution.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dice.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fsimple.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/isimple.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libctiming_la-ctiming.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/penney_game.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pi.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timing_mt19937v32.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timing_mt19937v64.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/exponent.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/significand.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -527,13 +406,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
-
-libctiming_la-ctiming.lo: ctiming.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libctiming_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libctiming_la-ctiming.lo -MD -MP -MF $(DEPDIR)/libctiming_la-ctiming.Tpo -c -o libctiming_la-ctiming.lo `test -f 'ctiming.c' || echo '$(srcdir)/'`ctiming.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libctiming_la-ctiming.Tpo $(DEPDIR)/libctiming_la-ctiming.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='ctiming.c' object='libctiming_la-ctiming.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libctiming_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libctiming_la-ctiming.lo `test -f 'ctiming.c' || echo '$(srcdir)/'`ctiming.c
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -625,7 +497,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LTLIBRARIES) $(PROGRAMS)
+all-am: Makefile $(PROGRAMS)
 installdirs:
 install: install-am
 install-exec: install-exec-am
@@ -659,8 +531,8 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-libtool clean-noinstLTLIBRARIES \
-	clean-noinstPROGRAMS mostlyclean-am
+clean-am: clean-generic clean-libtool clean-noinstPROGRAMS \
+	mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
@@ -731,23 +603,21 @@ uninstall-am:
 .MAKE: install-am install-strip
 
 .PHONY: CTAGS GTAGS TAGS all all-am check check-am clean clean-generic \
-	clean-libtool clean-noinstLTLIBRARIES clean-noinstPROGRAMS \
-	cscopelist-am ctags ctags-am distclean distclean-compile \
-	distclean-generic distclean-libtool distclean-tags distdir dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
+	clean-libtool clean-noinstPROGRAMS cscopelist-am ctags \
+	ctags-am distclean distclean-compile distclean-generic \
+	distclean-libtool distclean-tags distdir dvi dvi-am html \
+	html-am info info-am install install-am install-data \
+	install-data-am install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-man install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	tags tags-am uninstall uninstall-am
 
 .PRECIOUS: Makefile
 
-
-$(noinst_PROGRAMS): libctiming.la
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

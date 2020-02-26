@@ -39,10 +39,12 @@ by the Foundation.
 @contents
 
 @chapter What is FPNGlib?
+@c ======================
 
 FPNGlib is a C library that offers pseudo-random generators in a unified framework. As the name implies, its strong point is the availability of many IEEE@tie{}754 floating-point random number generators, with the possibility to control the kind of floating-point number generated (e.g., the amount of subnormal vs. normal) and their properties (e.g., probability of having a least significant bit of the fractional part to be @math{1})
 
-Even though it is entirely written in ISO Standard C99, FPNGlib is, at present, only supported on UNIX-like systems (GNU/Linux and Mac@tie{}OS@tie{}X are the only two tested environments) due to the tools used for its configuration, compilation and deployment (@emph{autotools}).@cindex Supported platforms
+Even though it is entirely written in ISO Standard C99, FPNGlib is, at present, only supported on UNIX-like systems (GNU/Linux and Mac@tie{}OS@tie{}X are the only two tested environments) due to the tools used for its configuration, compilation and deployment (@emph{autotools}).
+@cindex Supported platforms
 
 More information about the FPNGlib library can be found at the project homepage,
 @uref{https://gitlab.univ-nantes.fr/goualard-f/fpnglib}.
@@ -62,46 +64,49 @@ The FPNGlib library contains code from third parties, specifically:
 Questions and bug reports shall be directly submitted on the @url{https://gitlab.univ-nantes.fr/goualard-f/fpnglib/issues,GitLab platform} for the project.
 
 @chapter Getting Started with FPNGlib
+@c ==================================
 
-This chapter describes the very first steps with FPNGlib, from the retrieval of the archive for the library to the first program you will write to test its potential. If you are accustomed to work with autotools-based software, feel free to proceed directly to Section@tie{}@ref{A Guided Tour of FPNGlib}.
+This chapter describes the very first steps with FPNGlib, from the retrieval of the archive for the library to the first program you will write to test its potential. If you are accustomed to work with autotools-based software, feel free to proceed directly to Section@tie{}@ref{An Introduction to FPNGlib}.
 
 @section Installation
-
+@c ------------------
 The FPNGlib library uses the @emph{autotools} (@url{https://www.gnu.org/software/autoconf/,autoconf}, @url{https://www.gnu.org/software/automake/,automake}, @url{https://www.gnu.org/software/libtool/,libtool}) for configuration, compilation, and deployment. However, these tools do not need to be present on your computer as long as you do not modify the configuration files (@file{configure.ac} and the various @file{Makefile.am} files).
 
 The library is entirely written in the ISO/IEC 9899:1999 C language. Therefore, it requires a decently recent C compiler such as any GNU C Compiler v.@tie{}4.5 or higher.
 
-In order to test the library, you will need to install @command{check} v. 0.11.0 or higher (@url{https://libcheck.github.io/check/}) beforehand. 
+In order to test the library, you will also need to install @command{check} v. 0.11.0 or higher (@url{https://libcheck.github.io/check/}) beforehand. 
 
-Before compiling the library, you will need to configure it. It is done by calling the command @command{./configure} in the root directory of FPNGlib. The command accepts many options, among them:
+Before compiling the library, you need to configure it. It is done by calling the command @command{./configure} in the root directory of FPNGlib. The command accepts many options, among them:
 
 @itemize @w{}
-@item @option{--help}: display a list of all the options available;
-@item @option{--prefix=@var{<path to install into>}}: give the path to install the code into. The header files will go into an @file{include/} subdirectory, while the library will go into a @file{lib/} subdirectory;
+@item @option{--help}: displays a list of all the options available;
+@item @option{--prefix=@var{<path to install into>}}: gives the path to install the code into. The header files will go into an @file{include/} subdirectory, while the library will go into a @file{lib/} subdirectory;
 @item @option{--enable-debug=@var{[yes/info/profile/no]}}: define whether the code should be compiled with debugging information and assertion support. The default is @samp{yes}.
 @end itemize
 There are many other options, shared by all autotools-based applications. Use @command{./configure --help} to get the complete list.
 
 Once the configuration is complete, you may call @command{make} in the root directory of the distribution for FPNGlib to compile the library.
 
-After having compiled the library, you should test it in order to ensure that everything is ok. This is done by calling @command{make check}. If no error is detected, you may proceed to the installation phase.
+After having compiled the library, you should test it, in order to ensure that everything is ok. This is done by calling @command{make check}. If no error is detected, you may proceed to the installation phase.
 
-The library should be installed before being used. However, if you want to get a taste of it beforehand, you may modify and execute the examples in the sub-directory @command{examples} even before the installation. Calling @command{make} in this directory will recompile the necessary files.
+The library should be installed before being used. However, if you want to get a taste of it beforehand, you may modify and execute the examples in the sub-directory @command{examples/} even before the installation. Calling @command{make} in this directory will recompile the necessary files.
 
-The installation will be done by calling @command{make install}. Provided you did not override the default locations during the configuration process, the library will be installed into @file{/usr/local}.
+The installation is done by calling @command{make install}. Provided you did not override the default locations during the configuration process, the library will be installed into @file{/usr/local}.
 
 @page
-@node A Guided Tour of FPNGlib
-@section A Guided Tour of FPNGlib
-
-FPNGlib offers both generators for random integers and random IEEE 754 floating-point numbers. We will first see how to obtain random integers in @ref{Generating Random Integers}, and then random floats in @ref{Generating Random Floating-Point Numbers}.
+@node An Introduction to FPNGlib
+@section An Introduction to FPNGlib
+@c --------------------------------
+FPNGlib offers generators for random integers and random IEEE 754 floating-point numbers. We will first see how to obtain random integers in @ref{Generating Random Integers} and @ref{Generating Random Integers in a Domain}, and then random floats in @ref{Generating Random Floating-Point Numbers} and @ref{Generating a random float with some properties}.
 
 @node Generating Random Integers
 @subsection Generating Random Integers
-Our very first program using FPNGlib, available in @file{examples/simple.c}, simply draws one integer at random:
+@c ...................................
+Our very first program using FPNGlib simply draws one integer at random:
 
 @cartouche
 @verbatim
+// examples/isimple.c
 #include <stdio.h>
 #include <fpnglib/mt19937ar.h>
 
@@ -110,7 +115,9 @@ const uint32_t seed = 13;
 int main(void)
 {
   fpngl_irng32_t *irng32 = fpngl_mt19937v32(seed);
-  printf("%u\n",fpngl_irng32_next32(irng32));
+  printf("%u\n", fpngl_irng32_next32(irng32));
+  printf("%lu\n", fpngl_irng32_next64(irng32));
+  fpngl_irng32_delete(irng32);
 }
 @end verbatim
 @end cartouche
@@ -121,42 +128,204 @@ Assuming you have installed FPNGlib locally in some directory @file{$HOME/local}
 gcc -I$HOME/local/include -L$HOME/local/lib \
       -o simple simple.c -lfpnglib
 @end example
+@cindex Compiling with libfpnglib.so
 
 Of course, if both the @emph{include} directory and the @emph{lib} directory paths appear in the relevant environment variables (@env{C_INCLUDE_PATH} and @env{LD_LIBRARY_PATH}, respectively), you may dispense entirely with the @code{-I} and @code{-L} directives.
 Alternatively, as long as you work on the example file provided in the distribution of the library, you may simply call @command{make simple} to compile it.
 
-The output of this program should be @samp{3340206418}.
+The output of this program should be:
+@verbatim
+3340206418
+11203470090111516746
+@end verbatim
+
+In the above example, we use the 32 bits version of the Mersenne Twister MT19937@footnote{@url{http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/ARTICLES/earticles.html,@cite{Mersenne Twister: A 623-dimensionally equidistributed uniform pseudorandom number generator, M. Matsumoto and T. Nishimura. ACM Trans. on Modeling and Computer Simulation, 8(1), 1998.}}}, but FPNGlib also offers the 64 bits version, declared in @file{fpnglib/mt19937-64.h}.
+
+Random integers come in two sizes: 32 bits and 64 bits. As exemplified in the example above, both sizes may be created by 32 bits generators and 64 bits ones: A 32 bits generator will combine two outputs to return a 64 bits integer; on the other hand, a 64 bits generator will usually split its output into two 32 bits integers and return one of them to produce a 32 bits integer.
+
+All Random Number Generators (@dfn{RNG}) may be initialized by a single integer, the @emph{seed}. In addition, some may be initialized by other means, mostly vectors of integers. It is the case with the Mersenne Twister MT19937, of which an instance may be created with the @code{fpngl_mt19937v32_by_array} function instead of @code{fpngl_mt19937v32}. Both functions return a pointer to an object of the opaque type @code{fpngl_irng32_t}. Since the implementation of that type is not public, all object of the type must be manipulated through pointers only. This is the rule for all other RNG types in FPNGlib.
+
+By calling the function @code{fpngl_irng32_next32}, we compute the next 32 bits
+integer. When calling the function @code{fpngl_irng32_next64}, the next two 32 bits integer are computed and combined to produce one 64 bits integer.
+
+The call to @code{fpngl_mt19937v23} allocates some memory from the heap to represent the internal structure of the MT19937 RNG. We need to call @code{fpngl_irng32_delete} to reclaim that memory as soon as the RNG is no longer used.
+
+@node Generating Random Integers in a Domain
+@subsection Generating Random Integers in a Domain
+@c ...............................................
+A 32 bits RNG will usually draw an integer in the domain @math{[0,2^{32}-1]} or in some other smaller but still impractically large domain. More often than not, simulations require drawing integers in some precise domain, say @math{[1,6]} to simulate a dice, for example. For such an application, many sources still suggest to draw an integer in the full domain of the RNG and then use the modulo to restrict the output to the correct domain:
+@cartouche
+@verbatim
+// examples/biased_dice.c (BEWARE: wrong code!)
+#include <stdio.h>
+#include <fpnglib/mt19937ar.h>
+
+const uint32_t seed = 13;
+
+int main(void)
+{
+  fpngl_irng32_t *irng32 = fpngl_mt19937v32(seed);
+  printf("%u\n",(fpngl_irng32_next32(irng32) % 6) + 1);
+  fpngl_irng32_delete(irng32);
+}
+@end verbatim
+@end cartouche
+
+However, since @math{2^{32} = 6\times 715827882 + 4}, there are @math{715827883} ways to produce the numbers @math{1} to @math{4}, and only @math{715827882} ways to produce the numbers @math{5} and @math{6}, which introduces a @math{1.397\times 10^{-7}}% bias. A very small bias indeed, but one that could become significant if one used a different RNG, such as a @emph{Linear Congruential Generator}@footnote{@cite{@url{https://en.wikipedia.org/wiki/Linear_congruential_generator}}.} with a congruence much smaller than @math{2^{32}}.
+
+With FPNGLlib, the proper way to generate a random integer in the domain @math{[0,k]}, is to use the @code{fpngl_ubound32} or @code{fpngl_ubound64} functions available in @file{fpnglib/irange.h}, depending on the type of RNG used:
+
+@cartouche
+@verbatim
+// examples/dice.c
+#include <stdio.h>
+#include <fpnglib/mt19937ar.h>
+#include <fpnglib/irng_t.h>
+#include <fpnglib/irange.h>
+
+const uint32_t seed = 13;
+
+int main(void)
+{
+  fpngl_irng_t *irng = fpngl_irng_new32(fpngl_mt19937v32(seed));
+  printf("%u\n",fpngl_ubound32(irng, 6) + 1);
+  fpngl_irng_delete(irng);
+}
+@end verbatim
+@end cartouche
+Remember that the function @code{fpngl_mt19937v32} creates a 32 bits RNG with type @code{fpngl_irng32_t}. The @code{fpngl_ubound32} function computes a random integer in @math{[0,k-1]}, given @math{k} as its second argument. However, it must accept to do so with both a 32 bits RNG and a 64 bits RNG. We therefore need to encapsulate the actual 32 bits RNG into a ``generic'' RNG of type @code{fpngl_irng_t} with the function @code{fpngl_irng_new32}. The @code{irng} variable owns the 32 bits RNG it encapsulates and is responsible for its deletion, which will be done when we call @code{fpngl_irng_delete} instead of @code{fpngl_irng32_delete}. 
+
+The @code{fpngl_ubound32} function uses the modification by O'Neill@footnote{@i{Efficiently Generating a Number in a Range}, Melissa E. O'Neil, @url{https://www.pcg-random.org/posts/bounded-rands.html}, 2018.} of Lemire's algorithm@footnote{@i{Fast Random Integer Generation in an Interval}, Daniel Lemire, ACM TOMACS 29(1), 2019.} to draw integers in an interval. The @code{fpngl_ubound64} uses the same algorithm, provided a 128 bits integer type
+is available on the platform used. Otherwise, it uses slower methods presented by O'Neill at @url{https://www.pcg-random.org/posts/bounded-rands.html}.
+
+To draw integers from a domain @math{[a,b]} instead of @math{[0,k]}, one can use the functions @code{fpngl_range32} and @code{fpngl_range64}. 
+
+@node Generating Random Floating-Point Numbers
+@subsection Generating Random Floating-Point Numbers
+@c .................................................
+One of the strong points of FPNGlib is the generation of IEEE@tie{}754@footnote{@i{IEEE Standard for Floating-Point Arithmetic. IEEE STD 754-2008}. IEEE Computer Society, 2008.} floating-point numbers (@dfn{floats}, for short). It offers many methods to draw floats in different domains and with various properties.
+
+In the following example, we use the same RNG as the one used for @code{java.util.Random} in Java@tie{}8 to compute one double precision floating-point number in @math{[0,1)}:
+
+@cartouche
+@verbatim
+// examples/fsimple.c
+#include <stdio.h>
+#include <fpnglib/frng64_java.h>
+
+const uint32_t seed = 13;
+
+int main(void)
+{
+  fpngl_frng64_t *frng64 = fpngl_java(seed);
+  printf("%f\n",fpngl_frng64_nextf64(frng64));
+  fpngl_frng64_delete(frng64);
+}
+@end verbatim
+@end cartouche
+
+@node Generating a random float with some properties
+@subsection Generating a random float with some properties
+@c .......................................................
+
+
+
+@chapter General Organization of the Library
+@c =========================================
 
 In FPNGlib, all public constants, variables, types, and functions are prefixed with @samp{fpngl_} to make them stand apart in larger programs.
 @cindex Prefix
-
-Random integers come in two sizes: 32 bits and 64 bits. Both sizes may be created by 32 bits generators and 64 bits ones: A 32 bits generator will combine two outputs to return a 64 bits integer; on the other hand, a 64 bits generator will usually split its output into two 32 bits integers and return one of them to produce a 32 bits integer.
-
-In the above example, we use the 32 bits version of the Mersenne Twister MT19937@footnote{@url{http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/ARTICLES/earticles.html,@cite{Mersenne Twister: A 623-dimensionally equidistributed uniform pseudorandom number generator, M. Matsumoto and T. Nishimura. ACM Trans. on Modeling and Computer Simulation, 8(1), 1998.}}}, but FPNGlib also offers the 64 bits version, declared in @file{fpnglib/mt19937-64.h}. All header files from FPNGlib are in the directory @file{fpnglib/}.
-
-All Random Number Generators (@dfn{RNG}) may be initialized by a single integer, the @emph{seed}. Some may alternatively be initialized by other means, mostly vectors of integers. It is the case with the Mersenne Twister MT19937, whose instance of which may be created with the @code{fpngl_mt19937v32_by_array} function instead of @code{fpngl_mt19937v32}. Both functions return a pointer to an object of the opaque type @code{fpngl_irng32_t}. Since the implementation of that type is not public, all object of the type must be manipulated through pointers only. This is the rule for all other RNG types in FPNGlib.
-
+ All header files from FPNGlib are in the directory @file{fpnglib/}.
+ 
 All RNGs have types whose name is formed according to the same principle: first the prefix @samp{fpngl_}, then the type of the RNG (@samp{irng} for
 an RNG generating integers, and @samp{frng} for an RNG generating floating-point
 numbers) followed by the size of the values returned (@samp{32} for 32 bits integers and
 single precision floating-point numbers, and @samp{64} for 64 bits integers and
-double precision floating-point numbers).
+double precision floating-point numbers), and finally the postfix @samp{_t} to mark the name as a type.
 @cindex Type name formation
 
-By calling the function @code{fpngl_irng32_next32}, we compute the next 32 bits
-integer. If we had wanted to retrieve a 64 bits integer from the 32 bits Mersenne Twister, we would have called the function @code{fpngl_irng32_next64}.
-
-
-@node Generating Random Floating-Point Numbers
-@subsection Generating Random Floating-Point Numbers
-
-
 @chapter Integer Random Generators
+@c ===============================
 
 @chapter Floating-Point Random Generators
+@c ======================================
+
+@chapter IEEE 754 and the Floating-Point Unit
+@c ==========================================
+
+@section Constants
+@c ---------------
+
+Several constants related to the characteristics of the IEEE@tie{}754 floating-point
+format are defined in files @file{fpnglib/constants32.h} ---for the single precision---
+and @file{fpnglib/constants64.h} ---for the double precision.
+
+@deftypevr Constant uint32_t fpngl_emin32
+@deftypevrx Constant uint32_t fpngl_emin64
+@deftypevrx Constant uint32_t fpngl_emax32
+@deftypevrx Constant uint32_t fpngl_emax64
+Smallest and largest unbiased exponents for single and double precision float.
+
+@noindent @strong{Example}
+@cartouche
+@verbatim
+#include <stdio.h>
+#include <math.h>
+#include <fpnglib/constants32.h>
+#include <fpnglib/constants64.h>
+
+int main(void)
+{
+	printf("Single precision exponent in [%d, %d]\n",
+				 fpngl_emin32, fpngl_emax32);
+	printf("Double precision exponent in [%d, %d]\n",
+				 fpngl_emin64, fpngl_emax64);
+}
+@end verbatim
+@end cartouche
+
+@noindent @strong{Output:}
+@verbatim
+Single precision exponent in [-126, 127]
+Double precision exponent in [-1022, 1023]
+@end verbatim
+@end deftypevr
+@deftypevr Constant uint32_t fpngl_t32
+@deftypevrx Constant uint32_t fpngl_t64
+Number of bits in the significand of a single or double precision float.
+
+@noindent @strong{Example:}
+
+@cartouche
+@verbatim
+// doc/snippets/significand.c
+#include <stdio.h>
+#include <math.h>
+#include <fpnglib/constants32.h>
+#include <fpnglib/constants64.h>
+
+int main(void)
+{
+  printf("Number of digits with single precision: %u\n",
+         (uint32_t)trunc(fpngl_t32*log10(2)));
+  printf("Number of digits with double precision: %u\n",
+         (uint32_t)trunc(fpngl_t64*log10(2)));
+}
+@end verbatim
+@end cartouche
+
+@noindent @strong{Output:}
+@verbatim
+Number of digits with single precision: 7
+Number of digits with double precision: 15
+@end verbatim
+@end deftypevr
+
+@section Manipulating the FPU 
+@c ------------------------
 
 @chapter Extending the Library
-
+@c ===========================
 The library is written with an object-oriented style that should make it easy to extend.
 
 @float figure,fig:classes
@@ -165,12 +334,15 @@ The library is written with an object-oriented style that should make it easy to
 @end float
 
 @chapter Concept Index
+@c ===================
 @printindex cp
 
 @chapter Function Index
+@c ====================
 @printindex fn
 
 @chapter Type Index
+@c ================
 @printindex tp
 
 @bye

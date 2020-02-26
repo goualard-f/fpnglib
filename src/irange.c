@@ -74,7 +74,28 @@ uint64_t fpngl_ubound64(fpngl_irng_t *irng, uint64_t a)
   }
   return m >> 64;
 #else
-	return x % a; // BEWARE: biased version!
+#  if HAVE___BUILTIN_CLZ
+	assert(a != 0);
+	// Bitmask with Rejection (Unbiased) — Apple's Method
+	// from https://www.pcg-random.org/posts/bounded-rands.html
+	uint64_t mask = ~uint64_t(0);
+	--a;
+	mask >>= __builtin_clz(range | 1);
+	uint64_t x;
+	do {
+		x = fpngl_irng_next64(irng) & mask;
+	} while (x > a);
+	return x;
+#  else
+	// Debiased Modulo (Once) — Java's Method
+	// from https://www.pcg-random.org/posts/bounded-rands.html
+	uint64_t x, t;
+	do {
+		x = fpngl_irng_next64(irng);
+		r = x % a;
+	} while (x - r > (-a));
+	return r;
+#  endif
 #endif
 }
 

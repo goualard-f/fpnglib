@@ -18,4 +18,4 @@
 #	GNU Lesser General Public License along with the FPNGlib Library.  If not,
 #	see https://www.gnu.org/licenses/. 	
 
-SUBDIRS = fpnglib src tests doc examples
+SUBDIRS = fpnglib src tests doc

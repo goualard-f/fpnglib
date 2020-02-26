@@ -30,7 +30,7 @@ PKG_CHECK_MODULES([CHECK], [check >= 0.11.0])
 
 AC_CONFIG_SRCDIR([src/fpu.h])
 AC_CONFIG_HEADERS([config.h src/fpngl_config.h])
-AC_CONFIG_FILES([Makefile fpnglib/Makefile src/Makefile tests/Makefile doc/Makefile examples/Makefile])
+AC_CONFIG_FILES([Makefile fpnglib/Makefile src/Makefile tests/Makefile doc/Makefile examples/Makefile doc/snippets/Makefile])
 
 dnl Libtool support
 AC_CONFIG_MACRO_DIR([m4])
@@ -69,7 +69,9 @@ AC_CHECK_FUNCS(getrusage clock)
 
 # Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS([fenv.h stdint.h])
+AC_CHECK_HEADERS([fenv.h stdint.h stdbool.h])
+
+AX_GCC_BUILTIN(__builtin_clz)
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST

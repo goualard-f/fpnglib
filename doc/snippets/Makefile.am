@@ -1,4 +1,4 @@
-# Makefile for examples
+# Makefile to test the snippets of code presented in the documentation
 #
 #	Copyright 2019--2020 University of Nantes, France.
 #
@@ -18,14 +18,7 @@
 #	GNU Lesser General Public License along with the FPNGlib Library.  If not,
 #	see https://www.gnu.org/licenses/. 	
 
-noinst_LTLIBRARIES = libctiming.la
-libctiming_la_SOURCES = ctiming.c
-libctiming_la_CPPFLAGS = -I$(top_srcdir)
+noinst_PROGRAMS = significand exponent
 
-noinst_PROGRAMS = timing_mt19937v32 timing_mt19937v64 pi biased ddistribution coin \
-	penney_game isimple fsimple biased_dice dice
-
-LDADD= $(top_builddir)/src/libfpnglib.la -lm -lctiming $(LIBS)
-AM_CFLAGS = -I.. -Wall -O3
-
-$(noinst_PROGRAMS): libctiming.la
+LDADD= $(top_builddir)/src/libfpnglib.la -lm $(LIBS)
+AM_CFLAGS = -I.. -Wall

@@ -1,4 +1,4 @@
-/* Simplest example of use of the library.
+/* Simplest example of use of the library: generation of one random integer.
 
 	Copyright 2019--2020 University of Nantes, France.
 
@@ -29,4 +29,6 @@ int main(void)
 {
 	fpngl_irng32_t *irng32 = fpngl_mt19937v32(seed);
 	printf("%u\n",fpngl_irng32_next32(irng32));
+	printf("%lu\n",fpngl_irng32_next64(irng32));
+	fpngl_irng32_delete(irng32);
 }
