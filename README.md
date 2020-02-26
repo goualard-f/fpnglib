@@ -27,7 +27,8 @@ installation directories are under `/usr/local/`.
 
 ## Running the tests
 
-To test the library before installing it, just run `make check` from the base directory.
+To test the library before installing it, just run `make check` from the base directory. You may need to install 
+the unit testing library [Check](https://libcheck.github.io/check/) beforehand.
 
 ## Examples
 The directory `examples/` contains some programs illustrating the proper use of
