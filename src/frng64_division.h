@@ -44,6 +44,8 @@ extern "C" {
 
 	/*
 		Double precision floating-point generator used by MATLAB until MATLAB 5.
+
+		Return a floating-point number in `[0,1)`.
 	 */
 	fpngl_frng64_t *fpngl_matlabp5(uint64_t seed);
 

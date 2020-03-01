@@ -19,3 +19,8 @@
 #	see https://www.gnu.org/licenses/. 	
 
 info_TEXINFOS = fpnglib.texi
+
+clean-local:
+	-rm *.aux *.cp *.cps *.fn *.ky *.log *.pg *.toc *.tp *.vr *.vrs
+
+distclean-local: clean-local

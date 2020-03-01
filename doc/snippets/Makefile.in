@@ -108,14 +108,16 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-noinst_PROGRAMS = significand$(EXEEXT) exponent$(EXEEXT)
+noinst_PROGRAMS = significand$(EXEEXT) exponent$(EXEEXT) \
+	biased_dice$(EXEEXT) dice$(EXEEXT) fsimple$(EXEEXT) \
+	isimple$(EXEEXT) mcpi$(EXEEXT)
 subdir = doc/snippets
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_check_enable_debug.m4 \
 	$(top_srcdir)/m4/ax_gcc_builtin.m4 $(top_srcdir)/m4/libtool.m4 \
 	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
 	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
-	$(top_srcdir)/configure.ac
+	$(top_srcdir)/m4/va_opt_check.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
@@ -125,16 +127,41 @@ CONFIG_HEADER = $(top_builddir)/config.h \
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 PROGRAMS = $(noinst_PROGRAMS)
-exponent_SOURCES = exponent.c
-exponent_OBJECTS = exponent.$(OBJEXT)
-exponent_LDADD = $(LDADD)
+biased_dice_SOURCES = biased_dice.c
+biased_dice_OBJECTS = biased_dice.$(OBJEXT)
+biased_dice_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
-exponent_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+biased_dice_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
 	$(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+dice_SOURCES = dice.c
+dice_OBJECTS = dice.$(OBJEXT)
+dice_LDADD = $(LDADD)
+dice_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
+exponent_SOURCES = exponent.c
+exponent_OBJECTS = exponent.$(OBJEXT)
+exponent_LDADD = $(LDADD)
+exponent_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
+fsimple_SOURCES = fsimple.c
+fsimple_OBJECTS = fsimple.$(OBJEXT)
+fsimple_LDADD = $(LDADD)
+fsimple_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
+isimple_SOURCES = isimple.c
+isimple_OBJECTS = isimple.$(OBJEXT)
+isimple_LDADD = $(LDADD)
+isimple_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
+mcpi_SOURCES = mcpi.c
+mcpi_OBJECTS = mcpi.$(OBJEXT)
+mcpi_LDADD = $(LDADD)
+mcpi_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
 significand_SOURCES = significand.c
 significand_OBJECTS = significand.$(OBJEXT)
 significand_LDADD = $(LDADD)
@@ -174,8 +201,10 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = exponent.c significand.c
-DIST_SOURCES = exponent.c significand.c
+SOURCES = biased_dice.c dice.c exponent.c fsimple.c isimple.c mcpi.c \
+	significand.c
+DIST_SOURCES = biased_dice.c dice.c exponent.c fsimple.c isimple.c \
+	mcpi.c significand.c
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -369,9 +398,29 @@ clean-noinstPROGRAMS:
 	echo " rm -f" $$list; \
 	rm -f $$list
 
+biased_dice$(EXEEXT): $(biased_dice_OBJECTS) $(biased_dice_DEPENDENCIES) $(EXTRA_biased_dice_DEPENDENCIES) 
+	@rm -f biased_dice$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(biased_dice_OBJECTS) $(biased_dice_LDADD) $(LIBS)
+
+dice$(EXEEXT): $(dice_OBJECTS) $(dice_DEPENDENCIES) $(EXTRA_dice_DEPENDENCIES) 
+	@rm -f dice$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(dice_OBJECTS) $(dice_LDADD) $(LIBS)
+
 exponent$(EXEEXT): $(exponent_OBJECTS) $(exponent_DEPENDENCIES) $(EXTRA_exponent_DEPENDENCIES) 
 	@rm -f exponent$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(exponent_OBJECTS) $(exponent_LDADD) $(LIBS)
+
+fsimple$(EXEEXT): $(fsimple_OBJECTS) $(fsimple_DEPENDENCIES) $(EXTRA_fsimple_DEPENDENCIES) 
+	@rm -f fsimple$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(fsimple_OBJECTS) $(fsimple_LDADD) $(LIBS)
+
+isimple$(EXEEXT): $(isimple_OBJECTS) $(isimple_DEPENDENCIES) $(EXTRA_isimple_DEPENDENCIES) 
+	@rm -f isimple$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(isimple_OBJECTS) $(isimple_LDADD) $(LIBS)
+
+mcpi$(EXEEXT): $(mcpi_OBJECTS) $(mcpi_DEPENDENCIES) $(EXTRA_mcpi_DEPENDENCIES) 
+	@rm -f mcpi$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(mcpi_OBJECTS) $(mcpi_LDADD) $(LIBS)
 
 significand$(EXEEXT): $(significand_OBJECTS) $(significand_DEPENDENCIES) $(EXTRA_significand_DEPENDENCIES) 
 	@rm -f significand$(EXEEXT)
@@ -383,7 +432,12 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/biased_dice.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dice.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/exponent.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fsimple.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/isimple.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mcpi.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/significand.Po@am__quote@
 
 .c.o:

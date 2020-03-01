@@ -107,21 +107,7 @@ FPNGlib offers generators for random integers and random IEEE 754 floating-point
 Our very first program using FPNGlib simply draws one integer at random:
 
 @cartouche
-@verbatim
-// examples/isimple.c
-#include <stdio.h>
-#include <fpnglib/mt19937ar.h>
-
-const uint32_t seed = 13;
-
-int main(void)
-{
-  fpngl_irng32_t *irng32 = fpngl_mt19937v32(seed);
-  printf("%u\n", fpngl_irng32_next32(irng32));
-  printf("%lu\n", fpngl_irng32_next64(irng32));
-  fpngl_irng32_delete(irng32);
-}
-@end verbatim
+@verbatiminclude snippets/isimple.c
 @end cartouche
 
 Assuming you have installed FPNGlib locally in some directory @file{$HOME/local} by configuring it with the command @samp{./configure --prefix=$HOME/local}, you may compile the example above by calling @command{gcc} as such:
@@ -157,20 +143,7 @@ The call to @code{fpngl_mt19937v23} allocates some memory from the heap to repre
 @c ...............................................
 A 32 bits RNG will usually draw an integer in the domain @math{[0,2^{32}-1]} or in some other smaller but still impractically large domain. More often than not, simulations require drawing integers in some precise domain, say @math{[1,6]} to simulate a dice, for example. For such an application, many sources still suggest to draw an integer in the full domain of the RNG and then use the modulo to restrict the output to the correct domain:
 @cartouche
-@verbatim
-// examples/biased_dice.c (BEWARE: wrong code!)
-#include <stdio.h>
-#include <fpnglib/mt19937ar.h>
-
-const uint32_t seed = 13;
-
-int main(void)
-{
-  fpngl_irng32_t *irng32 = fpngl_mt19937v32(seed);
-  printf("%u\n",(fpngl_irng32_next32(irng32) % 6) + 1);
-  fpngl_irng32_delete(irng32);
-}
-@end verbatim
+@verbatiminclude snippets/biased_dice.c
 @end cartouche
 
 However, since @math{2^{32} = 6\times 715827882 + 4}, there are @math{715827883} ways to produce the numbers @math{1} to @math{4}, and only @math{715827882} ways to produce the numbers @math{5} and @math{6}, which introduces a @math{1.397\times 10^{-7}}% bias. A very small bias indeed, but one that could become significant if one used a different RNG, such as a @emph{Linear Congruential Generator}@footnote{@cite{@url{https://en.wikipedia.org/wiki/Linear_congruential_generator}}.} with a congruence much smaller than @math{2^{32}}.
@@ -178,22 +151,7 @@ However, since @math{2^{32} = 6\times 715827882 + 4}, there are @math{715827883}
 With FPNGLlib, the proper way to generate a random integer in the domain @math{[0,k]}, is to use the @code{fpngl_ubound32} or @code{fpngl_ubound64} functions available in @file{fpnglib/irange.h}, depending on the type of RNG used:
 
 @cartouche
-@verbatim
-// examples/dice.c
-#include <stdio.h>
-#include <fpnglib/mt19937ar.h>
-#include <fpnglib/irng_t.h>
-#include <fpnglib/irange.h>
-
-const uint32_t seed = 13;
-
-int main(void)
-{
-  fpngl_irng_t *irng = fpngl_irng_new32(fpngl_mt19937v32(seed));
-  printf("%u\n",fpngl_ubound32(irng, 6) + 1);
-  fpngl_irng_delete(irng);
-}
-@end verbatim
+@verbatiminclude snippets/dice.c
 @end cartouche
 Remember that the function @code{fpngl_mt19937v32} creates a 32 bits RNG with type @code{fpngl_irng32_t}. The @code{fpngl_ubound32} function computes a random integer in @math{[0,k-1]}, given @math{k} as its second argument. However, it must accept to do so with both a 32 bits RNG and a 64 bits RNG. We therefore need to encapsulate the actual 32 bits RNG into a ``generic'' RNG of type @code{fpngl_irng_t} with the function @code{fpngl_irng_new32}. The @code{irng} variable owns the 32 bits RNG it encapsulates and is responsible for its deletion, which will be done when we call @code{fpngl_irng_delete} instead of @code{fpngl_irng32_delete}. 
 
@@ -205,27 +163,50 @@ To draw integers from a domain @math{[a,b]} instead of @math{[0,k]}, one can use
 @node Generating Random Floating-Point Numbers
 @subsection Generating Random Floating-Point Numbers
 @c .................................................
-One of the strong points of FPNGlib is the generation of IEEE@tie{}754@footnote{@i{IEEE Standard for Floating-Point Arithmetic. IEEE STD 754-2008}. IEEE Computer Society, 2008.} floating-point numbers (@dfn{floats}, for short). It offers many methods to draw floats in different domains and with various properties.
+One of the strong points of FPNGlib is the generation of IEEE@tie{}754 floating-point numbers@footnote{@i{IEEE Standard for Floating-Point Arithmetic. IEEE STD 754-2008}. IEEE Computer Society, 2008.} (@dfn{floats}, for short). It offers many methods to draw floats in different domains and with various properties.
 
 In the following example, we use the same RNG as the one used for @code{java.util.Random} in Java@tie{}8 to compute one double precision floating-point number in @math{[0,1)}:
 
 @cartouche
-@verbatim
-// examples/fsimple.c
-#include <stdio.h>
-#include <fpnglib/frng64_java.h>
-
-const uint32_t seed = 13;
-
-int main(void)
-{
-  fpngl_frng64_t *frng64 = fpngl_java(seed);
-  printf("%f\n",fpngl_frng64_nextf64(frng64));
-  fpngl_frng64_delete(frng64);
-}
-@end verbatim
+@verbatiminclude snippets/fsimple.c
 @end cartouche
 
+The output expressed using the C99 hexadecimal format@footnote{See Section 6.4.4.2 of @i{ISO/IEC 9899:1999}.} is ``@code{0x1.314880e9bdp-10}.''
+
+Floating-point number generators (@dfn{FRNG}s, for short) are either of the type @code{fpngl_frng32_t} when they produce single
+precision floats, or @code{fpngl_frng64_t} for double precision. In the same way as for integer generators,
+floats generators can only be manipulated through pointers to objects of these types. Any generator of either type must implement the same functionalities. In particular, as shown in the example below, double precision generators must implement the following calls:
+@itemize
+@item @code{fpgnl_frng64_name()}: returns a constant string corresponding to the name of
+      the generator;
+@item @code{fpngl_fnrg64_nextf64()}: returns the next double precision random number;
+@item @code{fpngl_frng64_delete()}: reclaims the memory used to represent the generator.
+@end itemize
+As a consequence, it is possible to write functions requiring random floats independently of the FRNG actually used, and to pass it as a parameter (see, e.g., @code{mcpi} in @ref{exa:mcpi}).
+
+Note, however, that FRNGs are not bound to return floats in any prescribed domain: some may return values in @math{[0,1)}, some in @math{(0,1)}, and some others in any other domain. It is then the responsibility of the programmer to choose FRNGs according to the domains they are interested into.
+
+A classical way to implement FRNGs is to rely on an integer RNG and divide its output by
+some integer constant, usually the largest possible integer the RNG can produce or the next integer above. This is what we do to create @code{frng0} in @ref{exa:mcpi}. Firstly, we create an IRNG based on the 32 bits version of the Mersenne Twister MT19937, then we create and FRNG by using the @code{fpngl_bydivision_new} constructor. That constructor takes three parameters:
+@enumerate
+@item A name for the newly created FRNG (``@code{FMT19937v32}'' in @ref{exa:mcpi});
+@item An IRNG of the type @code{pfngl_irng_t};
+@item A divisor by which each random integer should be divided (here, we choose to divide
+      by the largest random number that our IRNG can produce, therefore creating a FRNG
+      returning values in @math{[0,1]}).
+@end enumerate
+
+Note that, as is always the case in FPNGlib, the FRNG @code{frng0} created from the IRNG @code{irng32} ``owns'' it and is, therefore, responsible for its destruction. This is why we do not call @code{fpngl_irng_delete} at the end of the program: the call @code{fpngl_frng64_delete(frng0)} is sufficient to reclaim both the memory allocated to represent @code{frng0} and @code{irng32}.
+
+The FRNG created with @code{fpngl_drand48bsd} also relies on the division of the result
+of an LCG by a constant integer. The result is a floating-point number in @math{[0,1)} with 48 bits of entropy only.
+
+@float Example,exa:mcpi
+@cartouche
+@verbatiminclude snippets/mcpi.c
+@end cartouche
+@caption{Computing an approximation to @math{\pi} with a Monte Carlo method.}
+@end float
 @node Generating a random float with some properties
 @subsection Generating a random float with some properties
 @c .......................................................
@@ -270,20 +251,7 @@ Smallest and largest unbiased exponents for single and double precision float.
 
 @noindent @strong{Example}
 @cartouche
-@verbatim
-#include <stdio.h>
-#include <math.h>
-#include <fpnglib/constants32.h>
-#include <fpnglib/constants64.h>
-
-int main(void)
-{
-	printf("Single precision exponent in [%d, %d]\n",
-				 fpngl_emin32, fpngl_emax32);
-	printf("Double precision exponent in [%d, %d]\n",
-				 fpngl_emin64, fpngl_emax64);
-}
-@end verbatim
+@verbatiminclude snippets/exponent.c
 @end cartouche
 
 @noindent @strong{Output:}
@@ -299,21 +267,7 @@ Number of bits in the significand of a single or double precision float.
 @noindent @strong{Example:}
 
 @cartouche
-@verbatim
-// doc/snippets/significand.c
-#include <stdio.h>
-#include <math.h>
-#include <fpnglib/constants32.h>
-#include <fpnglib/constants64.h>
-
-int main(void)
-{
-  printf("Number of digits with single precision: %u\n",
-         (uint32_t)trunc(fpngl_t32*log10(2)));
-  printf("Number of digits with double precision: %u\n",
-         (uint32_t)trunc(fpngl_t64*log10(2)));
-}
-@end verbatim
+@verbatiminclude snippets/significand.c
 @end cartouche
 
 @noindent @strong{Output:}

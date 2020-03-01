@@ -18,7 +18,7 @@
 #	GNU Lesser General Public License along with the FPNGlib Library.  If not,
 #	see https://www.gnu.org/licenses/. 	
 
-noinst_PROGRAMS = significand exponent
+noinst_PROGRAMS = significand exponent biased_dice dice fsimple isimple mcpi
 
 LDADD= $(top_builddir)/src/libfpnglib.la -lm $(LIBS)
 AM_CFLAGS = -I.. -Wall

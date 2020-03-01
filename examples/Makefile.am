@@ -23,7 +23,7 @@ libctiming_la_SOURCES = ctiming.c
 libctiming_la_CPPFLAGS = -I$(top_srcdir)
 
 noinst_PROGRAMS = timing_mt19937v32 timing_mt19937v64 pi biased ddistribution coin \
-	penney_game isimple fsimple biased_dice dice
+	penney_game
 
 LDADD= $(top_builddir)/src/libfpnglib.la -lm -lctiming $(LIBS)
 AM_CFLAGS = -I.. -Wall -O3 -std=c99 
