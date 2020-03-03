@@ -1,5 +1,8 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
+/* Define this to 1 if you want info code */
+#undef FPNGL_ENABLE_INFO
+
 /* Define to 1 if you have the `clock' function. */
 #undef HAVE_CLOCK
 

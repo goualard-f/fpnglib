@@ -73,7 +73,7 @@ static inline uint64_t randfrac2(fpngl_irng_t *rng, uint64_t min, uint64_t max)
 
 double fpngl_nextafter64(double v, uint64_t n)
 {
-	assert(n >= 1 && n <= 0x7fe0000000000000);
+	assert(n <= 0xffe0000000000000);
   if (isnan(v)) {
 	 return v;
   }

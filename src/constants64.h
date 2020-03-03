@@ -42,7 +42,7 @@ static const int32_t fpngl_emin64 = -1022;
 static const int32_t fpngl_emax64 = 1023;
 // Unit roundoff for a double precision number
 static const double fpngl_u64 = 0.5*DBL_EPSILON;
-// Smallest positive normalized double precision number
+// Smallest positive normal double precision number
 static const double fpngl_lambda64 = DBL_MIN;
 // Smallest positive double precision number
 static const double fpngl_mu64 = DBL_MIN*DBL_EPSILON;

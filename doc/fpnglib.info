@@ -137,10 +137,10 @@ const uint32_t seed = 13;
 
 int main(void)
 {
-	fpngl_irng32_t *irng32 = fpngl_mt19937v32(seed);
-	printf("%u\n",fpngl_irng32_next32(irng32));
-	printf("%lu\n",fpngl_irng32_next64(irng32));
-	fpngl_irng32_delete(irng32);
+  fpngl_irng32_t *irng32 = fpngl_mt19937v32(seed);
+  printf("%u\n",fpngl_irng32_next32(irng32));
+  printf("%lu\n",fpngl_irng32_next64(irng32));
+  fpngl_irng32_delete(irng32);
 }
 
    Assuming you have installed FPNGlib locally in some directory
@@ -221,9 +221,9 @@ const uint32_t seed = 13;
 
 int main(void)
 {
-	fpngl_irng32_t *irng32 = fpngl_mt19937v32(seed);
-	printf("%u\n",(fpngl_irng32_next32(irng32) % 6) + 1);
-	fpngl_irng32_delete(irng32);
+  fpngl_irng32_t *irng32 = fpngl_mt19937v32(seed);
+  printf("%u\n",(fpngl_irng32_next32(irng32) % 6) + 1);
+  fpngl_irng32_delete(irng32);
 }
 
    However, since 2^{32} = 6\times 715827882 + 4, there are 715827883
@@ -248,9 +248,9 @@ const uint32_t seed = 13;
 
 int main(void)
 {
-	fpngl_irng_t *irng = fpngl_irng_new32(fpngl_mt19937v32(seed));
-	printf("%u\n",fpngl_ubound32(irng,6) + 1);
-	fpngl_irng_delete(irng);
+  fpngl_irng_t *irng = fpngl_irng_new32(fpngl_mt19937v32(seed));
+  printf("%u\n",fpngl_ubound32(irng,6) + 1);
+  fpngl_irng_delete(irng);
 }
    Remember that the function 'fpngl_mt19937v32' creates a 32 bits RNG
 with type 'fpngl_irng32_t'.  The 'fpngl_ubound32' function computes a
@@ -304,15 +304,107 @@ const uint32_t seed = 13;
 
 int main(void)
 {
-	fpngl_frng64_t *frng64 = fpngl_java(seed);
-	printf("%f\n",fpngl_frng64_nextf64(frng64));
-	fpngl_frng64_delete(frng64);
+  fpngl_frng64_t *frng64 = fpngl_java(seed);
+  printf("%a\n",fpngl_frng64_nextf64(frng64));
+  fpngl_frng64_delete(frng64);
 }
+
+   The output expressed using the C99 hexadecimal format(2) is
+"'0x1.314880e9bdp-10'."
+
+   Floating-point number generators ("FRNG"s, for short) are either of
+the type 'fpngl_frng32_t' when they produce single precision floats, or
+'fpngl_frng64_t' for double precision.  In the same way as for integer
+generators, floats generators can only be manipulated through pointers
+to objects of these types.  Any generator of either type must implement
+the same functionalities.  In particular, as shown in the example below,
+double precision generators must implement the following calls:
+   * 'fpgnl_frng64_name()': returns a constant string corresponding to
+     the name of the generator;
+   * 'fpngl_fnrg64_nextf64()': returns the next double precision random
+     number;
+   * 'fpngl_frng64_delete()': reclaims the memory used to represent the
+     generator.
+   As a consequence, it is possible to write functions requiring random
+floats independently of the FRNG actually used, and to pass it as a
+parameter (see, e.g., 'mcpi' in *note Example 2.1: exa:mcpi.).
+
+   Note, however, that FRNGs are not bound to return floats in any
+prescribed domain: some may return values in [0,1), some in (0,1), and
+some others in any other domain.  It is then the responsibility of the
+programmer to choose FRNGs according to the domains they are interested
+into.
+
+   A classical way to implement FRNGs is to rely on an integer RNG and
+divide its output by some integer constant, usually the largest possible
+integer the RNG can produce or the next integer above.  This is what we
+do to create 'frng0' in *note Example 2.1: exa:mcpi.  Firstly, we create
+an IRNG based on the 32 bits version of the Mersenne Twister MT19937,
+then we create and FRNG by using the 'fpngl_bydivision_new' constructor.
+That constructor takes three parameters:
+  1. A name for the newly created FRNG ("'FMT19937v32'" in *note Example
+     2.1: exa:mcpi.);
+  2. An IRNG of the type 'pfngl_irng_t';
+  3. A divisor by which each random integer should be divided (here, we
+     choose to divide by the largest random number that our IRNG can
+     produce, therefore creating a FRNG returning values in [0,1]).
+
+   Note that, as is always the case in FPNGlib, the FRNG 'frng0' created
+from the IRNG 'irng32' "owns" it and is, therefore, responsible for its
+destruction.  This is why we do not call 'fpngl_irng_delete' at the end
+of the program: the call 'fpngl_frng64_delete(frng0)' is sufficient to
+reclaim both the memory allocated to represent 'frng0' and 'irng32'.
+
+   The FRNG created with 'fpngl_drand48bsd' also relies on the division
+of the result of an LCG by a constant integer.  The result is a
+floating-point number in [0,1) with 48 bits of entropy only.
+
+// doc/snippets/mcpi.c
+#include <stdio.h>
+#include <math.h>
+#include <fpnglib/frng64_division.h>
+#include <fpnglib/mt19937ar.h>
+#include <fpnglib/irng_t.h>
+
+#define NITERS 10000000
+const uint64_t seed = 13;
+// Approximation of pi to double precision
+const double m_pi = 0x1.921fb54442d18p+1;
+
+// Estimating the value of pi by throwing darts at a unit circle.
+double mcpi(fpngl_frng64_t *frng, uint32_t niters)
+{
+  uint32_t in_circle = 0;
+  for (uint32_t i = 0; i < niters; ++i) {
+    double x = fpngl_frng64_nextf64(frng);
+    double y = fpngl_frng64_nextf64(frng);
+    in_circle += ((x*x + y*y) <= 1);
+  }
+  return 4*((double)in_circle / niters);
+}
+
+int main(void)
+{
+  fpngl_irng_t *irng32 = fpngl_irng_new32(fpngl_mt19937v32(seed));
+  fpngl_frng64_t *frng0 = fpngl_bydivision_new("FMT19937v32",
+                                               irng32,
+                                               fpngl_irng_max(irng32));
+  fpngl_frng64_t *frng1 = fpngl_drand48bsd(seed);
+  printf("%s: %.16g\n",fpngl_frng64_name(frng0), mcpi(frng0,NITERS));
+  printf("%s: %.16g\n",fpngl_frng64_name(frng1), mcpi(frng1,NITERS));
+  fpngl_frng64_delete(frng0);
+  fpngl_frng64_delete(frng1);
+}
+
+Example 2.1: Computing an approximation to \pi with a Monte Carlo
+method.
 
    ---------- Footnotes ----------
 
    (1) IEEE Standard for Floating-Point Arithmetic.  IEEE STD 754-2008.
 IEEE Computer Society, 2008.
+
+   (2) See Section 6.4.4.2 of ISO/IEC 9899:1999.
 
 
 File: fpnglib.info,  Node: Generating a random float with some properties,  Prev: Generating Random Floating-Point Numbers,  Up: An Introduction to FPNGlib
@@ -368,10 +460,10 @@ precision.
      
      int main(void)
      {
-     	printf("Single precision exponent in [%d, %d]\n",
-     				 fpngl_emin32,fpngl_emax32);
-     	printf("Double precision exponent in [%d, %d]\n",
-     				 fpngl_emin64,fpngl_emax64);
+       printf("Single precision exponent in [%d, %d]\n",
+              fpngl_emin32,fpngl_emax32);
+       printf("Double precision exponent in [%d, %d]\n",
+              fpngl_emin64,fpngl_emax64);
      }
 
      *Output:*
@@ -392,10 +484,10 @@ precision.
      
      int main(void)
      {
-     	printf("Number of digits with single precision: %u\n",
-     				 (uint32_t)trunc(fpngl_t32*log10(2)));
-     	printf("Number of digits with double precision: %u\n",
-     				 (uint32_t)trunc(fpngl_t64*log10(2)));
+       printf("Number of digits with single precision: %u\n",
+              (uint32_t)trunc(fpngl_t32*log10(2)));
+       printf("Number of digits with double precision: %u\n",
+              (uint32_t)trunc(fpngl_t64*log10(2)));
      }
 
      *Output:*
@@ -412,6 +504,30 @@ The library is written with an object-oriented style that should make it
 easy to extend.
 
 figure 7.1: The "classes" of FPNGlib
+
+7.1 Debugging facilities
+========================
+
+FPNGlib offers facilities to debug itself.  There are in particular some
+macros that can be used to display messages to the standard error ouput
+'stderr', provided the library was configured with the option
+'--enable-debug=yes' (the default).
+
+ -- Macro: FPNGL_DEBUG ...
+     Uses 'fprintf' to output its arguments to 'stderr' if the macro
+     'NDEBUG' is defined to '1'.  Otherwise, it does nothing.
+
+     The macro flushes the output buffer with 'fflush' after each call.
+
+     Example:
+     // doc/snippets/debug.c
+     #include <fpnglib/debug.h>
+     
+     int main(void)
+     {
+       double a = 1.0;
+       FPNGL_DEBUG("This will be displayed only in debug mode: %g\n",a);
+     }
 
 8 Concept Index
 ***************
@@ -435,6 +551,12 @@ figure 7.1: The "classes" of FPNGlib
 9 Function Index
 ****************
 
+ [index ]
+* Menu:
+
+* FPNGL_DEBUG:                           Generating a random float with some properties.
+                                                              (line 107)
+
 10 Type Index
 *************
 
@@ -443,14 +565,16 @@ figure 7.1: The "classes" of FPNGlib
 Tag Table:
 Node: An Introduction to FPNGlib4774
 Node: Generating Random Integers5439
-Ref: Generating Random Integers-Footnote-18416
-Node: Generating Random Integers in a Domain8684
-Ref: Generating Random Integers in a Domain-Footnote-111682
-Ref: Generating Random Integers in a Domain-Footnote-211755
-Ref: Generating Random Integers in a Domain-Footnote-311887
-Node: Generating Random Floating-Point Numbers11981
-Ref: Generating Random Floating-Point Numbers-Footnote-112932
-Node: Generating a random float with some properties13034
-Ref: fig:classes16137
+Ref: Generating Random Integers-Footnote-18420
+Node: Generating Random Integers in a Domain8688
+Ref: Generating Random Integers in a Domain-Footnote-111692
+Ref: Generating Random Integers in a Domain-Footnote-211765
+Ref: Generating Random Integers in a Domain-Footnote-311897
+Node: Generating Random Floating-Point Numbers11991
+Ref: exa:mcpi15634
+Ref: Generating Random Floating-Point Numbers-Footnote-116922
+Ref: Generating Random Floating-Point Numbers-Footnote-217024
+Node: Generating a random float with some properties17074
+Ref: fig:classes20197
 
 End Tag Table

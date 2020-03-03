@@ -3043,6 +3043,18 @@ fi
 
 
 
+
+
+        # $is_release = (.git directory does not exist)
+        if test -d ${srcdir}/.git || (test -f ${srcdir}/.git && grep \.git/worktrees ${srcdir}/.git); then :
+  ax_is_release=no
+else
+  ax_is_release=yes
+fi
+
+
+
+
     { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to enable debugging" >&5
 $as_echo_n "checking whether to enable debugging... " >&6; }
 
@@ -3134,6 +3146,11 @@ $as_echo "#define NDEBUG 1" >>confdefs.h
 fi
     ax_enable_debug=$enable_debug
 
+if test x$ax_enable_debug = xinfo; then
+
+$as_echo "#define FPNGL_ENABLE_INFO 1" >>confdefs.h
+
+fi
 
 
 

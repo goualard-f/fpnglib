@@ -110,11 +110,15 @@ build_triplet = @build@
 host_triplet = @host@
 noinst_PROGRAMS = significand$(EXEEXT) exponent$(EXEEXT) \
 	biased_dice$(EXEEXT) dice$(EXEEXT) fsimple$(EXEEXT) \
-	isimple$(EXEEXT) mcpi$(EXEEXT)
+	isimple$(EXEEXT) mcpi$(EXEEXT) debug$(EXEEXT) warning$(EXEEXT) \
+	nextafter64$(EXEEXT) previous64$(EXEEXT) unitroundoff$(EXEEXT) \
+	mu$(EXEEXT) lambda$(EXEEXT) nan$(EXEEXT) inf$(EXEEXT) \
+	max$(EXEEXT)
 subdir = doc/snippets
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_check_enable_debug.m4 \
-	$(top_srcdir)/m4/ax_gcc_builtin.m4 $(top_srcdir)/m4/libtool.m4 \
+	$(top_srcdir)/m4/ax_gcc_builtin.m4 \
+	$(top_srcdir)/m4/ax_is_release.m4 $(top_srcdir)/m4/libtool.m4 \
 	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
 	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
 	$(top_srcdir)/m4/va_opt_check.m4 $(top_srcdir)/configure.ac
@@ -137,6 +141,11 @@ AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+debug_SOURCES = debug.c
+debug_OBJECTS = debug.$(OBJEXT)
+debug_LDADD = $(LDADD)
+debug_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
 dice_SOURCES = dice.c
 dice_OBJECTS = dice.$(OBJEXT)
 dice_LDADD = $(LDADD)
@@ -152,20 +161,65 @@ fsimple_OBJECTS = fsimple.$(OBJEXT)
 fsimple_LDADD = $(LDADD)
 fsimple_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
 	$(am__DEPENDENCIES_1)
+inf_SOURCES = inf.c
+inf_OBJECTS = inf.$(OBJEXT)
+inf_LDADD = $(LDADD)
+inf_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
 isimple_SOURCES = isimple.c
 isimple_OBJECTS = isimple.$(OBJEXT)
 isimple_LDADD = $(LDADD)
 isimple_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
+lambda_SOURCES = lambda.c
+lambda_OBJECTS = lambda.$(OBJEXT)
+lambda_LDADD = $(LDADD)
+lambda_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
+max_SOURCES = max.c
+max_OBJECTS = max.$(OBJEXT)
+max_LDADD = $(LDADD)
+max_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
 	$(am__DEPENDENCIES_1)
 mcpi_SOURCES = mcpi.c
 mcpi_OBJECTS = mcpi.$(OBJEXT)
 mcpi_LDADD = $(LDADD)
 mcpi_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
 	$(am__DEPENDENCIES_1)
+mu_SOURCES = mu.c
+mu_OBJECTS = mu.$(OBJEXT)
+mu_LDADD = $(LDADD)
+mu_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
+nan_SOURCES = nan.c
+nan_OBJECTS = nan.$(OBJEXT)
+nan_LDADD = $(LDADD)
+nan_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
+nextafter64_SOURCES = nextafter64.c
+nextafter64_OBJECTS = nextafter64.$(OBJEXT)
+nextafter64_LDADD = $(LDADD)
+nextafter64_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
+previous64_SOURCES = previous64.c
+previous64_OBJECTS = previous64.$(OBJEXT)
+previous64_LDADD = $(LDADD)
+previous64_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
 significand_SOURCES = significand.c
 significand_OBJECTS = significand.$(OBJEXT)
 significand_LDADD = $(LDADD)
 significand_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
+unitroundoff_SOURCES = unitroundoff.c
+unitroundoff_OBJECTS = unitroundoff.$(OBJEXT)
+unitroundoff_LDADD = $(LDADD)
+unitroundoff_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
+warning_SOURCES = warning.c
+warning_OBJECTS = warning.$(OBJEXT)
+warning_LDADD = $(LDADD)
+warning_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
 	$(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -201,10 +255,12 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = biased_dice.c dice.c exponent.c fsimple.c isimple.c mcpi.c \
-	significand.c
-DIST_SOURCES = biased_dice.c dice.c exponent.c fsimple.c isimple.c \
-	mcpi.c significand.c
+SOURCES = biased_dice.c debug.c dice.c exponent.c fsimple.c inf.c \
+	isimple.c lambda.c max.c mcpi.c mu.c nan.c nextafter64.c \
+	previous64.c significand.c unitroundoff.c warning.c
+DIST_SOURCES = biased_dice.c debug.c dice.c exponent.c fsimple.c inf.c \
+	isimple.c lambda.c max.c mcpi.c mu.c nan.c nextafter64.c \
+	previous64.c significand.c unitroundoff.c warning.c
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -402,6 +458,10 @@ biased_dice$(EXEEXT): $(biased_dice_OBJECTS) $(biased_dice_DEPENDENCIES) $(EXTRA
 	@rm -f biased_dice$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(biased_dice_OBJECTS) $(biased_dice_LDADD) $(LIBS)
 
+debug$(EXEEXT): $(debug_OBJECTS) $(debug_DEPENDENCIES) $(EXTRA_debug_DEPENDENCIES) 
+	@rm -f debug$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(debug_OBJECTS) $(debug_LDADD) $(LIBS)
+
 dice$(EXEEXT): $(dice_OBJECTS) $(dice_DEPENDENCIES) $(EXTRA_dice_DEPENDENCIES) 
 	@rm -f dice$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(dice_OBJECTS) $(dice_LDADD) $(LIBS)
@@ -414,17 +474,53 @@ fsimple$(EXEEXT): $(fsimple_OBJECTS) $(fsimple_DEPENDENCIES) $(EXTRA_fsimple_DEP
 	@rm -f fsimple$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(fsimple_OBJECTS) $(fsimple_LDADD) $(LIBS)
 
+inf$(EXEEXT): $(inf_OBJECTS) $(inf_DEPENDENCIES) $(EXTRA_inf_DEPENDENCIES) 
+	@rm -f inf$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(inf_OBJECTS) $(inf_LDADD) $(LIBS)
+
 isimple$(EXEEXT): $(isimple_OBJECTS) $(isimple_DEPENDENCIES) $(EXTRA_isimple_DEPENDENCIES) 
 	@rm -f isimple$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(isimple_OBJECTS) $(isimple_LDADD) $(LIBS)
+
+lambda$(EXEEXT): $(lambda_OBJECTS) $(lambda_DEPENDENCIES) $(EXTRA_lambda_DEPENDENCIES) 
+	@rm -f lambda$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(lambda_OBJECTS) $(lambda_LDADD) $(LIBS)
+
+max$(EXEEXT): $(max_OBJECTS) $(max_DEPENDENCIES) $(EXTRA_max_DEPENDENCIES) 
+	@rm -f max$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(max_OBJECTS) $(max_LDADD) $(LIBS)
 
 mcpi$(EXEEXT): $(mcpi_OBJECTS) $(mcpi_DEPENDENCIES) $(EXTRA_mcpi_DEPENDENCIES) 
 	@rm -f mcpi$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(mcpi_OBJECTS) $(mcpi_LDADD) $(LIBS)
 
+mu$(EXEEXT): $(mu_OBJECTS) $(mu_DEPENDENCIES) $(EXTRA_mu_DEPENDENCIES) 
+	@rm -f mu$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(mu_OBJECTS) $(mu_LDADD) $(LIBS)
+
+nan$(EXEEXT): $(nan_OBJECTS) $(nan_DEPENDENCIES) $(EXTRA_nan_DEPENDENCIES) 
+	@rm -f nan$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(nan_OBJECTS) $(nan_LDADD) $(LIBS)
+
+nextafter64$(EXEEXT): $(nextafter64_OBJECTS) $(nextafter64_DEPENDENCIES) $(EXTRA_nextafter64_DEPENDENCIES) 
+	@rm -f nextafter64$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(nextafter64_OBJECTS) $(nextafter64_LDADD) $(LIBS)
+
+previous64$(EXEEXT): $(previous64_OBJECTS) $(previous64_DEPENDENCIES) $(EXTRA_previous64_DEPENDENCIES) 
+	@rm -f previous64$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(previous64_OBJECTS) $(previous64_LDADD) $(LIBS)
+
 significand$(EXEEXT): $(significand_OBJECTS) $(significand_DEPENDENCIES) $(EXTRA_significand_DEPENDENCIES) 
 	@rm -f significand$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(significand_OBJECTS) $(significand_LDADD) $(LIBS)
+
+unitroundoff$(EXEEXT): $(unitroundoff_OBJECTS) $(unitroundoff_DEPENDENCIES) $(EXTRA_unitroundoff_DEPENDENCIES) 
+	@rm -f unitroundoff$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(unitroundoff_OBJECTS) $(unitroundoff_LDADD) $(LIBS)
+
+warning$(EXEEXT): $(warning_OBJECTS) $(warning_DEPENDENCIES) $(EXTRA_warning_DEPENDENCIES) 
+	@rm -f warning$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(warning_OBJECTS) $(warning_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -433,12 +529,22 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/biased_dice.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/debug.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dice.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/exponent.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fsimple.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/inf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/isimple.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lambda.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/max.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mcpi.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mu.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nan.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nextafter64.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/previous64.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/significand.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/unitroundoff.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/warning.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

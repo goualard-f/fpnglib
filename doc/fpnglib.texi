@@ -211,7 +211,17 @@ of an LCG by a constant integer. The result is a floating-point number in @math{
 @subsection Generating a random float with some properties
 @c .......................................................
 
+For some applications, we are interested in drawing floating-point numbers with some
+properties only. That might be:
+@itemize
+@item Only @emph{subnormal} floats;
+@item Only @emph{normal} floats;
+@item Only positive floats with the exponent in some domain and the fractional part in
+another domain;
+@item @dots{}
+@end itemize
 
+FPNGlib is particularly well suited for this kind of applications as it offers many ways to define the properties the floats drawn should meet.
 
 @chapter General Organization of the Library
 @c =========================================
@@ -236,6 +246,8 @@ double precision floating-point numbers), and finally the postfix @samp{_t} to m
 @chapter IEEE 754 and the Floating-Point Unit
 @c ==========================================
 
+That chapter describes the various constants, functions and macros provided by FPNGlib that do not directly contribute to the generation of random numbers. 
+
 @section Constants
 @c ---------------
 
@@ -248,34 +260,150 @@ and @file{fpnglib/constants64.h} ---for the double precision.
 @deftypevrx Constant uint32_t fpngl_emax32
 @deftypevrx Constant uint32_t fpngl_emax64
 Smallest and largest unbiased exponents for single and double precision float.
-
 @noindent @strong{Example}
 @cartouche
 @verbatiminclude snippets/exponent.c
 @end cartouche
-
 @noindent @strong{Output:}
 @verbatim
 Single precision exponent in [-126, 127]
 Double precision exponent in [-1022, 1023]
 @end verbatim
 @end deftypevr
+
 @deftypevr Constant uint32_t fpngl_t32
 @deftypevrx Constant uint32_t fpngl_t64
 Number of bits in the significand of a single or double precision float.
-
 @noindent @strong{Example:}
-
 @cartouche
 @verbatiminclude snippets/significand.c
 @end cartouche
-
 @noindent @strong{Output:}
 @verbatim
 Number of digits with single precision: 7
 Number of digits with double precision: 15
 @end verbatim
 @end deftypevr
+
+@deftypevr Constant float fpngl_mu32
+@deftypevrx Constant double fpngl_mu64
+Smallest positive float. This is a subnormal number.
+@noindent@b{Example:}
+@cartouche
+@verbatiminclude snippets/mu.c
+@end cartouche
+@noindent@b{Output:}
+@verbatim
+1
+1
+@end verbatim
+@end deftypevr
+
+@deftypevr Constant float fpngl_lambda32
+@deftypevrx Constant double fpngl_lambda64
+Smallest positive normal float.
+@noindent@b{Example:}
+@cartouche
+@verbatiminclude snippets/lambda.c
+@end cartouche
+@noindent@b{Output:}
+@verbatim
+Single precision smallest positive normal: 1.17549e-38
+Double precision smallest positive normal: 2.22507e-308
+@end verbatim
+@end deftypevr
+
+@deftypevr Constant float fpngl_u32
+@deftypevrx Constant double fpngl_u64
+@dfn{Unit roundoff}, which is half the distance between @code{1.0} and the next floating-point number.
+@noindent@b{Example:}
+@cartouche
+@verbatiminclude snippets/unitroundoff.c
+@end cartouche
+@noindent@b{Output:}
+@verbatim
+Single precision unit roundoff: 5.96046e-08
+Double precision unit roundoff: 1.11022e-16
+@end verbatim
+@end deftypevr
+
+@deftypevr Constant float fpngl_max32
+@deftypevrx Constant double fpngl_max64
+Largest positive float smaller than the ``infinity'' value.
+@noindent@b{Example:}
+@cartouche
+@verbatiminclude snippets/max.c
+@end cartouche
+@noindent@b{Output:}
+@verbatim
+Single precision largest float: 3.40282e+38
+Double precision largest float: 1.79769e+308
+@end verbatim
+@end deftypevr
+
+@deftypevr Constant float fpngl_NaN32
+@deftypevrx Constant double fpngl_NaN64
+Return a @emph{Not a Number}.
+@noindent@b{Example:}
+@cartouche
+@verbatiminclude snippets/nan.c
+@end cartouche
+@noindent@b{Output:}
+@verbatim
+Single precision NaN: nan
+Double precision NaN: nan
+@end verbatim
+@end deftypevr
+
+@deftypevr Constant float fpngl_infinity32
+@deftypevrx Constant double fpngl_infinity64
+Infinity value.
+@noindent@b{Example:}
+@cartouche
+@verbatiminclude snippets/inf.c
+@end cartouche
+@noindent@b{Output:}
+@verbatim
+Single precision infinity: inf
+Double precision infinity: inf
+@end verbatim
+@end deftypevr
+
+@section Utility Functions
+@c -----------------------
+
+FPNGlib defines functions that can aid in computing the floating-point numbers an application requires. They are:
+
+@deftypefn {Library Function} double fpngl_nextafter64 (double @var{v}, uint64_t @var{n})
+Return a double precision number that is @var{n} floating-point numbers @emph{after}
+@var{v} on the real line.
+
+The value of @var{n} must be smaller or equal to @code{0xffe0000000000000}. The function will abort if @var{n} is greater than that @b{and} the library has been compiled with @option{--enable-debug=yes}.
+
+If @var{v} is an NaN, the function returns the same NaN. Otherwise, it returns either a finite float or a positive infinite, depending on the value of @var{n} and the distance of @var{v} to the maximum representable double precision float.
+
+@noindent@b{Example:}
+@cartouche
+@verbatiminclude snippets/nextafter64.c
+@end cartouche
+The output is @code{1} since there are @math{2^{52}} floats from @code{1.0} to @code{2.0} in double precision.
+@end deftypefn
+
+
+@deftypefn {Library Function} double fpngl_previous64 (double @var{v}, uint64_t @var{n})
+Return a double precision number that is @var{n} floating-point numbers @emph{before}
+@var{v} on the real line.
+
+The value of @var{n} must be smaller or equal to @code{0xffe0000000000000}. The function will abort if @var{n} is greater than that @b{and} the library has been compiled with @option{--enable-debug=yes}.
+
+If @var{v} is an NaN, the function returns the same NaN. Otherwise, it returns either a finite float or a positive infinite, depending on the value of @var{n} and the distance of @var{v} to the maximum representable double precision float.
+
+@noindent@b{Example:}
+@cartouche
+@verbatiminclude snippets/previous64.c
+@end cartouche
+The output is @code{1} since the smallest positive double precision float is separated from the largest negative float by @code{0}.
+@end deftypefn
 
 @section Manipulating the FPU 
 @c ------------------------
@@ -289,9 +417,33 @@ The library is written with an object-oriented style that should make it easy to
 @caption{The ``classes'' of FPNGlib}
 @end float
 
-@chapter Concept Index
-@c ===================
-@printindex cp
+@section Debugging facilities
+
+FPNGlib offers facilities to debug itself. There are in particular some macros that can be used to display messages to the standard error ouput @code{stderr}, provided the library was configured with the option @option{--enable-debug=yes} (the default) or @option{--enable-debug=info} for some macros.
+
+@deffn Macro FPNGL_DEBUG (...)
+Uses @code{fprintf} to output its arguments to @code{stderr} if the macro @code{NDEBUG}
+is defined to @code{1}. Otherwise, it does nothing.
+
+The macro flushes the output buffer with @code{fflush} after each call.
+
+@noindent@b{Example:}
+@cartouche
+@verbatiminclude snippets/debug.c
+@end cartouche
+@end deffn
+
+@deffn Macro FPNGL_WARNING (...)
+Displays a warning message to @code{stderr} if the library was configured with either
+@option{--enable-debug=yes} or @option{--enable-debug=info}.
+
+The macro flushes the output buffer with @code{fflush} after each call.
+
+@noindent@b{Example:}
+@cartouche
+@verbatiminclude snippets/warning.c
+@end cartouche
+@end deffn
 
 @chapter Function Index
 @c ====================
@@ -300,6 +452,10 @@ The library is written with an object-oriented style that should make it easy to
 @chapter Type Index
 @c ================
 @printindex tp
+
+@chapter Concept Index
+@c ===================
+@printindex cp
 
 @bye
 

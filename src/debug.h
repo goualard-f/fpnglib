@@ -42,16 +42,6 @@ extern "C" {
 	}	while (0)
 
 	/*
-		Macro to output warning messages to `stderr` if the library is compiled
-		with debugging information enabled.
-	 */
-# define FPNGL_WARNING(...)													\
-	do {																							\
-		fprintf(stderr,__VA_ARGS__);										\
-		fflush(stderr);																	\
-	}	while (0)
-
-	/*
 		Macro to output the contents of an integer array to stderr if the 
 		library is compiled	with debugging information enabled.
 	 */
@@ -62,12 +52,27 @@ extern "C" {
 	}																								\
 	FPNGL_DEBUG("\n");															\
 	} while(0)
+
 #else
 # define FPNGL_DEBUG(...) do {} while (0)
-# define FPNGL_WARNING(...) do {} while (0)
 # define FPNGL_INTARRAY(T,n) do {} while (0)
 #endif
-	
+
+#if FPNGL_ENABLE_INFO || !NDEBUG
+	 /*
+		Macro to output warning messages to `stderr` if the library is compiled
+		with debugging information enabled.
+	 */
+# define FPNGL_WARNING(...)													\
+	do {																							\
+		fprintf(stderr,"Warning: ");										\
+		fprintf(stderr,__VA_ARGS__);										\
+		fflush(stderr);																	\
+	}	while (0)
+#else
+# define FPNGL_WARNING(...) do {} while (0)
+#endif
+		
 #ifdef __cplusplus
 }
 #endif

@@ -42,7 +42,7 @@ static const int32_t fpngl_emin32 = -126;
 static const int32_t fpngl_emax32 = 127;
 // Unit roundoff for a single precision number
 static const float fpngl_u32 = 0.5f*FLT_EPSILON;
-// Smallest positive normalized single precision number
+// Smallest positive normal single precision number
 static const float fpngl_lambda32 = FLT_MIN;
 // Smallest positive single precision number
 static const float fpngl_mu32 = FLT_MIN*FLT_EPSILON;
