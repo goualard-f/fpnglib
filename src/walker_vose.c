@@ -35,7 +35,7 @@
 #include <fpnglib/frng64_division_k.h>
 #include <fpnglib/irange.h>
 
-struct fpngl_ddistribution_t {
+struct fpngl_distribution_t {
 	fpngl_frng64_t *frng;
 	fpngl_irng_t *irng;
 	uint32_t *alias;
@@ -43,10 +43,10 @@ struct fpngl_ddistribution_t {
 	uint32_t n; 
 };
 
-fpngl_ddistribution_t *fpngl_ddistribution_new(fpngl_irng_t *rng,
+fpngl_distribution_t *fpngl_distribution_new(fpngl_irng_t *rng,
 																							 const double P[], uint32_t szP)
 {
-	fpngl_ddistribution_t *dist = malloc(sizeof(fpngl_ddistribution_t));
+	fpngl_distribution_t *dist = malloc(sizeof(fpngl_distribution_t));
 	dist->irng = rng;
 	dist->frng = fpngl_div32(rng,fpngl_irng_seed(rng));
 	dist->alias = calloc(szP,sizeof(uint32_t));
@@ -94,7 +94,7 @@ fpngl_ddistribution_t *fpngl_ddistribution_new(fpngl_irng_t *rng,
 	return dist;
 }
 	
-void fpngl_ddistribution_delete(fpngl_ddistribution_t* dd)
+void fpngl_distribution_delete(fpngl_distribution_t* dd)
 {
 	assert(dd != NULL);
 	fpngl_frng64_delete(dd->frng); // Also deletes dist->irng
@@ -103,7 +103,7 @@ void fpngl_ddistribution_delete(fpngl_ddistribution_t* dd)
 	free(dd);
 }
 
-uint32_t fpngl_ddistribution_next32(fpngl_ddistribution_t *dd)
+uint32_t fpngl_distribution_next32(fpngl_distribution_t *dd)
 {
 #if 0
 	uint32_t column = fpngl_ubound32(dd->irng,dd->n);
@@ -125,7 +125,7 @@ uint32_t fpngl_ddistribution_next32(fpngl_ddistribution_t *dd)
 	}
 }
 
-fpngl_irng_t *fpngl_ddistribution_rng(fpngl_ddistribution_t *dd)
+fpngl_irng_t *fpngl_distribution_rng(fpngl_distribution_t *dd)
 {
 	assert(dd != NULL);
 	return dd->irng;

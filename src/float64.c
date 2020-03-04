@@ -46,7 +46,7 @@ static inline uint64_t randexp2(fpngl_irng_t *rng, uint32_t min, uint32_t max)
   return fpngl_range32(rng,(int32_t)min,(int32_t)(max+1));
 }
 
-// Random exponent (normal or denormal, but not infinite)
+// Random exponent (normal or subnormal, but not infinite)
 static inline uint64_t randnumexp(fpngl_irng_t *rng)
 {
   return fpngl_ubound32(rng,2047);
@@ -117,12 +117,12 @@ double fpngl_previous64(double v, uint64_t n)
   return -fpngl_nextafter64(-v,n);
 }
 
-double fpngl_denormal64(fpngl_irng_t *rng)
+double fpngl_subnormal64(fpngl_irng_t *rng)
 {
   fpngl_uintf64_t dui;
   
   uint64_t sign = randsign(rng);
-  uint64_t exponent = 0; // Characteristics of denormal numbers
+  uint64_t exponent = 0; // Characteristics of subnormal numbers
   uint64_t fract = randfrac(rng);
   
   dui.ui = (sign << 63) | (exponent << 52) | fract;
@@ -146,7 +146,7 @@ double fpngl_normal64(fpngl_irng_t *rng)
   fpngl_uintf64_t di;
   uint64_t sign = randsign(rng);
   uint64_t exponent = randnormexp(rng); // Exponent shall not be zero or 
-                                        // 2047 to avoid denormal and 
+                                        // 2047 to avoid subnormal and 
                                         // infinite numbers
 
   uint64_t fract = randfrac(rng);
@@ -196,22 +196,22 @@ double fpngl_float64(fpngl_irng_t *rng,
 }
 
 
-fpngl_ddistribution_t *fpngl_class_float64_new(fpngl_irng_t *irng,
+fpngl_distribution_t *fpngl_class_float64_new(fpngl_irng_t *irng,
 																							 const double P[static 5])
 {
-	return fpngl_ddistribution_new(irng,P,5);
+	return fpngl_distribution_new(irng,P,5);
 }
 
 
-double fpngl_float64_distrib(fpngl_ddistribution_t *fpd)
+double fpngl_float64_distrib(fpngl_distribution_t *fpd)
 {
 	typedef double (*realfun_t)(fpngl_irng_t *);
   static realfun_t createv[] = { fpngl_zero64,
-																 fpngl_denormal64,
+																 fpngl_subnormal64,
 																 fpngl_normal64,
 																 fpngl_inf64,
 																 fpngl_nan64 };
-  return createv[fpngl_ddistribution_next32(fpd)](fpngl_ddistribution_rng(fpd));
+  return createv[fpngl_distribution_next32(fpd)](fpngl_distribution_rng(fpd));
 
 }
 

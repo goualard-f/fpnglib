@@ -49,16 +49,22 @@ Even though it is entirely written in ISO Standard C99, FPNGlib is, at present, 
 More information about the FPNGlib library can be found at the project homepage,
 @uref{https://gitlab.univ-nantes.fr/goualard-f/fpnglib}.
 
+
+This manual assumes a basic knowledge of the IEEE~754 standard@footnote{@i{IEEE Standard for Floating-Point Arithmetic. IEEE STD 754-2008}. IEEE Computer Society, 2008.} and refers to the internal representation of floating-point numbers in several places. Readers unfamiliar with it may find beneficial to at least read the @url{https://en.wikipedia.org/wiki/IEEE_754,Wikipedia entry} for the standard first.
+
 The FPNGlib library contains code from third parties, specifically:
 @itemize @bullet
 @item @url{https://maths-people.anu.edu.au/~brent/random.html,xorgens 3.06} by Richard Brent, licenced under the @url{http://www.gnu.org/copyleft/gpl.html,GNU General Public License};
 @item Both 64 bits and 32 bits versions of the @url{http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html,Mersenne twister}, by Takuji Nishimura and Makoto Matsumoto, whose licenses can be found in files @file{src/mt19937-64.c} and @file{src/mt19937ar.c}.
 @end itemize
 
-@strong{Caution:} FPNGlib does not contain any true random generator as its focus is on reproducibility for applications such as Monte-Carlo algorithms and the like. As a consequence, it shall not be used for cryptographic applications.
-@cindex Cryptographic use
+Additionally, The implementation of the Walker/Vose algorithm in @code{src/walker_vose.c} is mostly our reimplementation in C of the Java version by Keith Schwarz (@url{https://www.keithschwarz.com/interesting/code/?dir=alias-method}). Some small parts of it are also directly taken from the @url{https://www.gnu.org/software/gsl/,GNU GSL 2.6} implementation of the same.
 
-@unnumberedsec Reporting a bug
+@unnumberedsec A Word of Caution
+@cindex Cryptographic use
+FPNGlib does not contain any true random generator as its focus is on reproducibility for applications such as Monte-Carlo algorithms and the like. As a consequence, it shall not be used for cryptographic applications.
+
+@unnumberedsec Reporting a Bug
 @cindex Bug report
 
 Questions and bug reports shall be directly submitted on the @url{https://gitlab.univ-nantes.fr/goualard-f/fpnglib/issues,GitLab platform} for the project.
@@ -207,6 +213,7 @@ of an LCG by a constant integer. The result is a floating-point number in @math{
 @end cartouche
 @caption{Computing an approximation to @math{\pi} with a Monte Carlo method.}
 @end float
+
 @node Generating a random float with some properties
 @subsection Generating a random float with some properties
 @c .......................................................
@@ -222,6 +229,30 @@ another domain;
 @end itemize
 
 FPNGlib is particularly well suited for this kind of applications as it offers many ways to define the properties the floats drawn should meet.
+
+For example, if only random double precision subnormal floats are required, one can use the @code{fpngl_denormal64} function. For random normal floats, the @code{fpngl_normal64} function can be used:
+
+@cartouche
+@verbatiminclude snippets/subnormal.c
+@end cartouche
+
+Both functions require an integer RNG as the subnormal and normal random floats are constructed from their exponent and fractional part integer fields.
+
+FPNGlib considers five classes of floats: @math{\pm0}, @emph{subnormal}, @emph{normal}, @math{\pm\infty}, and @emph{Not a Number}s. Using the @code{fpngl_class_float64_new} function, it is easy to draw floats from these five classes with different probabilities attached to each:
+@cartouche
+@verbatiminclude snippets/distrib.c
+@end cartouche
+This program displays 10 floats, with probabilities 12.5% that they are equal to @math{\pm0}, 25% that they are subnormal, 50% that they are normal, and  12.5% that they are infinite.
+
+
+A more flexible way to draw floats from a specific set is to put constraints on the acceptable sign, exponent and fractional part with the @code{fpngl_float64} function. The following program, for example, will draw 10 double precision floats in @code{[2,4)}:
+@cartouche
+@verbatiminclude snippets/float64.c
+@end cartouche
+The first parameter of @code{fpngl_float64} is an integer RNG, which is used to draw the integers defining the sign, exponent and fractional part of the float returned. The second parameter indicates what is the expected sign of the float drawn; It can be one of @code{fpngl_positive} (for drawing only positive floats), @code{fpngl_negative} (for drawing only negative floats), or @code{fpngl_whatever} (for either positive or negative floats, with an equiprobability of both). The third and fourth parameters establish bounds on the @emph{biased} exponent@footnote{The @emph{biased} exponent @math{e} for double precision floats takes its value in @math{[0,2047]}, the actual exponent @math{E} being equal to @math{e-1023}.}. The fifth and sixth parameters establish bounds on the possible values of the fractional part, with @code{fpngl_minfrac64} being the smallest possible value, equal to @code{0x0000000000000}, and @code{fpngl_maxfrac64} being the largest possible value, equal to @code{0xfffffffffffff}. Lastly, the seventh and eighth parameters are masks that are ultimately applied to the fractional part: the seventh parameter is ``@i{and}ed'' with the fractional part and the eighth parameter is ``@i{or}ed'' with that resulting value.
+
+In the example above, we are asking for floats with a positive sign, an exponent of @code{1} (@math{1024} minus the bias of @math{1023}) and a fractional part between  @code{0x0000000000000} and @code{0xfffffffffffff}, that is ---in binary--- floats from @math{+1.0\times2^1} to @math{+1.111111111111111111111111111111111111111111111111111\times2^1}, or ---in decimal---, from @math{2.0} to @math{4.0-2^{-51}}.
+
 
 @chapter General Organization of the Library
 @c =========================================
@@ -366,6 +397,36 @@ Infinity value.
 @verbatim
 Single precision infinity: inf
 Double precision infinity: inf
+@end verbatim
+@end deftypevr
+
+@deftypevr Constant uint64_t fpngl_minfrac64
+@deftypevrx Constant uint64_t fpngl_maxfrac64
+Minimum and maximum value for the fractional part of a 64 bits double precision floating-point number. These constants are mainly used when calling @code{fpngl_float64} to draw floats with some properties.
+@noindent@b{Example:}
+@cartouche
+@verbatiminclude snippets/minmaxfrac.c
+@end cartouche
+@noindent@b{Output:}
+@verbatim
+minfrac64: 0
+maxfrac64: fffffffffffff
+@end verbatim
+@end deftypevr
+
+@deftypevr Constant uint64_t fpngl_noand64
+@deftypevrx Constant uint64_t fpngl_noor64
+Masks to use with the function @code{fpng_float64} when no @emph{and} mask
+(resp.@tie{}no @emph{or} mask) is needed for the fractional part of the floats
+constructed.
+@noindent@b{Example:}
+@cartouche
+@verbatiminclude snippets/noandor.c
+@end cartouche
+@noindent@b{Output:}
+@verbatim
+noand64 mask: ffffffffffffffff
+noor64 mask: 0
 @end verbatim
 @end deftypevr
 

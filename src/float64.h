@@ -36,7 +36,7 @@ extern "C" {
 	/*
 	 Return a double precision number that is 'n' floating-point numbers after 'v'.
 	 
-	 The parameter n must be in the interval [1, 0x7fe0000000000000].
+	 The parameter n must be in the interval [0, 0xffe0000000000000].
   */
   double fpngl_nextafter64(double v, uint64_t n);
   
@@ -45,13 +45,13 @@ extern "C" {
   */
   double fpngl_previous64(double v, uint64_t n);
   
-  // Return a random denormal double precision number
-  double fpngl_denormal64(fpngl_irng_t *rng);
+  // Return a random subnormal double precision number
+  double fpngl_subnormal64(fpngl_irng_t *rng);
   // Return +0.0 or -0.0 randomly with even probability
   double fpngl_zero64(fpngl_irng_t *rng);
   // Return +oo or -oo randomly with even probability
   double fpngl_inf64(fpngl_irng_t *rng);
-  // Return a normal double precision number in [fngl_d_lambda,fpngl_d_max]
+  // Return a normal double precision number in [fngl_lambda64,fpngl_max64]
   double fpngl_normal64(fpngl_irng_t *rng);
   // Return a nan
   double fpngl_nan64(fpngl_irng_t *rng);
@@ -83,15 +83,15 @@ extern "C" {
 											 uint64_t ormask);
 
 	// Create a probability distribution for the five classes of floats:
-	// { zero, denormalized, normalized, infinite, nan }
-	fpngl_ddistribution_t *fpngl_class_float64_new(fpngl_irng_t *irng,
+	// { zero, subnormal, normal, infinite, nan }
+	fpngl_distribution_t *fpngl_class_float64_new(fpngl_irng_t *irng,
 																								 const double P[static 5]);
   /*
 	 Return a floating-point number from one of the four classes:
-	 { zero, denormalized, normalized, infinite, nan }
+	 { zero, subnormal, normal, infinite, nan }
 	 with a probability according to fpd.
   */
-  double fpngl_float64_distrib(fpngl_ddistribution_t *fpd);
+  double fpngl_float64_distrib(fpngl_distribution_t *fpd);
 
   /*
   Computes the number of floats (bounds included) from a to b.

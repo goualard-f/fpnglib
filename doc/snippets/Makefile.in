@@ -113,7 +113,8 @@ noinst_PROGRAMS = significand$(EXEEXT) exponent$(EXEEXT) \
 	isimple$(EXEEXT) mcpi$(EXEEXT) debug$(EXEEXT) warning$(EXEEXT) \
 	nextafter64$(EXEEXT) previous64$(EXEEXT) unitroundoff$(EXEEXT) \
 	mu$(EXEEXT) lambda$(EXEEXT) nan$(EXEEXT) inf$(EXEEXT) \
-	max$(EXEEXT)
+	max$(EXEEXT) subnormal$(EXEEXT) float64$(EXEEXT) \
+	minmaxfrac64$(EXEEXT) noandor$(EXEEXT) distrib$(EXEEXT)
 subdir = doc/snippets
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_check_enable_debug.m4 \
@@ -151,10 +152,20 @@ dice_OBJECTS = dice.$(OBJEXT)
 dice_LDADD = $(LDADD)
 dice_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
 	$(am__DEPENDENCIES_1)
+distrib_SOURCES = distrib.c
+distrib_OBJECTS = distrib.$(OBJEXT)
+distrib_LDADD = $(LDADD)
+distrib_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
 exponent_SOURCES = exponent.c
 exponent_OBJECTS = exponent.$(OBJEXT)
 exponent_LDADD = $(LDADD)
 exponent_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
+float64_SOURCES = float64.c
+float64_OBJECTS = float64.$(OBJEXT)
+float64_LDADD = $(LDADD)
+float64_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
 	$(am__DEPENDENCIES_1)
 fsimple_SOURCES = fsimple.c
 fsimple_OBJECTS = fsimple.$(OBJEXT)
@@ -186,6 +197,11 @@ mcpi_OBJECTS = mcpi.$(OBJEXT)
 mcpi_LDADD = $(LDADD)
 mcpi_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
 	$(am__DEPENDENCIES_1)
+minmaxfrac64_SOURCES = minmaxfrac64.c
+minmaxfrac64_OBJECTS = minmaxfrac64.$(OBJEXT)
+minmaxfrac64_LDADD = $(LDADD)
+minmaxfrac64_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
 mu_SOURCES = mu.c
 mu_OBJECTS = mu.$(OBJEXT)
 mu_LDADD = $(LDADD)
@@ -201,6 +217,11 @@ nextafter64_OBJECTS = nextafter64.$(OBJEXT)
 nextafter64_LDADD = $(LDADD)
 nextafter64_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
 	$(am__DEPENDENCIES_1)
+noandor_SOURCES = noandor.c
+noandor_OBJECTS = noandor.$(OBJEXT)
+noandor_LDADD = $(LDADD)
+noandor_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
 previous64_SOURCES = previous64.c
 previous64_OBJECTS = previous64.$(OBJEXT)
 previous64_LDADD = $(LDADD)
@@ -210,6 +231,11 @@ significand_SOURCES = significand.c
 significand_OBJECTS = significand.$(OBJEXT)
 significand_LDADD = $(LDADD)
 significand_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
+subnormal_SOURCES = subnormal.c
+subnormal_OBJECTS = subnormal.$(OBJEXT)
+subnormal_LDADD = $(LDADD)
+subnormal_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
 	$(am__DEPENDENCIES_1)
 unitroundoff_SOURCES = unitroundoff.c
 unitroundoff_OBJECTS = unitroundoff.$(OBJEXT)
@@ -255,12 +281,14 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = biased_dice.c debug.c dice.c exponent.c fsimple.c inf.c \
-	isimple.c lambda.c max.c mcpi.c mu.c nan.c nextafter64.c \
-	previous64.c significand.c unitroundoff.c warning.c
-DIST_SOURCES = biased_dice.c debug.c dice.c exponent.c fsimple.c inf.c \
-	isimple.c lambda.c max.c mcpi.c mu.c nan.c nextafter64.c \
-	previous64.c significand.c unitroundoff.c warning.c
+SOURCES = biased_dice.c debug.c dice.c distrib.c exponent.c float64.c \
+	fsimple.c inf.c isimple.c lambda.c max.c mcpi.c minmaxfrac64.c \
+	mu.c nan.c nextafter64.c noandor.c previous64.c significand.c \
+	subnormal.c unitroundoff.c warning.c
+DIST_SOURCES = biased_dice.c debug.c dice.c distrib.c exponent.c \
+	float64.c fsimple.c inf.c isimple.c lambda.c max.c mcpi.c \
+	minmaxfrac64.c mu.c nan.c nextafter64.c noandor.c previous64.c \
+	significand.c subnormal.c unitroundoff.c warning.c
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -466,9 +494,17 @@ dice$(EXEEXT): $(dice_OBJECTS) $(dice_DEPENDENCIES) $(EXTRA_dice_DEPENDENCIES)
 	@rm -f dice$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(dice_OBJECTS) $(dice_LDADD) $(LIBS)
 
+distrib$(EXEEXT): $(distrib_OBJECTS) $(distrib_DEPENDENCIES) $(EXTRA_distrib_DEPENDENCIES) 
+	@rm -f distrib$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(distrib_OBJECTS) $(distrib_LDADD) $(LIBS)
+
 exponent$(EXEEXT): $(exponent_OBJECTS) $(exponent_DEPENDENCIES) $(EXTRA_exponent_DEPENDENCIES) 
 	@rm -f exponent$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(exponent_OBJECTS) $(exponent_LDADD) $(LIBS)
+
+float64$(EXEEXT): $(float64_OBJECTS) $(float64_DEPENDENCIES) $(EXTRA_float64_DEPENDENCIES) 
+	@rm -f float64$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(float64_OBJECTS) $(float64_LDADD) $(LIBS)
 
 fsimple$(EXEEXT): $(fsimple_OBJECTS) $(fsimple_DEPENDENCIES) $(EXTRA_fsimple_DEPENDENCIES) 
 	@rm -f fsimple$(EXEEXT)
@@ -494,6 +530,10 @@ mcpi$(EXEEXT): $(mcpi_OBJECTS) $(mcpi_DEPENDENCIES) $(EXTRA_mcpi_DEPENDENCIES)
 	@rm -f mcpi$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(mcpi_OBJECTS) $(mcpi_LDADD) $(LIBS)
 
+minmaxfrac64$(EXEEXT): $(minmaxfrac64_OBJECTS) $(minmaxfrac64_DEPENDENCIES) $(EXTRA_minmaxfrac64_DEPENDENCIES) 
+	@rm -f minmaxfrac64$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(minmaxfrac64_OBJECTS) $(minmaxfrac64_LDADD) $(LIBS)
+
 mu$(EXEEXT): $(mu_OBJECTS) $(mu_DEPENDENCIES) $(EXTRA_mu_DEPENDENCIES) 
 	@rm -f mu$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(mu_OBJECTS) $(mu_LDADD) $(LIBS)
@@ -506,6 +546,10 @@ nextafter64$(EXEEXT): $(nextafter64_OBJECTS) $(nextafter64_DEPENDENCIES) $(EXTRA
 	@rm -f nextafter64$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(nextafter64_OBJECTS) $(nextafter64_LDADD) $(LIBS)
 
+noandor$(EXEEXT): $(noandor_OBJECTS) $(noandor_DEPENDENCIES) $(EXTRA_noandor_DEPENDENCIES) 
+	@rm -f noandor$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(noandor_OBJECTS) $(noandor_LDADD) $(LIBS)
+
 previous64$(EXEEXT): $(previous64_OBJECTS) $(previous64_DEPENDENCIES) $(EXTRA_previous64_DEPENDENCIES) 
 	@rm -f previous64$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(previous64_OBJECTS) $(previous64_LDADD) $(LIBS)
@@ -513,6 +557,10 @@ previous64$(EXEEXT): $(previous64_OBJECTS) $(previous64_DEPENDENCIES) $(EXTRA_pr
 significand$(EXEEXT): $(significand_OBJECTS) $(significand_DEPENDENCIES) $(EXTRA_significand_DEPENDENCIES) 
 	@rm -f significand$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(significand_OBJECTS) $(significand_LDADD) $(LIBS)
+
+subnormal$(EXEEXT): $(subnormal_OBJECTS) $(subnormal_DEPENDENCIES) $(EXTRA_subnormal_DEPENDENCIES) 
+	@rm -f subnormal$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(subnormal_OBJECTS) $(subnormal_LDADD) $(LIBS)
 
 unitroundoff$(EXEEXT): $(unitroundoff_OBJECTS) $(unitroundoff_DEPENDENCIES) $(EXTRA_unitroundoff_DEPENDENCIES) 
 	@rm -f unitroundoff$(EXEEXT)
@@ -531,18 +579,23 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/biased_dice.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/debug.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dice.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/distrib.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/exponent.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/float64.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fsimple.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/inf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/isimple.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lambda.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/max.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mcpi.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/minmaxfrac64.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mu.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nan.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/nextafter64.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/noandor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/previous64.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/significand.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/subnormal.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/unitroundoff.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/warning.Po@am__quote@
 

@@ -51,5 +51,17 @@ static const double fpngl_infinity64 = 1.0/0.0;
 // Largest positive finite double precision number
 static const double fpngl_max64 = DBL_MAX;
 
+/*
+	Constants used in defining constraints on floating-point numbers
+ */
+// Minimum fractional part in a 64 bits float
+static const uint64_t fpngl_minfrac64 = 0x0000000000000000;
+// Maximum fractional part in a 64 bits float
+static const uint64_t fpngl_maxfrac64 = 0x000fffffffffffff;
+// No AND mask on the fractional part of a 64 bits float
+static const uint64_t fpngl_noand64 = 0xffffffffffffffff;
+// No OR mask on the fractional part of a 64 bits float
+static const uint64_t fpngl_noor64 = 0x0000000000000000;
+
 
 #endif // __fpngl_constants64_h__

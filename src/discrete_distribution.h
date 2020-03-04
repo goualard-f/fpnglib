@@ -37,29 +37,29 @@ extern "C" {
 #endif
 
 	// Double precision discrete distribution
-	typedef struct fpngl_ddistribution_t fpngl_ddistribution_t;
+	typedef struct fpngl_distribution_t fpngl_distribution_t;
 	
   /* 
 		 Create a structure to handle sampling from a discrete distribution.
 		 \return NULL if the result cannot be allocated
 
-		 The fpngl_ddistribution_t object owns the rng and is responsible for
+		 The fpngl_distribution_t object owns the rng and is responsible for
 		 its destruction.
 
 		 @precondition \sum P = 1
   */
-	fpngl_ddistribution_t *fpngl_ddistribution_new(fpngl_irng_t *rng,
+	fpngl_distribution_t *fpngl_distribution_new(fpngl_irng_t *rng,
 																								 const double P[], uint32_t szP);
 	
   /* Free memory allocated to represent the distribution `dd`.
   */
-  void fpngl_ddistribution_delete(fpngl_ddistribution_t* dd);
+  void fpngl_distribution_delete(fpngl_distribution_t* dd);
 
   // Return a random value according to the distribution in `dd`.
-  uint32_t fpngl_ddistribution_next32(fpngl_ddistribution_t *dd);
+  uint32_t fpngl_distribution_next32(fpngl_distribution_t *dd);
 
 	// Return the RNG used internally.
-	fpngl_irng_t *fpngl_ddistribution_rng(fpngl_ddistribution_t *dd);
+	fpngl_irng_t *fpngl_distribution_rng(fpngl_distribution_t *dd);
 
 #ifdef __cplusplus
 }

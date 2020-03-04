@@ -67,9 +67,9 @@ END_TEST
 
 fpngl_irng_t *irng;
 
-START_TEST(test_denormal64)
+START_TEST(test_subnormal64)
 {
-	ck_assert(fpclassify(fpngl_denormal64(irng)) == FP_SUBNORMAL);
+	ck_assert(fpclassify(fpngl_subnormal64(irng)) == FP_SUBNORMAL);
 }
 END_TEST
 
@@ -121,7 +121,7 @@ START_TEST(test_float64_distrib)
 {
 	const uint32_t niters = 100000;
 	const double T[5] = {0.5, 0.125, 0.125, 0.125, 0.125};
-	fpngl_ddistribution_t *dd = fpngl_class_float64_new(irng,T);
+	fpngl_distribution_t *dd = fpngl_class_float64_new(irng,T);
 	uint32_t hist[5] = {0, 0, 0, 0, 0};
 	for (uint32_t i = 0; i < niters; ++i) {
 		int classd = fpclassify(fpngl_float64_distrib(dd));
@@ -175,7 +175,7 @@ Suite *float64_suite(void)
   
   tcase_add_test(tc_core, test_nextafter64);
   tcase_add_test(tc_core, test_previous64);
-  tcase_add_test(tc_core, test_denormal64);
+  tcase_add_test(tc_core, test_subnormal64);
   tcase_add_test(tc_core, test_zero64);
   tcase_add_test(tc_core, test_inf64);
   tcase_add_test(tc_core, test_normal64);

@@ -34,18 +34,18 @@ START_TEST(test_distribution)
 	const uint32_t ndraws = 1000000;
 
 	fpngl_irng_t *irng = fpngl_irng_new32(fpngl_mt19937v32(seed));
-	fpngl_ddistribution_t *dd = fpngl_ddistribution_new(irng, P, 4);
+	fpngl_distribution_t *dd = fpngl_distribution_new(irng, P, 4);
 	uint32_t occurrences[4] = { 0, 0, 0, 0};
 
 	for (uint32_t i = 0; i < ndraws; ++i) {
-		uint32_t drawn = fpngl_ddistribution_next32(dd);
+		uint32_t drawn = fpngl_distribution_next32(dd);
 		++occurrences[drawn];
 	}
 
 	for (uint32_t j = 0; j < 4; ++j) {
 		ck_assert_double_eq_tol(P[j],occurrences[j]/(double)ndraws,1e-3);
 	}
-	fpngl_ddistribution_delete(dd);
+	fpngl_distribution_delete(dd);
 }
 END_TEST
 

@@ -412,6 +412,18 @@ File: fpnglib.info,  Node: Generating a random float with some properties,  Prev
 2.2.4 Generating a random float with some properties
 ----------------------------------------------------
 
+For some applications, we are interested in drawing floating-point
+numbers with some properties only.  That might be:
+   * Only _subnormal_ floats;
+   * Only _normal_ floats;
+   * Only positive floats with the exponent in some domain and the
+     fractional part in another domain;
+   * ...
+
+   FPNGlib is particularly well suited for this kind of applications as
+it offers many ways to define the properties the floats drawn should
+meet.
+
 3 General Organization of the Library
 *************************************
 
@@ -436,6 +448,10 @@ numbers), and finally the postfix '_t' to mark the name as a type.
 6 IEEE 754 and the Floating-Point Unit
 **************************************
 
+That chapter describes the various constants, functions and macros
+provided by FPNGlib that do not directly contribute to the generation of
+random numbers.
+
 6.1 Constants
 =============
 
@@ -449,9 +465,7 @@ precision.
  -- Constant: uint32_t fpngl_emax32
  -- Constant: uint32_t fpngl_emax64
      Smallest and largest unbiased exponents for single and double
-     precision float.
-
-     *Example*
+     precision float.  *Example*
      // doc/snippets/exponent.c
      #include <stdio.h>
      #include <math.h>
@@ -465,17 +479,14 @@ precision.
        printf("Double precision exponent in [%d, %d]\n",
               fpngl_emin64,fpngl_emax64);
      }
-
      *Output:*
      Single precision exponent in [-126, 127]
      Double precision exponent in [-1022, 1023]
+
  -- Constant: uint32_t fpngl_t32
  -- Constant: uint32_t fpngl_t64
      Number of bits in the significand of a single or double precision
-     float.
-
-     *Example:*
-
+     float.  *Example:*
      // doc/snippets/significand.c
      #include <stdio.h>
      #include <math.h>
@@ -489,12 +500,175 @@ precision.
        printf("Number of digits with double precision: %u\n",
               (uint32_t)trunc(fpngl_t64*log10(2)));
      }
-
      *Output:*
      Number of digits with single precision: 7
      Number of digits with double precision: 15
 
-6.2 Manipulating the FPU
+ -- Constant: float fpngl_mu32
+ -- Constant: double fpngl_mu64
+     Smallest positive float.  This is a subnormal number.  Example:
+     // doc/snippets/mu.c
+     #include <stdio.h>
+     #include <math.h>
+     #include <fpnglib/constants32.h>
+     #include <fpnglib/constants64.h>
+     
+     int main(void)
+     {
+       printf("%d\n",nextafterf(0.0f,1.0f) == fpngl_mu32);
+       printf("%d\n",nextafter(0.0,1.0) == fpngl_mu64);
+     }
+     Output:
+     1
+     1
+
+ -- Constant: float fpngl_lambda32
+ -- Constant: double fpngl_lambda64
+     Smallest positive normal float.  Example:
+     // doc/snippets/lambda.c
+     #include <stdio.h>
+     #include <fpnglib/constants32.h>
+     #include <fpnglib/constants64.h>
+     
+     int main(void)
+     {
+       printf("Single precision smallest positive normal: %g\n",
+              fpngl_lambda32);
+       printf("Double precision smallest positive normal: %g\n",
+              fpngl_lambda64);
+     }
+     Output:
+     Single precision smallest positive normal: 1.17549e-38
+     Double precision smallest positive normal: 2.22507e-308
+
+ -- Constant: float fpngl_u32
+ -- Constant: double fpngl_u64
+     "Unit roundoff", which is half the distance between '1.0' and the
+     next floating-point number.  Example:
+     // doc/snippets/unitroundoff.c
+     #include <stdio.h>
+     #include <fpnglib/constants32.h>
+     #include <fpnglib/constants64.h>
+     
+     int main(void)
+     {
+     	printf("Single precision unit roundoff: %g\n",fpngl_u32);
+     	printf("Double precision unit roundoff: %g\n",fpngl_u64);
+     }
+     Output:
+     Single precision unit roundoff: 5.96046e-08
+     Double precision unit roundoff: 1.11022e-16
+
+ -- Constant: float fpngl_max32
+ -- Constant: double fpngl_max64
+     Largest positive float smaller than the "infinity" value.  Example:
+     // doc/snippets/max.c
+     #include <stdio.h>
+     #include <fpnglib/constants32.h>
+     #include <fpnglib/constants64.h>
+     
+     int main(void)
+     {
+       printf("Single precision largest float: %g\n",fpngl_max32);
+       printf("Double precision largest float: %g\n",fpngl_max64);
+     }
+     Output:
+     Single precision largest float: 3.40282e+38
+     Double precision largest float: 1.79769e+308
+
+ -- Constant: float fpngl_NaN32
+ -- Constant: double fpngl_NaN64
+     Return a _Not a Number_.  Example:
+     // doc/snippets/nan.c
+     #include <stdio.h>
+     #include <fpnglib/constants32.h>
+     #include <fpnglib/constants64.h>
+     
+     int main(void)
+     {
+       printf("Single precision NaN: %g\n",fpngl_NaN32);
+       printf("Double precision NaN: %g\n",fpngl_NaN64);
+     }
+     Output:
+     Single precision NaN: nan
+     Double precision NaN: nan
+
+ -- Constant: float fpngl_infinity32
+ -- Constant: double fpngl_infinity64
+     Infinity value.  Example:
+     // doc/snippets/inf.c
+     #include <stdio.h>
+     #include <fpnglib/constants32.h>
+     #include <fpnglib/constants64.h>
+     
+     int main(void)
+     {
+       printf("Single precision infinity: %g\n",fpngl_infinity32);
+       printf("Double precision infinity: %g\n",fpngl_infinity64);
+     }
+     Output:
+     Single precision infinity: inf
+     Double precision infinity: inf
+
+6.2 Utility Functions
+=====================
+
+FPNGlib defines functions that can aid in computing the floating-point
+numbers an application requires.  They are:
+
+ -- Library Function: double fpngl_nextafter64 (double V, uint64_t N)
+     Return a double precision number that is N floating-point numbers
+     _after_ V on the real line.
+
+     The value of N must be smaller or equal to '0xffe0000000000000'.
+     The function will abort if N is greater than that and the library
+     has been compiled with '--enable-debug=yes'.
+
+     If V is an NaN, the function returns the same NaN. Otherwise, it
+     returns either a finite float or a positive infinite, depending on
+     the value of N and the distance of V to the maximum representable
+     double precision float.
+
+     Example:
+     // doc/snippets/nextafter64.c
+     #include <stdio.h>
+     #include <fpnglib/constants64.h>
+     #include <fpnglib/float64.h>
+     
+     int main(void)
+     {
+       printf("%d\n",fpngl_nextafter64(1.0, 1L<<52) == 2.0);
+     }
+     The output is '1' since there are 2^{52} floats from '1.0' to '2.0'
+     in double precision.
+
+ -- Library Function: double fpngl_previous64 (double V, uint64_t N)
+     Return a double precision number that is N floating-point numbers
+     _before_ V on the real line.
+
+     The value of N must be smaller or equal to '0xffe0000000000000'.
+     The function will abort if N is greater than that and the library
+     has been compiled with '--enable-debug=yes'.
+
+     If V is an NaN, the function returns the same NaN. Otherwise, it
+     returns either a finite float or a positive infinite, depending on
+     the value of N and the distance of V to the maximum representable
+     double precision float.
+
+     Example:
+     // doc/snippets/previous64.c
+     #include <stdio.h>
+     #include <fpnglib/constants64.h>
+     #include <fpnglib/float64.h>
+     
+     int main(void)
+     {
+       printf("%d\n",fpngl_previous64(fpngl_mu64, 2) == -fpngl_mu64);
+     }
+     The output is '1' since the smallest positive double precision
+     float is separated from the largest negative float by '0'.
+
+6.3 Manipulating the FPU
 ========================
 
 7 Extending the Library
@@ -502,6 +676,8 @@ precision.
 
 The library is written with an object-oriented style that should make it
 easy to extend.
+
+ [image src="fpnglib-figures/classes.jpg" text="" ]
 
 figure 7.1: The "classes" of FPNGlib
 
@@ -511,9 +687,10 @@ figure 7.1: The "classes" of FPNGlib
 FPNGlib offers facilities to debug itself.  There are in particular some
 macros that can be used to display messages to the standard error ouput
 'stderr', provided the library was configured with the option
-'--enable-debug=yes' (the default).
+'--enable-debug=yes' (the default) or '--enable-debug=info' for some
+macros.
 
- -- Macro: FPNGL_DEBUG ...
+ -- Macro: FPNGL_DEBUG (...)
      Uses 'fprintf' to output its arguments to 'stderr' if the macro
      'NDEBUG' is defined to '1'.  Otherwise, it does nothing.
 
@@ -529,8 +706,43 @@ macros that can be used to display messages to the standard error ouput
        FPNGL_DEBUG("This will be displayed only in debug mode: %g\n",a);
      }
 
-8 Concept Index
-***************
+ -- Macro: FPNGL_WARNING (...)
+     Displays a warning message to 'stderr' if the library was
+     configured with either '--enable-debug=yes' or
+     '--enable-debug=info'.
+
+     The macro flushes the output buffer with 'fflush' after each call.
+
+     Example:
+     // doc/snippets/warning.c
+     #include <fpnglib/debug.h>
+     
+     int main(void)
+     {
+       double a = 1.0;
+       FPNGL_WARNING("This will be displayed in debug/info mode: %g\n",a);
+     }
+
+8 Function Index
+****************
+
+ [index ]
+* Menu:
+
+* FPNGL_DEBUG:                           Generating a random float with some properties.
+                                                              (line 283)
+* fpngl_nextafter64:                     Generating a random float with some properties.
+                                                              (line 210)
+* fpngl_previous64:                      Generating a random float with some properties.
+                                                              (line 236)
+* FPNGL_WARNING:                         Generating a random float with some properties.
+                                                              (line 299)
+
+9 Type Index
+************
+
+10 Concept Index
+****************
 
  [index ]
 * Menu:
@@ -542,23 +754,11 @@ macros that can be used to display messages to the standard error ouput
 * Cryptographic use:                     (outside of any node).
                                                                (line  0)
 * Prefix:                                Generating a random float with some properties.
-                                                               (line 10)
+                                                               (line 22)
 * Supported platforms:                   (outside of any node).
                                                                (line  0)
 * Type name formation:                   Generating a random float with some properties.
-                                                               (line 19)
-
-9 Function Index
-****************
-
- [index ]
-* Menu:
-
-* FPNGL_DEBUG:                           Generating a random float with some properties.
-                                                              (line 107)
-
-10 Type Index
-*************
+                                                               (line 31)
 
 
 
@@ -575,6 +775,6 @@ Ref: exa:mcpi15634
 Ref: Generating Random Floating-Point Numbers-Footnote-116922
 Ref: Generating Random Floating-Point Numbers-Footnote-217024
 Node: Generating a random float with some properties17074
-Ref: fig:classes20197
+Ref: fig:classes26073
 
 End Tag Table
