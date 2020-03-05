@@ -7,7 +7,6 @@
 
 #define NITERS 10000000
 const uint64_t seed = 13;
-// Approximation of pi to double precision
 const double m_pi = 0x1.921fb54442d18p+1;
 
 // Estimating the value of pi by throwing darts at a unit circle.
@@ -25,9 +24,8 @@ double mcpi(fpngl_frng64_t *frng, uint32_t niters)
 int main(void)
 {
   fpngl_irng_t *irng32 = fpngl_irng_new32(fpngl_mt19937v32(seed));
-  fpngl_frng64_t *frng0 = fpngl_bydivision_new("FMT19937v32",
-                                               irng32,
-                                               fpngl_irng_max(irng32));
+  fpngl_frng64_t *frng0 = fpngl_bydivision_new("FMT19937v32",irng32,
+                                               fpngl_irng_max(irng32)+1);
   fpngl_frng64_t *frng1 = fpngl_drand48bsd(seed);
   printf("%s: %.16g\n",fpngl_frng64_name(frng0), mcpi(frng0,NITERS));
   printf("%s: %.16g\n",fpngl_frng64_name(frng1), mcpi(frng1,NITERS));

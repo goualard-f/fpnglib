@@ -20,6 +20,12 @@ configuration, compilation and deployment (_autotools_).
    More information about the FPNGlib library can be found at the
 project homepage, <https://gitlab.univ-nantes.fr/goualard-f/fpnglib>.
 
+   This manual assumes a basic knowledge of the IEEE~754 standard(1) and
+refers to the internal representation of floating-point numbers in
+several places.  Readers unfamiliar with it may find beneficial to at
+least read the Wikipedia entry (https://en.wikipedia.org/wiki/IEEE_754)
+for the standard first.
+
    The FPNGlib library contains code from third parties, specifically:
    * xorgens 3.06 (https://maths-people.anu.edu.au/~brent/random.html)
      by Richard Brent, licenced under the GNU General Public License
@@ -29,12 +35,22 @@ project homepage, <https://gitlab.univ-nantes.fr/goualard-f/fpnglib>.
      Takuji Nishimura and Makoto Matsumoto, whose licenses can be found
      in files 'src/mt19937-64.c' and 'src/mt19937ar.c'.
 
-   *Caution:* FPNGlib does not contain any true random generator as its
-focus is on reproducibility for applications such as Monte-Carlo
-algorithms and the like.  As a consequence, it shall not be used for
-cryptographic applications.
+   Additionally, The implementation of the Walker/Vose algorithm in
+'src/walker_vose.c' is mostly our reimplementation in C of the Java
+version by Keith Schwarz
+(<https://www.keithschwarz.com/interesting/code/?dir=alias-method>).
+Some small parts of it are also directly taken from the GNU GSL 2.6
+(https://www.gnu.org/software/gsl/) implementation of the same.
 
-Reporting a bug
+A Word of Caution
+=================
+
+FPNGlib does not contain any true random generator as its focus is on
+reproducibility for applications such as Monte-Carlo algorithms and the
+like.  As a consequence, it shall not be used for cryptographic
+applications.
+
+Reporting a Bug
 ===============
 
 Questions and bug reports shall be directly submitted on the GitLab
@@ -120,6 +136,11 @@ some properties::.
 * Generating Random Integers in a Domain::
 * Generating Random Floating-Point Numbers::
 * Generating a random float with some properties::
+
+   ---------- Footnotes ----------
+
+   (1) IEEE Standard for Floating-Point Arithmetic.  IEEE STD 754-2008.
+IEEE Computer Society, 2008.
 
 
 File: fpnglib.info,  Node: Generating Random Integers,  Next: Generating Random Integers in a Domain,  Up: An Introduction to FPNGlib
@@ -424,6 +445,99 @@ numbers with some properties only.  That might be:
 it offers many ways to define the properties the floats drawn should
 meet.
 
+   For example, if only random double precision subnormal floats are
+required, one can use the 'fpngl_denormal64' function.  For random
+normal floats, the 'fpngl_normal64' function can be used:
+
+// doc/snippets/subnormal.c
+#include <stdio.h>
+#include <fpnglib/float64.h>
+#include <fpnglib/mt19937-64.h>
+
+const uint64_t seed = 42;
+
+int main(void)
+{
+  fpngl_irng_t *irng = fpngl_irng_new64(fpngl_mt19937v64(seed));
+  printf("Random denormal: %g\n",fpngl_denormal64(irng));
+  printf("Random normal: %g\n",fpngl_normal64(irng));
+  fpngl_irng_delete(irng);
+}
+
+   Both functions require an integer RNG as the subnormal and normal
+random floats are constructed from their exponent and fractional part
+integer fields.
+
+   FPNGlib considers five classes of floats: \pm0, _subnormal_,
+_normal_, \pm\infty, and _Not a Number_s.  Using the
+'fpngl_class_float64_new' function, it is easy to draw floats from these
+five classes with different probabilities attached to each:
+// doc/snippets/distrib.c
+#include <stdio.h>
+#include <fpnglib/float64.h>
+#include <fpnglib/mt19937-64.h>
+
+const uint64_t seed = 42;
+
+int main(void)
+{
+  fpngl_irng_t *irng = fpngl_irng_new64(fpngl_mt19937v64(seed));
+  fpngl_distribution_t *dist = fpngl_class_float64_new(irng,
+                                   (double[]){0.125,0.25,0.5,0.125,0.0});
+  for (uint32_t i = 0; i < 10; ++i) {
+    printf("%g\n",fpngl_float64_distrib(dist));
+  }
+  fpngl_irng_delete(irng);
+}
+   This program displays 10 floats, with probabilities 12.5% that they
+are equal to \pm0, 25% that they are subnormal, 50% that they are
+normal, and 12.5% that they are infinite.
+
+   A more flexible way to draw floats from a specific set is to put
+constraints on the acceptable sign, exponent and fractional part with
+the 'fpngl_float64' function.  The following program, for example, will
+draw 10 double precision floats in '[2,4)':
+// doc/snippets/float64.c
+#include <stdio.h>
+#include <fpnglib/constants64.h>
+#include <fpnglib/float64.h>
+#include <fpnglib/mt19937-64.h>
+
+const uint64_t seed = 13;
+
+int main(void)
+{
+  fpngl_irng_t *irng = fpngl_irng_new64(fpngl_mt19937v64(seed));
+  for (uint32_t i = 0; i < 10; ++i) {
+    printf("%g\n",fpngl_float64(irng, fpngl_positive, 1024, 1024,
+                                fpngl_minfrac64, fpngl_maxfrac64,
+                                fpngl_noand64, fpngl_noor64));
+  }
+  fpngl_irng_delete(irng);
+}
+   The first parameter of 'fpngl_float64' is an integer RNG, which is
+used to draw the integers defining the sign, exponent and fractional
+part of the float returned.  The second parameter indicates what is the
+expected sign of the float drawn; It can be one of 'fpngl_positive' (for
+drawing only positive floats), 'fpngl_negative' (for drawing only
+negative floats), or 'fpngl_whatever' (for either positive or negative
+floats, with an equiprobability of both).  The third and fourth
+parameters establish bounds on the _biased_ exponent(1).  The fifth and
+sixth parameters establish bounds on the possible values of the
+fractional part, with 'fpngl_minfrac64' being the smallest possible
+value, equal to '0x0000000000000', and 'fpngl_maxfrac64' being the
+largest possible value, equal to '0xfffffffffffff'.  Lastly, the seventh
+and eighth parameters are masks that are ultimately applied to the
+fractional part: the seventh parameter is "anded" with the fractional
+part and the eighth parameter is "ored" with that resulting value.
+
+   In the example above, we are asking for floats with a positive sign,
+an exponent of '1' (1024 minus the bias of 1023) and a fractional part
+between '0x0000000000000' and '0xfffffffffffff', that is --in binary--
+floats from +1.0\times2^1 to
++1.111111111111111111111111111111111111111111111111111\times2^1, or --in
+decimal--, from 2.0 to 4.0-2^{-51}.
+
 3 General Organization of the Library
 *************************************
 
@@ -610,6 +724,43 @@ precision.
      Single precision infinity: inf
      Double precision infinity: inf
 
+ -- Constant: uint64_t fpngl_minfrac64
+ -- Constant: uint64_t fpngl_maxfrac64
+     Minimum and maximum value for the fractional part of a 64 bits
+     double precision floating-point number.  These constants are mainly
+     used when calling 'fpngl_float64' to draw floats with some
+     properties.  Example:
+     // doc/snippets/minmaxfrac64.c
+     #include <stdio.h>
+     #include <fpnglib/constants64.h>
+     
+     int main(void)
+     {
+       printf("minfrac64: %lx\n",fpngl_minfrac64);
+       printf("maxfrac64: %lx\n",fpngl_maxfrac64);
+     }
+     Output:
+     minfrac64: 0
+     maxfrac64: fffffffffffff
+
+ -- Constant: uint64_t fpngl_noand64
+ -- Constant: uint64_t fpngl_noor64
+     Masks to use with the function 'fpng_float64' when no _and_ mask
+     (resp. no _or_ mask) is needed for the fractional part of the
+     floats constructed.  Example:
+     // doc/snippets/noandor.c
+     #include <stdio.h>
+     #include <fpnglib/constants64.h>
+     
+     int main(void)
+     {
+       printf("noand64 mask: %lx\n",fpngl_noand64);
+       printf("noor64 mask: %lx\n",fpngl_noor64);
+     }
+     Output:
+     noand64 mask: ffffffffffffffff
+     noor64 mask: 0
+
 6.2 Utility Functions
 =====================
 
@@ -730,13 +881,13 @@ macros.
 * Menu:
 
 * FPNGL_DEBUG:                           Generating a random float with some properties.
-                                                              (line 283)
+                                                              (line 414)
 * fpngl_nextafter64:                     Generating a random float with some properties.
-                                                              (line 210)
+                                                              (line 341)
 * fpngl_previous64:                      Generating a random float with some properties.
-                                                              (line 236)
+                                                              (line 367)
 * FPNGL_WARNING:                         Generating a random float with some properties.
-                                                              (line 299)
+                                                              (line 430)
 
 9 Type Index
 ************
@@ -748,33 +899,40 @@ macros.
 * Menu:
 
 * Bug report:                            (outside of any node).
-                                                               (line  0)
+                                                              (line   0)
 * Compiling with libfpnglib.so:          Generating Random Integers.
-                                                               (line 29)
+                                                              (line  29)
 * Cryptographic use:                     (outside of any node).
-                                                               (line  0)
+                                                              (line   0)
 * Prefix:                                Generating a random float with some properties.
-                                                               (line 22)
+                                                              (line 115)
 * Supported platforms:                   (outside of any node).
-                                                               (line  0)
+                                                              (line   0)
 * Type name formation:                   Generating a random float with some properties.
-                                                               (line 31)
+                                                              (line 124)
+
+   ---------- Footnotes ----------
+
+   (1) The _biased_ exponent e for double precision floats takes its
+value in [0,2047], the actual exponent E being equal to e-1023.
 
 
 
 Tag Table:
-Node: An Introduction to FPNGlib4774
-Node: Generating Random Integers5439
-Ref: Generating Random Integers-Footnote-18420
-Node: Generating Random Integers in a Domain8688
-Ref: Generating Random Integers in a Domain-Footnote-111692
-Ref: Generating Random Integers in a Domain-Footnote-211765
-Ref: Generating Random Integers in a Domain-Footnote-311897
-Node: Generating Random Floating-Point Numbers11991
-Ref: exa:mcpi15634
-Ref: Generating Random Floating-Point Numbers-Footnote-116922
-Ref: Generating Random Floating-Point Numbers-Footnote-217024
-Node: Generating a random float with some properties17074
-Ref: fig:classes26073
+Node: An Introduction to FPNGlib5467
+Ref: An Introduction to FPNGlib-Footnote-16168
+Node: Generating Random Integers6270
+Ref: Generating Random Integers-Footnote-19251
+Node: Generating Random Integers in a Domain9519
+Ref: Generating Random Integers in a Domain-Footnote-112523
+Ref: Generating Random Integers in a Domain-Footnote-212596
+Ref: Generating Random Integers in a Domain-Footnote-312728
+Node: Generating Random Floating-Point Numbers12822
+Ref: exa:mcpi16465
+Ref: Generating Random Floating-Point Numbers-Footnote-117753
+Ref: Generating Random Floating-Point Numbers-Footnote-217855
+Node: Generating a random float with some properties17905
+Ref: fig:classes31833
+Ref: Generating a random float with some properties-Footnote-134874
 
 End Tag Table

@@ -41,7 +41,7 @@ by the Foundation.
 @chapter What is FPNGlib?
 @c ======================
 
-FPNGlib is a C library that offers pseudo-random generators in a unified framework. As the name implies, its strong point is the availability of many IEEE@tie{}754 floating-point random number generators, with the possibility to control the kind of floating-point number generated (e.g., the amount of subnormal vs. normal) and their properties (e.g., probability of having a least significant bit of the fractional part to be @math{1})
+FPNGlib is a C library that offers pseudo-random generators in a unified framework. As the name implies, its strong point is the availability of many IEEE@tie{}754@footnote{@i{IEEE Standard for Floating-Point Arithmetic. IEEE STD 754-2008}. IEEE Computer Society, 2008.} floating-point random number generators, with the possibility to control the kind of floating-point number generated (e.g., the amount of subnormal vs. normal) and their properties (e.g., probability of having a least significant bit of the fractional part to be @math{1})
 
 Even though it is entirely written in ISO Standard C99, FPNGlib is, at present, only supported on UNIX-like systems (GNU/Linux and Mac@tie{}OS@tie{}X are the only two tested environments) due to the tools used for its configuration, compilation and deployment (@emph{autotools}).
 @cindex Supported platforms
@@ -50,7 +50,7 @@ More information about the FPNGlib library can be found at the project homepage,
 @uref{https://gitlab.univ-nantes.fr/goualard-f/fpnglib}.
 
 
-This manual assumes a basic knowledge of the IEEE~754 standard@footnote{@i{IEEE Standard for Floating-Point Arithmetic. IEEE STD 754-2008}. IEEE Computer Society, 2008.} and refers to the internal representation of floating-point numbers in several places. Readers unfamiliar with it may find beneficial to at least read the @url{https://en.wikipedia.org/wiki/IEEE_754,Wikipedia entry} for the standard first.
+This manual assumes a basic knowledge of the IEEE~754 standard and refers to the internal representation of floating-point numbers in several places. Readers unfamiliar with it may find beneficial to at least read the @url{https://en.wikipedia.org/wiki/IEEE_754,Wikipedia entry} for the standard first.
 
 The FPNGlib library contains code from third parties, specifically:
 @itemize @bullet
@@ -58,7 +58,7 @@ The FPNGlib library contains code from third parties, specifically:
 @item Both 64 bits and 32 bits versions of the @url{http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html,Mersenne twister}, by Takuji Nishimura and Makoto Matsumoto, whose licenses can be found in files @file{src/mt19937-64.c} and @file{src/mt19937ar.c}.
 @end itemize
 
-Additionally, The implementation of the Walker/Vose algorithm in @code{src/walker_vose.c} is mostly our reimplementation in C of the Java version by Keith Schwarz (@url{https://www.keithschwarz.com/interesting/code/?dir=alias-method}). Some small parts of it are also directly taken from the @url{https://www.gnu.org/software/gsl/,GNU GSL 2.6} implementation of the same.
+Additionally, the implementation of the Walker/Vose algorithm in @code{src/walker_vose.c} is mostly a reimplementation in C of the Java version by Keith Schwarz (@url{https://www.keithschwarz.com/interesting/code/?dir=alias-method}). Some code is also directly taken from the @url{https://www.gnu.org/software/gsl/,GNU GSL 2.6} implementation of the same.
 
 @unnumberedsec A Word of Caution
 @cindex Cryptographic use
@@ -72,13 +72,13 @@ Questions and bug reports shall be directly submitted on the @url{https://gitlab
 @chapter Getting Started with FPNGlib
 @c ==================================
 
-This chapter describes the very first steps with FPNGlib, from the retrieval of the archive for the library to the first program you will write to test its potential. If you are accustomed to work with autotools-based software, feel free to proceed directly to Section@tie{}@ref{An Introduction to FPNGlib}.
+This chapter describes the very first steps with FPNGlib, from the retrieval of the archive for the library to the first program you will write to test its potential. If you are accustomed to work with autotools-based software, feel free to proceed directly to @ref{An Introduction to FPNGlib}.
 
 @section Installation
 @c ------------------
 The FPNGlib library uses the @emph{autotools} (@url{https://www.gnu.org/software/autoconf/,autoconf}, @url{https://www.gnu.org/software/automake/,automake}, @url{https://www.gnu.org/software/libtool/,libtool}) for configuration, compilation, and deployment. However, these tools do not need to be present on your computer as long as you do not modify the configuration files (@file{configure.ac} and the various @file{Makefile.am} files).
 
-The library is entirely written in the ISO/IEC 9899:1999 C language. Therefore, it requires a decently recent C compiler such as any GNU C Compiler v.@tie{}4.5 or higher.
+The library is entirely written in the ISO/IEC 9899:1999 C language. Therefore, its compilation requires a sufficiently recent C compiler such as any GNU C Compiler v.@tie{}4.5 or higher.
 
 In order to test the library, you will need to install @command{check} v. 0.11.0 or higher (@url{https://libcheck.github.io/check/}) beforehand. If your compiler does not support
 the macro @code{__VA_OPT__}, some tests will not be performed. That macro should be
@@ -97,9 +97,9 @@ Once the configuration is complete, you may call @command{make} in the root dire
 
 After having compiled the library, you should test it, in order to ensure that everything is ok. This is done by calling @command{make check}. If no error is detected, you may proceed to the installation phase.
 
-The library should be installed before being used. However, if you want to get a taste of it beforehand, you may modify and execute the examples in the sub-directory @command{examples/} even before the installation. Calling @command{make} in this directory will recompile the necessary files.
+The library should be installed before being used. However, if you want to get a taste of it beforehand, you may modify and execute the examples in the sub-directory @command{examples/}, even before the installation. Calling @command{make} in this directory will recompile the necessary files.
 
-The installation is done by calling @command{make install}. Provided you did not override the default locations during the configuration process, the library will be installed into @file{/usr/local}.
+The installation is done by calling @command{make install} from the top directory of the distribution. By default, the library is installed into @file{/usr/local}.
 
 @page
 @node An Introduction to FPNGlib
@@ -124,8 +124,8 @@ gcc -I$HOME/local/include -L$HOME/local/lib \
 @end example
 @cindex Compiling with libfpnglib.so
 
-Of course, if both the @emph{include} directory and the @emph{lib} directory paths appear in the relevant environment variables (@env{C_INCLUDE_PATH} and @env{LD_LIBRARY_PATH}, respectively), you may dispense entirely with the @code{-I} and @code{-L} directives.
-Alternatively, as long as you work on the example file provided in the distribution of the library, you may simply call @command{make simple} to compile it.
+Of course, if both the @emph{include} directory and the @emph{lib} directory paths appear in the relevant environment variables (@env{C_INCLUDE_PATH} and @env{LD_LIBRARY_PATH}, respectively), you may dispense with the @code{-I} and @code{-L} directives entirely.
+Alternatively, as long as you work on the example file provided in the distribution of the library, you may simply call @command{make isimple} to compile it.
 
 The output of this program should be:
 @verbatim
@@ -133,26 +133,26 @@ The output of this program should be:
 11203470090111516746
 @end verbatim
 
-In the above example, we use the 32 bits version of the Mersenne Twister MT19937@footnote{@url{http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/ARTICLES/earticles.html,@cite{Mersenne Twister: A 623-dimensionally equidistributed uniform pseudorandom number generator, M. Matsumoto and T. Nishimura. ACM Trans. on Modeling and Computer Simulation, 8(1), 1998.}}}, but FPNGlib also offers the 64 bits version, declared in @file{fpnglib/mt19937-64.h}.
+In the example above, we use the 32 bits version of the Mersenne Twister MT19937@footnote{@url{http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/ARTICLES/earticles.html,@cite{Mersenne Twister: A 623-dimensionally equidistributed uniform pseudorandom number generator, M. Matsumoto and T. Nishimura. ACM Trans. on Modeling and Computer Simulation, 8(1), 1998.}}}, but FPNGlib also offers the 64 bits version, declared in @file{fpnglib/mt19937-64.h}.
 
-Random integers come in two sizes: 32 bits and 64 bits. As exemplified in the example above, both sizes may be created by 32 bits generators and 64 bits ones: A 32 bits generator will combine two outputs to return a 64 bits integer; on the other hand, a 64 bits generator will usually split its output into two 32 bits integers and return one of them to produce a 32 bits integer.
+Random integers come in two sizes: 32 bits and 64 bits. As exemplified in the example above, both sizes may be created by 32 bits generators as well as 64 bits ones: A 32 bits generator will combine two outputs to return a 64 bits integer; on the other hand, a 64 bits generator will usually split its output into two 32 bits integers and return one of them to produce a 32 bits integer.
 
-All Random Number Generators (@dfn{RNG}) may be initialized by a single integer, the @emph{seed}. In addition, some may be initialized by other means, mostly vectors of integers. It is the case with the Mersenne Twister MT19937, of which an instance may be created with the @code{fpngl_mt19937v32_by_array} function instead of @code{fpngl_mt19937v32}. Both functions return a pointer to an object of the opaque type @code{fpngl_irng32_t}. Since the implementation of that type is not public, all object of the type must be manipulated through pointers only. This is the rule for all other RNG types in FPNGlib.
+All Random Number Generators (@dfn{RNG}) may be initialized by a single integer, the @emph{seed}. In addition, some may be initialized by other means, mostly vectors of integers. It is the case with the Mersenne Twister MT19937, of which an instance may be created with the @code{fpngl_mt19937v32_by_array} function instead of @code{fpngl_mt19937v32}. Both functions return a pointer to an object of the opaque type @code{fpngl_irng32_t}. Since the implementation of that type is not public, all object of the type must be manipulated through pointers only. This is the rule for most types in FPNGlib.
 
 By calling the function @code{fpngl_irng32_next32}, we compute the next 32 bits
 integer. When calling the function @code{fpngl_irng32_next64}, the next two 32 bits integer are computed and combined to produce one 64 bits integer.
 
-The call to @code{fpngl_mt19937v23} allocates some memory from the heap to represent the internal structure of the MT19937 RNG. We need to call @code{fpngl_irng32_delete} to reclaim that memory as soon as the RNG is no longer used.
+The call to @code{fpngl_mt19937v32} allocates some memory from the heap to represent the internal structure of the MT19937 RNG. We need to call @code{fpngl_irng32_delete} to reclaim that memory as soon as the RNG is no longer used.
 
 @node Generating Random Integers in a Domain
 @subsection Generating Random Integers in a Domain
 @c ...............................................
-A 32 bits RNG will usually draw an integer in the domain @math{[0,2^{32}-1]} or in some other smaller but still impractically large domain. More often than not, simulations require drawing integers in some precise domain, say @math{[1,6]} to simulate a dice, for example. For such an application, many sources still suggest to draw an integer in the full domain of the RNG and then use the modulo to restrict the output to the correct domain:
+A 32 bits Integer RNG (@dfn{IRNG}, for short) will usually draw an integer in the domain @math{[0,2^{32}-1]} or in some other smaller but still impractically large domain. More often than not, simulations require drawing integers in some precise domain, say @math{[1,6]} to simulate a dice, for example. For such an application, many sources still suggest to draw an integer in the full domain of the RNG and then use the modulo to restrict the output to the correct domain:
 @cartouche
 @verbatiminclude snippets/biased_dice.c
 @end cartouche
 
-However, since @math{2^{32} = 6\times 715827882 + 4}, there are @math{715827883} ways to produce the numbers @math{1} to @math{4}, and only @math{715827882} ways to produce the numbers @math{5} and @math{6}, which introduces a @math{1.397\times 10^{-7}}% bias. A very small bias indeed, but one that could become significant if one used a different RNG, such as a @emph{Linear Congruential Generator}@footnote{@cite{@url{https://en.wikipedia.org/wiki/Linear_congruential_generator}}.} with a congruence much smaller than @math{2^{32}}.
+However, since @math{2^{32} = 6\times 715827882 + 4}, there are @math{715827883} ways to produce the numbers @math{1} to @math{4}, and only @math{715827882} ways to produce the numbers @math{5} and @math{6}, which introduces a @math{1.397\times 10^{-7}}% bias. A very small bias indeed, but one that could become significant if one used a different RNG, such as a @emph{Linear Congruential Generator}@footnote{@cite{@url{https://en.wikipedia.org/wiki/Linear_congruential_generator}}.} (@dfn{LCG}) with a congruence much smaller than @math{2^{32}}.
 
 With FPNGLlib, the proper way to generate a random integer in the domain @math{[0,k]}, is to use the @code{fpngl_ubound32} or @code{fpngl_ubound64} functions available in @file{fpnglib/irange.h}, depending on the type of RNG used:
 
@@ -181,7 +181,7 @@ The output expressed using the C99 hexadecimal format@footnote{See Section 6.4.4
 
 Floating-point number generators (@dfn{FRNG}s, for short) are either of the type @code{fpngl_frng32_t} when they produce single
 precision floats, or @code{fpngl_frng64_t} for double precision. In the same way as for integer generators,
-floats generators can only be manipulated through pointers to objects of these types. Any generator of either type must implement the same functionalities. In particular, as shown in the example below, double precision generators must implement the following calls:
+floats generators can only be manipulated through pointers to objects of these types. All generators of either type must implement the same functionalities. In particular, as shown in @ref{exa:mcpi}, double precision generators must implement the following calls:
 @itemize
 @item @code{fpgnl_frng64_name()}: returns a constant string corresponding to the name of
       the generator;
@@ -190,22 +190,21 @@ floats generators can only be manipulated through pointers to objects of these t
 @end itemize
 As a consequence, it is possible to write functions requiring random floats independently of the FRNG actually used, and to pass it as a parameter (see, e.g., @code{mcpi} in @ref{exa:mcpi}).
 
-Note, however, that FRNGs are not bound to return floats in any prescribed domain: some may return values in @math{[0,1)}, some in @math{(0,1)}, and some others in any other domain. It is then the responsibility of the programmer to choose FRNGs according to the domains they are interested into.
+Note, however, that FRNGs are not bound to return floats in any prescribed domain: some may return values in ``@math{[0,1)},'' some in ``@math{(0,1)},'' and some others in any other domain. It is then the responsibility of the programmer to choose FRNGs according to the domains they are interested into.
 
 A classical way to implement FRNGs is to rely on an integer RNG and divide its output by
-some integer constant, usually the largest possible integer the RNG can produce or the next integer above. This is what we do to create @code{frng0} in @ref{exa:mcpi}. Firstly, we create an IRNG based on the 32 bits version of the Mersenne Twister MT19937, then we create and FRNG by using the @code{fpngl_bydivision_new} constructor. That constructor takes three parameters:
+some integer constant, usually the largest possible integer the RNG can produce or the next integer above. This is what we do to create @code{frng0} in @ref{exa:mcpi}. Firstly, we create an IRNG based on the 32 bits version of the Mersenne Twister MT19937, then we create an FRNG by using the @code{fpngl_bydivision_new} constructor. That constructor takes three parameters:
 @enumerate
-@item A name for the newly created FRNG (``@code{FMT19937v32}'' in @ref{exa:mcpi});
-@item An IRNG of the type @code{pfngl_irng_t};
+@item A name for the newly created FRNG (``@code{FMT19937v32},'' in @ref{exa:mcpi});
+@item An IRNG of the type @code{fpngl_irng_t};
 @item A divisor by which each random integer should be divided (here, we choose to divide
-      by the largest random number that our IRNG can produce, therefore creating a FRNG
-      returning values in @math{[0,1]}).
+      by the smallest integer strictly larger than the largest random number that our IRNG can produce, therefore creating a FRNG returning values in @math{[0,1)}@footnote{As a side note, the open bound is guaranteed only if the divisor is smaller than @math{2^{53}}, which is the case here since we use a 32 bits IRNG.}).
 @end enumerate
 
 Note that, as is always the case in FPNGlib, the FRNG @code{frng0} created from the IRNG @code{irng32} ``owns'' it and is, therefore, responsible for its destruction. This is why we do not call @code{fpngl_irng_delete} at the end of the program: the call @code{fpngl_frng64_delete(frng0)} is sufficient to reclaim both the memory allocated to represent @code{frng0} and @code{irng32}.
 
 The FRNG created with @code{fpngl_drand48bsd} also relies on the division of the result
-of an LCG by a constant integer. The result is a floating-point number in @math{[0,1)} with 48 bits of entropy only.
+of a Linear Congruential Generator by a constant integer. The result is a floating-point number in @math{[0,1)} with 48 bits of entropy only.
 
 @float Example,exa:mcpi
 @cartouche
@@ -219,10 +218,11 @@ of an LCG by a constant integer. The result is a floating-point number in @math{
 @c .......................................................
 
 For some applications, we are interested in drawing floating-point numbers with some
-properties only. That might be:
+definite properties only. That might be:
 @itemize
-@item Only @emph{subnormal} floats;
-@item Only @emph{normal} floats;
+@item Only subnormal floats;
+@item Only normal floats;
+@item Subnormal and normal floats in some precision proportion; 
 @item Only positive floats with the exponent in some domain and the fractional part in
 another domain;
 @item @dots{}
@@ -236,9 +236,17 @@ For example, if only random double precision subnormal floats are required, one 
 @verbatiminclude snippets/subnormal.c
 @end cartouche
 
-Both functions require an integer RNG as the subnormal and normal random floats are constructed from their exponent and fractional part integer fields.
+Both functions require an integer RNG, as the subnormal and normal random floats are constructed from their exponent and fractional part fields.
 
-FPNGlib considers five classes of floats: @math{\pm0}, @emph{subnormal}, @emph{normal}, @math{\pm\infty}, and @emph{Not a Number}s. Using the @code{fpngl_class_float64_new} function, it is easy to draw floats from these five classes with different probabilities attached to each:
+FPNGlib considers five classes of floats:
+@itemize
+@item @math{\pm0};
+@item Subnormal;
+@item Normal;
+@item @math{\pm\infty};
+@item @emph{Not a Number}.
+@end itemize
+There are generator functions for each of theses classes. In addition, using the @code{fpngl_class_float64_new} function, it is easy to draw floats from these five classes with different probabilities attached to each:
 @cartouche
 @verbatiminclude snippets/distrib.c
 @end cartouche
@@ -249,7 +257,13 @@ A more flexible way to draw floats from a specific set is to put constraints on 
 @cartouche
 @verbatiminclude snippets/float64.c
 @end cartouche
-The first parameter of @code{fpngl_float64} is an integer RNG, which is used to draw the integers defining the sign, exponent and fractional part of the float returned. The second parameter indicates what is the expected sign of the float drawn; It can be one of @code{fpngl_positive} (for drawing only positive floats), @code{fpngl_negative} (for drawing only negative floats), or @code{fpngl_whatever} (for either positive or negative floats, with an equiprobability of both). The third and fourth parameters establish bounds on the @emph{biased} exponent@footnote{The @emph{biased} exponent @math{e} for double precision floats takes its value in @math{[0,2047]}, the actual exponent @math{E} being equal to @math{e-1023}.}. The fifth and sixth parameters establish bounds on the possible values of the fractional part, with @code{fpngl_minfrac64} being the smallest possible value, equal to @code{0x0000000000000}, and @code{fpngl_maxfrac64} being the largest possible value, equal to @code{0xfffffffffffff}. Lastly, the seventh and eighth parameters are masks that are ultimately applied to the fractional part: the seventh parameter is ``@i{and}ed'' with the fractional part and the eighth parameter is ``@i{or}ed'' with that resulting value.
+The first parameter of @code{fpngl_float64} is an integer RNG, which is used to draw the integers defining the sign, exponent and fractional part of the float returned. The second parameter indicates what is the expected sign of the float drawn; It can be one of:
+@itemize
+@item @code{fpngl_positive} (for drawing only positive floats);
+@item @code{fpngl_negative} (for drawing only negative floats);
+@item @code{fpngl_whatever} (for either positive or negative floats, with an equiprobability of both).
+@end itemize
+The third and fourth parameters establish bounds on the @emph{biased} exponent@footnote{The @emph{biased} exponent @math{e} for double precision floats takes its value in @math{[0,2047]}, the actual exponent @math{E} being equal to @math{e-1023}.}. The fifth and sixth parameters establish bounds on the possible values of the fractional part, with @code{fpngl_minfrac64} being the smallest possible value, equal to @code{0x0000000000000}, and @code{fpngl_maxfrac64} being the largest possible value, equal to @code{0xfffffffffffff}. Lastly, the seventh and eighth parameters are masks that are ultimately applied to the fractional part: the seventh parameter is ``@i{and}ed'' with the fractional part and the eighth parameter is ``@i{or}ed'' with that resulting value.
 
 In the example above, we are asking for floats with a positive sign, an exponent of @code{1} (@math{1024} minus the bias of @math{1023}) and a fractional part between  @code{0x0000000000000} and @code{0xfffffffffffff}, that is ---in binary--- floats from @math{+1.0\times2^1} to @math{+1.111111111111111111111111111111111111111111111111111\times2^1}, or ---in decimal---, from @math{2.0} to @math{4.0-2^{-51}}.
 
