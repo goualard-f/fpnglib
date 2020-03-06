@@ -26,7 +26,7 @@ libfpnglib_la_SOURCES = fpu.c irng32_t.c irng64_t.c irng_t.c irange.c \
 	frng64_t.c frng64_division.c frng64_division_k.c \
 	frng64_drand48gnu.c frng64_java.c frng64_golang.c \
 	frng64_lecuyer_simard.c frng64_rationalLCG10.c \
-	frng64_KGW.c frng64_fog97.c frng64_fog05.c \
+	frng64_KGW.c frng64_fog97.c frng64_fog05.c xorgens.c \
 	frng32_t.c \
 	irng32_vnm.c
 
@@ -39,7 +39,7 @@ pkginclude_HEADERS = fpngl_config.h constants32.h constants64.h fpnglib.h fpu.h 
 	frng64_t.h frng64_division.h frng64_division_k.h \
 	frng64_drand48gnu.h frng64_java.h frng64_golang.h \
 	frng64_lecuyer_simard.h frng64_rationalLCG10.h \
-	frng64_KGW.h frng64_fog97.h frng64_fog05.h \
+	frng64_KGW.h frng64_fog97.h frng64_fog05.h xorgens.h \
 	frng32_t.h \
 	irng32_vnm.h
 libfpnglib_la_LDFLAGS = -version-info $(LT_VERSION_INFO)

@@ -113,7 +113,8 @@ TESTS = check_constants32$(EXEEXT) check_constants64$(EXEEXT) \
 	check_utilities$(EXEEXT) check_uistack$(EXEEXT) \
 	check_walker_vose$(EXEEXT) $(am__EXEEXT_1) \
 	check_float64$(EXEEXT) check_frng64_java$(EXEEXT) \
-	check_vnm$(EXEEXT) check_drand48gnu$(EXEEXT)
+	check_vnm$(EXEEXT) check_drand48gnu$(EXEEXT) \
+	check_xorgens$(EXEEXT)
 check_PROGRAMS = $(am__EXEEXT_2)
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -146,7 +147,8 @@ am__EXEEXT_2 = check_constants32$(EXEEXT) check_constants64$(EXEEXT) \
 	check_utilities$(EXEEXT) check_uistack$(EXEEXT) \
 	check_walker_vose$(EXEEXT) $(am__EXEEXT_1) \
 	check_float64$(EXEEXT) check_frng64_java$(EXEEXT) \
-	check_vnm$(EXEEXT) check_drand48gnu$(EXEEXT)
+	check_vnm$(EXEEXT) check_drand48gnu$(EXEEXT) \
+	check_xorgens$(EXEEXT)
 check_constants32_SOURCES = check_constants32.c
 check_constants32_OBJECTS = check_constants32.$(OBJEXT)
 check_constants32_LDADD = $(LDADD)
@@ -267,6 +269,11 @@ check_walker_vose_OBJECTS = check_walker_vose.$(OBJEXT)
 check_walker_vose_LDADD = $(LDADD)
 check_walker_vose_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
 	$(am__DEPENDENCIES_1)
+check_xorgens_SOURCES = check_xorgens.c
+check_xorgens_OBJECTS = check_xorgens.$(OBJEXT)
+check_xorgens_LDADD = $(LDADD)
+check_xorgens_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -309,7 +316,7 @@ SOURCES = check_constants32.c check_constants64.c check_drand48gnu.c \
 	check_frng64_lecuyer_simard.c check_frng64_rationalLCG10.c \
 	check_irange.c check_lcg.c check_mt19937v32.c \
 	check_mt19937v64.c check_uistack.c check_utilities.c \
-	check_vnm.c check_walker_vose.c
+	check_vnm.c check_walker_vose.c check_xorgens.c
 DIST_SOURCES = check_constants32.c check_constants64.c \
 	check_drand48gnu.c check_float64.c check_fpu.c \
 	check_frng64_KGW.c check_frng64_division.c \
@@ -318,7 +325,7 @@ DIST_SOURCES = check_constants32.c check_constants64.c \
 	check_frng64_lecuyer_simard.c check_frng64_rationalLCG10.c \
 	check_irange.c check_lcg.c check_mt19937v32.c \
 	check_mt19937v64.c check_uistack.c check_utilities.c \
-	check_vnm.c check_walker_vose.c
+	check_vnm.c check_walker_vose.c check_xorgens.c
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -677,7 +684,7 @@ top_srcdir = @top_srcdir@
 # Tests performed only if the compiler supports the __VA_OPT__ macro.
 @HAVE_VA_OPT_TRUE@CONDTESTS = check_lcg check_frng64_division check_frng64_division_k check_frng64_fog05 \
 @HAVE_VA_OPT_TRUE@	check_frng64_fog97 check_frng64_golang check_frng64_KGW check_frng64_lecuyer_simard \
-@HAVE_VA_OPT_TRUE@	check_frng64_rationalLCG10 
+@HAVE_VA_OPT_TRUE@	check_frng64_rationalLCG10
 
 LDADD = $(top_builddir)/src/libfpnglib.la @CHECK_LIBS@ -lm $(LIBS)
 AM_CFLAGS = -I.. -std=c99 -Wall @CHECK_CFLAGS@
@@ -813,6 +820,10 @@ check_walker_vose$(EXEEXT): $(check_walker_vose_OBJECTS) $(check_walker_vose_DEP
 	@rm -f check_walker_vose$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(check_walker_vose_OBJECTS) $(check_walker_vose_LDADD) $(LIBS)
 
+check_xorgens$(EXEEXT): $(check_xorgens_OBJECTS) $(check_xorgens_DEPENDENCIES) $(EXTRA_check_xorgens_DEPENDENCIES) 
+	@rm -f check_xorgens$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(check_xorgens_OBJECTS) $(check_xorgens_LDADD) $(LIBS)
+
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 
@@ -841,6 +852,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_utilities.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_vnm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_walker_vose.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/check_xorgens.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -1226,6 +1238,13 @@ check_vnm.log: check_vnm$(EXEEXT)
 check_drand48gnu.log: check_drand48gnu$(EXEEXT)
 	@p='check_drand48gnu$(EXEEXT)'; \
 	b='check_drand48gnu'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+check_xorgens.log: check_xorgens$(EXEEXT)
+	@p='check_xorgens$(EXEEXT)'; \
+	b='check_xorgens'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

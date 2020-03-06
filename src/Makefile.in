@@ -169,8 +169,8 @@ am_libfpnglib_la_OBJECTS = libfpnglib_la-fpu.lo \
 	libfpnglib_la-frng64_lecuyer_simard.lo \
 	libfpnglib_la-frng64_rationalLCG10.lo \
 	libfpnglib_la-frng64_KGW.lo libfpnglib_la-frng64_fog97.lo \
-	libfpnglib_la-frng64_fog05.lo libfpnglib_la-frng32_t.lo \
-	libfpnglib_la-irng32_vnm.lo
+	libfpnglib_la-frng64_fog05.lo libfpnglib_la-xorgens.lo \
+	libfpnglib_la-frng32_t.lo libfpnglib_la-irng32_vnm.lo
 libfpnglib_la_OBJECTS = $(am_libfpnglib_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -374,7 +374,7 @@ libfpnglib_la_SOURCES = fpu.c irng32_t.c irng64_t.c irng_t.c irange.c \
 	frng64_t.c frng64_division.c frng64_division_k.c \
 	frng64_drand48gnu.c frng64_java.c frng64_golang.c \
 	frng64_lecuyer_simard.c frng64_rationalLCG10.c \
-	frng64_KGW.c frng64_fog97.c frng64_fog05.c \
+	frng64_KGW.c frng64_fog97.c frng64_fog05.c xorgens.c \
 	frng32_t.c \
 	irng32_vnm.c
 
@@ -387,7 +387,7 @@ pkginclude_HEADERS = fpngl_config.h constants32.h constants64.h fpnglib.h fpu.h 
 	frng64_t.h frng64_division.h frng64_division_k.h \
 	frng64_drand48gnu.h frng64_java.h frng64_golang.h \
 	frng64_lecuyer_simard.h frng64_rationalLCG10.h \
-	frng64_KGW.h frng64_fog97.h frng64_fog05.h \
+	frng64_KGW.h frng64_fog97.h frng64_fog05.h xorgens.h \
 	frng32_t.h \
 	irng32_vnm.h
 
@@ -507,6 +507,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfpnglib_la-uistack.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfpnglib_la-utilities.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfpnglib_la-walker_vose.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libfpnglib_la-xorgens.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -689,6 +690,13 @@ libfpnglib_la-frng64_fog05.lo: frng64_fog05.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='frng64_fog05.c' object='libfpnglib_la-frng64_fog05.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libfpnglib_la-frng64_fog05.lo `test -f 'frng64_fog05.c' || echo '$(srcdir)/'`frng64_fog05.c
+
+libfpnglib_la-xorgens.lo: xorgens.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libfpnglib_la-xorgens.lo -MD -MP -MF $(DEPDIR)/libfpnglib_la-xorgens.Tpo -c -o libfpnglib_la-xorgens.lo `test -f 'xorgens.c' || echo '$(srcdir)/'`xorgens.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libfpnglib_la-xorgens.Tpo $(DEPDIR)/libfpnglib_la-xorgens.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='xorgens.c' object='libfpnglib_la-xorgens.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libfpnglib_la-xorgens.lo `test -f 'xorgens.c' || echo '$(srcdir)/'`xorgens.c
 
 libfpnglib_la-frng32_t.lo: frng32_t.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libfpnglib_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libfpnglib_la-frng32_t.lo -MD -MP -MF $(DEPDIR)/libfpnglib_la-frng32_t.Tpo -c -o libfpnglib_la-frng32_t.lo `test -f 'frng32_t.c' || echo '$(srcdir)/'`frng32_t.c

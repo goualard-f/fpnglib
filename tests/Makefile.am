@@ -22,7 +22,7 @@
 if HAVE_VA_OPT
 CONDTESTS = check_lcg check_frng64_division check_frng64_division_k check_frng64_fog05 \
 	check_frng64_fog97 check_frng64_golang check_frng64_KGW check_frng64_lecuyer_simard \
-	check_frng64_rationalLCG10 
+	check_frng64_rationalLCG10
 else
 CONDTESTS =
 endif
@@ -31,7 +31,7 @@ TESTS = check_constants32 check_constants64 check_fpu check_mt19937v32 check_mt1
 	check_irange check_utilities check_uistack check_walker_vose $(CONDTESTS)\
 	check_float64 \
 	check_frng64_java \
-	check_vnm check_drand48gnu
+	check_vnm check_drand48gnu check_xorgens
 
 check_PROGRAMS = $(TESTS)
 LDADD = $(top_builddir)/src/libfpnglib.la @CHECK_LIBS@ -lm $(LIBS)

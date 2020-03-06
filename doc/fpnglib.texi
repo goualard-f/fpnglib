@@ -271,7 +271,7 @@ In the example above, we are asking for floats with a positive sign, an exponent
 @chapter General Organization of the Library
 @c =========================================
 
-In FPNGlib, all public constants, variables, types, and functions are prefixed with @samp{fpngl_} to make them stand apart in larger programs.
+In FPNGlib, all public constants, variables, types, and functions are prefixed with @samp{fpngl_} to make them stand apart in larger programs and avoid name collision.
 @cindex Prefix
  All header files from FPNGlib are in the directory @file{fpnglib/}.
  
@@ -281,6 +281,7 @@ numbers) followed by the size of the values returned (@samp{32} for 32 bits inte
 single precision floating-point numbers, and @samp{64} for 64 bits integers and
 double precision floating-point numbers), and finally the postfix @samp{_t} to mark the name as a type.
 @cindex Type name formation
+
 
 @chapter Integer Random Generators
 @c ===============================
