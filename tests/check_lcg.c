@@ -134,11 +134,11 @@ START_TEST(test_lcg64)
 }
 END_TEST
 
-TESTING_IRNG64(minstd64,(1UL << 31)-1,seed);
-TESTING_IRNG64(gnuc_lcg64,1UL << 31,seed);
-TESTING_IRNG64(randu64,1UL << 31,seed);
-TESTING_IRNG64(drand48_lcg64,1UL<<48,seed);
-TESTING_IRNG64(mupad_lcg64,0xe8d4a50ff5UL,seed);
+TESTING_IRNG64(minstd64,(1UL << 31)-2,seed);
+TESTING_IRNG64(gnuc_lcg64,(1UL << 31)-1,seed);
+TESTING_IRNG64(randu64,(1UL << 31)-1,seed);
+TESTING_IRNG64(drand48_lcg64,(1UL<<48)-1,seed);
+TESTING_IRNG64(mupad_lcg64,0xe8d4a50ff4UL,seed);
 TESTING_IRNG64_32(minstd64,seed);
 TESTING_IRNG64_32(gnuc_lcg64,seed);
 TESTING_IRNG64_32(randu64,seed);

@@ -44,9 +44,46 @@
 
 
 #include <global.h>
+#include <stdlib.h>
 #include <fpnglib/xorgens.h>
+#include <fpnglib/utilities.h>
 
-uint32_t xor4096iv32(uint32_t seed)
+typedef struct {
+	uint32_t seed;
+	uint32_t w;
+	uint32_t weyl;
+	uint32_t zero;
+	uint32_t x[128];
+	int i;
+} xor4096iv32_state_t;
+
+typedef struct {
+	uint64_t seed;
+	uint64_t w;
+	uint64_t weyl;
+	uint64_t zero;
+	uint64_t x[128];
+	int i;
+} xor4096iv64_state_t;
+
+static xor4096iv32_state_t *xor4096iv32_init(uint32_t seed)
+{
+	xor4096iv32_state_t *state = malloc(sizeof(xor4096iv32_state_t));
+	if (state == NULL) {
+		return NULL;
+	}
+	state->seed = seed;
+	state->zero = 0;
+	state->i = -1;
+	return state;
+}
+
+static void xor4096iv32_free(xor4096iv32_state_t *state)
+{
+	free(state);
+}
+
+static uint32_t xor4096iv32_next32(xor4096iv32_state_t *state)
 {
   /* 32-bit or 64-bit integer random number generator 
      with period at least 2**4096-1.
@@ -72,43 +109,44 @@ uint32_t xor4096iv32(uint32_t seed)
 #define d    15
 #define ws   16
 
-		static uint32_t w, weyl, zero = 0, x[r];
 		uint32_t t, v;
-		static int i = -1 ;              /* i < 0 indicates first call */
 		unsigned int k;
   
-		if ((i < 0) || (seed != zero)) { /* Initialisation necessary */
+		if (state->i < 0) { /* Initialisation necessary */
 			
 			/* weyl = odd approximation to 2**wlen*(3-sqrt(5))/2. */
 
-      weyl = 0x61c88647;
-			v = (seed!=zero)? seed:~seed;  /* v must be nonzero */
+      state->weyl = 0x61c88647;
+			v = state->seed;
 
 			for (k = wlen; k > 0; k--) {   /* Avoid correlations for close seeds */
 				v ^= v<<10; v ^= v>>15;      /* Recurrence has period 2**wlen-1 */ 
 				v ^= v<<4;  v ^= v>>13;      /* for wlen = 32 or 64 */
       }
-			for (w = v, k = 0; k < r; k++) { /* Initialise circular array */
+			for (state->w = v, k = 0; k < r; k++) { /* Initialise circular array */
 				v ^= v<<10; v ^= v>>15; 
 				v ^= v<<4;  v ^= v>>13;
-				x[k] = v + (w+=weyl);                
+				state->x[k] = v + (state->w += state->weyl);                
       }
-			for (i = r-1, k = 4*r; k > 0; k--) { /* Discard first 4*r results */ 
-				t = x[i = (i+1)&(r-1)];   t ^= t<<a;  t ^= t>>b; 
-				v = x[(i+(r-s))&(r-1)];   v ^= v<<c;  v ^= v>>d;          
-				x[i] = t^v;       
+			for (state->i = r-1, k = 4*r; k > 0; k--) { /* Discard first 4*r results */ 
+				t = state->x[state->i = (state->i+1)&(r-1)];
+				t ^= t<<a;  t ^= t>>b; 
+				v = state->x[(state->i+(r-s))&(r-1)];
+				v ^= v<<c;
+				v ^= v>>d;          
+				state->x[state->i] = t^v;       
       }
     }
     
   /* Apart from initialisation (above), this is the generator */
 
-		t = x[i = (i+1)&(r-1)];            /* Assumes that r is a power of two */
-		v = x[(i+(r-s))&(r-1)];            /* Index is (i-s) mod r */
+		t = state->x[state->i = (state->i+1)&(r-1)];  /* Assumes that r is a power of two */
+		v = state->x[(state->i+(r-s))&(r-1)];            /* Index is (i-s) mod r */
 		t ^= t<<a;  t ^= t>>b;             /* (I + L^a)(I + R^b) */
 		v ^= v<<c;  v ^= v>>d;             /* (I + L^c)(I + R^d) */
-		x[i] = (v ^= t);                   /* Update circular array */
-		w += weyl;                         /* Update Weyl generator */
-		return (v + (w^(w>>ws)));          /* Return combination */
+		state->x[state->i] = (v ^= t);                   /* Update circular array */
+		state->w += state->weyl;                         /* Update Weyl generator */
+		return (v + (state->w^(state->w>>ws)));          /* Return combination */
 
 #undef wlen
 #undef r
@@ -120,8 +158,63 @@ uint32_t xor4096iv32(uint32_t seed)
 #undef ws 
 }
 
+static uint64_t xor4096iv32_next64(xor4096iv32_state_t *state)
+{
+	return (((uint64_t)xor4096iv32_next32(state)) << 32) |
+		(uint64_t)xor4096iv32_next32(state);
+}
 
-uint64_t xor4096iv64(uint64_t seed)
+static void xor4096iv32_array32(xor4096iv32_state_t *state, uint32_t *T, uint32_t n)
+{
+	for (uint32_t i = 0; i < n; ++i) {
+		T[i] = xor4096iv32_next32(state);
+	}
+}
+
+static void xor4096iv32_array64(xor4096iv32_state_t *state, uint64_t *T, uint32_t n)
+{
+	// Should we try to use next32() instead to fill T cast as a (uint32_t*) ?
+	for (uint32_t i = 0; i < n; ++i) {
+		T[i] = xor4096iv32_next64(state);
+	}
+}
+
+static uint32_t xor4096iv32_nextk(xor4096iv32_state_t *state, uint32_t k)
+{
+	assert(k <= 32 && k != 0);
+	return xor4096iv32_next32(state) >> (32-k);
+}
+
+fpngl_irng32_t *fpngl_xor4096iv32(uint32_t seed)
+{
+	return fpngl_irng32_new(seed,"xor4096iv32",0,0xffffffff,
+													xor4096iv32_init(seed),
+													(uint32_t (*)(void*))xor4096iv32_next32,
+													(uint64_t (*)(void*))xor4096iv32_next64,
+													(uint32_t (*)(void*, uint32_t))xor4096iv32_nextk,
+													(void (*)(void*, uint32_t *, uint32_t))xor4096iv32_array32,
+													(void (*)(void*, uint64_t *, uint32_t))xor4096iv32_array64,
+													(void (*)(void*))xor4096iv32_free);
+}
+
+static xor4096iv64_state_t *xor4096iv64_init(uint32_t seed)
+{
+	xor4096iv64_state_t *state = malloc(sizeof(xor4096iv64_state_t));
+	if (state == NULL) {
+		return NULL;
+	}
+	state->seed = seed;
+	state->zero = 0;
+	state->i = -1;
+	return state;
+}
+
+static void xor4096iv64_free(xor4096iv64_state_t *state)
+{
+	free(state);
+}
+
+static uint64_t xor4096iv64_next64(xor4096iv64_state_t *state)
 {
   /* 32-bit or 64-bit integer random number generator 
      with period at least 2**4096-1.
@@ -147,44 +240,44 @@ uint64_t xor4096iv64(uint64_t seed)
 #define d    29
 #define ws   27
 
-  static uint64_t w, weyl, zero = 0, x[r];
   uint64_t t, v;
-  static int i = -1 ;              /* i < 0 indicates first call */
   unsigned int k;
   
-  if ((i < 0) || (seed != zero)) { /* Initialisation necessary */
+  if (state->i < 0) {
   
   /* weyl = odd approximation to 2**wlen*(3-sqrt(5))/2. */
 
-		weyl = ((((uint64_t)0x61c88646)<<16)<<16) + (uint64_t)0x80b583eb;
+		state->weyl = ((((uint64_t)0x61c88646)<<16)<<16) + (uint64_t)0x80b583eb;
                  
-    v = (seed!=zero)? seed:~seed;  /* v must be nonzero */
+    v = state->seed;  /* v must be nonzero */
 
     for (k = wlen; k > 0; k--) {   /* Avoid correlations for close seeds */
       v ^= v<<10; v ^= v>>15;      /* Recurrence has period 2**wlen-1 */ 
       v ^= v<<4;  v ^= v>>13;      /* for wlen = 32 or 64 */
       }
-    for (w = v, k = 0; k < r; k++) { /* Initialise circular array */
+    for (state->w = v, k = 0; k < r; k++) { /* Initialise circular array */
       v ^= v<<10; v ^= v>>15; 
       v ^= v<<4;  v ^= v>>13;
-      x[k] = v + (w+=weyl);                
+      state->x[k] = v + (state->w+=state->weyl);                
       }
-    for (i = r-1, k = 4*r; k > 0; k--) { /* Discard first 4*r results */ 
-      t = x[i = (i+1)&(r-1)];   t ^= t<<a;  t ^= t>>b; 
-      v = x[(i+(r-s))&(r-1)];   v ^= v<<c;  v ^= v>>d;          
-      x[i] = t^v;       
+    for (state->i = r-1, k = 4*r; k > 0; k--) { /* Discard first 4*r results */ 
+      t = state->x[state->i = (state->i+1)&(r-1)];
+			t ^= t<<a;  t ^= t>>b; 
+      v = state->x[(state->i+(r-s))&(r-1)];
+			v ^= v<<c;  v ^= v>>d;          
+      state->x[state->i] = t^v;       
       }
     }
     
   /* Apart from initialisation (above), this is the generator */
 
-  t = x[i = (i+1)&(r-1)];            /* Assumes that r is a power of two */
-  v = x[(i+(r-s))&(r-1)];            /* Index is (i-s) mod r */
+  t = state->x[state->i = (state->i+1)&(r-1)];  /* Assumes that r is a power of two */
+  v = state->x[(state->i+(r-s))&(r-1)];            /* Index is (i-s) mod r */
   t ^= t<<a;  t ^= t>>b;             /* (I + L^a)(I + R^b) */
   v ^= v<<c;  v ^= v>>d;             /* (I + L^c)(I + R^d) */
-  x[i] = (v ^= t);                   /* Update circular array */
-  w += weyl;                         /* Update Weyl generator */
-  return (v + (w^(w>>ws)));          /* Return combination */
+  state->x[state->i] = (v ^= t);                   /* Update circular array */
+  state->w += state->weyl;                         /* Update Weyl generator */
+  return (v + (state->w^(state->w>>ws)));          /* Return combination */
 
 #undef wlen
 #undef r
@@ -196,7 +289,62 @@ uint64_t xor4096iv64(uint64_t seed)
 #undef ws 
   }
 
-float xor4096rv32(uint64_t seed)
+static uint32_t xor4096iv64_next32(xor4096iv64_state_t *state)
+{
+	uint64_t v = xor4096iv64_next64(state);
+	return (uint32_t)(v >> 32);
+}
+
+static void xor4096iv64_array32(xor4096iv64_state_t *state,
+															 uint32_t *T, uint32_t n)
+{
+	// Filling the array two 32 bits values at a time.
+	for (uint64_t *p = (uint64_t*)T; p < (uint64_t*)T+n/2; ++p) { // Default implementation
+		*p = xor4096iv64_next64(state);
+	}
+	// odd(n) => there is still the last cell to fill
+	if (fpngl_odd(n)) {
+		*(T+n-1)= (uint32_t)(xor4096iv64_next64(state) >> 32);
+	}
+}
+
+static void xor4096iv64_array64(xor4096iv64_state_t *state,
+															 uint64_t *T, uint32_t n)
+{
+	for (uint32_t i = 0; i < n; ++i) {
+		T[i] = xor4096iv64_next64(state);
+	}
+}
+
+static uint64_t xor4096iv64_nextk(xor4096iv64_state_t *state, uint32_t k)
+{
+	assert(k <= 65 && k != 0);
+	// Returning only the `k` highest bits of the first 32 bits if `k`
+	// is smaller or equal to 32 to have the same behavior as the LCGs (see lcg.c).
+	if (k <= 32) {
+		return (xor4096iv64_next64(state) >> (32-k)) & 0x00000000ffffffff;
+	} else {
+		return xor4096iv64_next64(state) >> (64-k);
+	}
+}
+
+
+fpngl_irng64_t *fpngl_xor4096iv64(uint64_t seed)
+{
+	return  fpngl_irng64_new(seed,
+													 "xor4096iv64",
+													 0, 0xffffffffffffffff,
+													 xor4096iv64_init(seed),
+													 (uint32_t (*)(void*))xor4096iv64_next32,
+													 (uint64_t (*)(void*))xor4096iv64_next64,
+													 (uint64_t (*)(void*,uint32_t))xor4096iv64_nextk,
+													 (void (*)(void*,uint32_t*, uint32_t))xor4096iv64_array32,
+													 (void (*)(void*,uint64_t*, uint32_t))xor4096iv64_array64,
+													 (void (*)(void*))xor4096iv64_free);
+}
+
+
+static float xor4096rv32_nextf32(xor4096iv32_state_t *state)
 {
   /* 64-bit or 32-bit real random number generator 
      with period at least 2**4096-1.
@@ -248,13 +396,13 @@ float xor4096rv32(uint64_t seed)
 
   float res;
   
-  res = (float)0; 
-  while (res == (float)0)               /* Loop until nonzero result.   */
+  res = 0.0f; 
+  while (res == 0.0f)               /* Loop until nonzero result.   */
     {                                   /* Usually only one iteration . */
-    res = (float)(xor4096iv32(seed)>>sr);  /* Discard sr random bits.  */
-    seed = (uint32_t)0;                     /* Zero seed for next time. */
+    res = (float)(xor4096iv32_next32(state)>>sr);  /* Discard sr random bits.  */
+    state->seed = (uint32_t)0;                     /* Zero seed for next time. */
     if (UINT32 && UREAL64)              /* Need another call to xor4096i. */
-      res += SC32*(float)xor4096iv32(seed);/* Add low-order 32 bits. */
+      res += SC32*(float)xor4096iv32_next32(state);/* Add low-order 32 bits. */
     }
   return (SCALE*res);                   /* Return result in (0.0, 1.0). */  
 
@@ -269,7 +417,7 @@ float xor4096rv32(uint64_t seed)
 }
 
 
-double xor4096rv64(uint64_t seed)
+static double xor4096rv64_nextf64(xor4096iv64_state_t *state)
 {
   /* 64-bit or 32-bit real random number generator 
      with period at least 2**4096-1.
@@ -319,15 +467,14 @@ double xor4096rv64(uint64_t seed)
 #define SCALE ((double)1/(double)((uint64_t)1<<ss)) 
 #define SC32  ((double)1/((double)65536*(double)65536)) 
 
-  double res;
+  double res = 0.0;
   
-  res = (double)0; 
-  while (res == (double)0)               /* Loop until nonzero result.   */
+  while (res == 0.0)               /* Loop until nonzero result.   */
     {                                   /* Usually only one iteration . */
-    res = (double)(xor4096iv64(seed)>>sr);  /* Discard sr random bits.  */
-    seed = (uint64_t)0;                     /* Zero seed for next time. */
+    res = (double)(xor4096iv64_next64(state)>>sr);  /* Discard sr random bits.  */
+    state->seed = (uint64_t)0;                     /* Zero seed for next time. */
     if (UINT32 && UREAL64)              /* Need another call to xor4096i. */
-      res += SC32*(double)xor4096iv64(seed);/* Add low-order 32 bits. */
+      res += SC32*(double)xor4096iv64_next64(state);/* Add low-order 32 bits. */
     }
   return (SCALE*res);                   /* Return result in (0.0, 1.0). */  
 
@@ -340,3 +487,48 @@ double xor4096rv64(uint64_t seed)
 #undef sr
 #undef ss
 }
+
+
+static void xor4096rv32_next_arrayf32(xor4096iv32_state_t *state, float *T, uint32_t n)
+{
+	for (uint32_t i = 0; i < n; ++i) {
+		T[i] = xor4096rv32_nextf32(state);
+	}
+}
+
+static void xor4096rv64_next_arrayf64(xor4096iv64_state_t *state, double *T, uint32_t n)
+{
+	for (uint32_t i = 0; i < n; ++i) {
+		T[i] = xor4096rv64_nextf64(state);
+	}
+}
+
+static uint32_t xor4096iv32_seed(xor4096iv32_state_t *irng)
+{
+	return irng->seed;
+}
+
+static uint32_t xor4096iv64_seed(xor4096iv64_state_t *irng)
+{
+	return irng->seed;
+}
+
+fpngl_frng32_t *fpngl_xor4096rv32(uint32_t seed)
+{
+	return fpngl_frng32_new("xor4096rv32",xor4096iv32_init(seed),
+													 (float (*)(void*))xor4096rv32_nextf32,
+													 (void (*)(void *,float*,uint32_t))xor4096rv32_next_arrayf32,
+													 (void (*)(void*))xor4096iv32_free,
+													 (uint32_t (*)(void*))xor4096iv32_seed);
+}
+
+
+fpngl_frng64_t *fpngl_xor4096rv64(uint64_t seed)
+{
+	return fpngl_frng64_new("xor4096rv64",xor4096iv64_init(seed),
+													 (double (*)(void*))xor4096rv64_nextf64,
+													 (void (*)(void *,double*,uint32_t))xor4096rv64_next_arrayf64,
+													 (void (*)(void*))xor4096iv64_free,
+													 (uint64_t (*)(void*))xor4096iv64_seed);
+}	
+	

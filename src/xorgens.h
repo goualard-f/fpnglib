@@ -51,11 +51,17 @@
 extern "C" {
 #endif
 
-	uint32_t  xor4096iv32(uint32_t seed);  /* integer random number generator */
-	uint64_t  xor4096iv64(uint64_t seed);  /* integer random number generator */
+#include <fpnglib/irng32_t.h>
+#include <fpnglib/irng64_t.h>
+#include <fpnglib/frng32_t.h>
+#include <fpnglib/frng64_t.h>
 
-	float xor4096rv32(uint64_t seed);  /* real random number generator */
-	double xor4096rv64(uint64_t seed);  /* real random number generator */
+	
+	fpngl_irng32_t *fpngl_xor4096iv32(uint32_t seed);
+	fpngl_irng64_t *fpngl_xor4096iv64(uint64_t seed);
+
+	fpngl_frng32_t *fpngl_xor4096rv32(uint32_t seed);
+	fpngl_frng64_t *fpngl_xor4096rv64(uint64_t seed);
 	
 #ifdef __cplusplus
 }

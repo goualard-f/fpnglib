@@ -91,7 +91,7 @@ static uint64_t lcg64_nextk(fpngl_lcg64_state_t *state, uint32_t k)
 		 we return the k highest bit in the first 32 bits word if k is lower than 32.
 	 */
 	if (k <= 32) {
-		return lcg64_next64(state) >> (32-k);
+		return (lcg64_next64(state) >> (32-k)) & 0x00000000ffffffff;
 	} else {
 		return lcg64_next64(state) >> (64-k);
 	}
