@@ -1,0 +1,7 @@
+compile linguist-vendored
+depcomp linguist-vendored
+doc/mdate-sh linguist-vendored
+install-sh linguist-vendored
+ltmain.sh linguist-vendored
+missing linguist-vendored
+test-driver linguist-vendored
