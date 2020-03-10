@@ -65,10 +65,7 @@ fpngl_frng64_t *fpngl_bydivision_new(const char *name,
 {
 	assert(denominator != 0);
 	frng_division_state_t *frngstate = malloc(sizeof(frng_division_state_t));
-	
-	if (frngstate == NULL) {
-		return NULL;
-	}
+	assert(frngstate != NULL);
 	
 	frngstate->irng = irng;
 	frngstate->denominator = denominator; // BEWARE: what if some rounding takes place?

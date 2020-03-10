@@ -43,9 +43,7 @@ fpngl_frng32_t *fpngl_frng32_new(const char *name,
 																 uint32_t (*seed)(void*))
 {
 	fpngl_frng32_t *rng = malloc(sizeof(fpngl_frng32_t));
-	if (rng == NULL) {
-		return NULL;
-	}
+	assert(rng != NULL);
 	rng->state = state;
 	rng->name = name;
 	rng->nextf32 = nextf32;

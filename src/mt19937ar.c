@@ -67,6 +67,7 @@
 
 #include <global.h>
 #include <stdlib.h>
+#include <string.h>
 #include <fpnglib/mt19937ar.h>
 
 /* Period parameters */  
@@ -80,14 +81,22 @@ typedef struct {
 	uint32_t mt[N]; /* the array for the state vector  */
 	int mti;
 } mt19937v32_state_t;
-	
+
+static void* copy_state(mt19937v32_state_t *state)
+{
+	mt19937v32_state_t *c = malloc(sizeof(mt19937v32_state_t));
+	assert(c != NULL);
+	memcpy(c,state,sizeof(mt19937v32_state_t));
+	return c;
+}
+												
+
 /* initializes mt[N] with a seed */
 static mt19937v32_state_t *mt19937v32_init(uint32_t s)
 {
 	mt19937v32_state_t *state = malloc(sizeof(mt19937v32_state_t));
-	if (state == NULL) { // Error in allocating memory for the state?
-		return NULL;
-	}
+	assert(state != NULL);
+
 	state->mti = N;
 	state->mt[0]= s & 0xffffffffUL;
 	for (int mti=1; mti<N; mti++) {
@@ -210,6 +219,7 @@ fpngl_irng32_t *fpngl_mt19937v32(uint32_t seed)
 {
 	return fpngl_irng32_new(seed,"mt19937v32",0,0xffffffff,
 													mt19937v32_init(seed),
+													(void* (*)(void*))copy_state,
 													(uint32_t (*)(void*))mt19937v32_next32,
 													(uint64_t (*)(void*))mt19937v32_next64,
 													(uint32_t (*)(void*, uint32_t))mt19937v32_nextk,
@@ -223,6 +233,7 @@ fpngl_irng32_t *fpngl_mt19937v32_by_array(const uint32_t init_key[],
 {
 	return fpngl_irng32_new(0,"mt19937v32",0,0xffffffff,
 													mt19937v32_init_by_array32(init_key, key_length),
+													(void* (*)(void*))copy_state,
 													(uint32_t (*)(void*))mt19937v32_next32,
 													(uint64_t (*)(void*))mt19937v32_next64,
 													(uint32_t (*)(void*, uint32_t))mt19937v32_nextk,

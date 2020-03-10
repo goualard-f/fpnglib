@@ -81,9 +81,8 @@ static void KGW_delete(kgw_state_t *state)
 fpngl_frng64_t *fpngl_KGW(fpngl_irng_t *irng, uint64_t seed)
 {
 	kgw_state_t *state = malloc(sizeof(kgw_state_t));
-	if (state == NULL) {
-		return NULL;
-	}
+	assert(state != NULL);
+
 	state->irng = irng;
 	// Warning: fpngl_irng_max(irng)+1.0 must be representable
 	// as a double precision number.

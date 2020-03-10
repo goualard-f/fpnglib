@@ -64,7 +64,6 @@ extern "C" {
 		*Source:* [IEEE Std 1003.1-2017](http://pubs.opengroup.org/onlinepubs/9699919799/functions/drand48.html) and https://github.com/lattera/glibc/blob/master/stdlib/erand48_r.c
 		*Source:* https://opensource.apple.com/source/Libc/Libc-583/gen/FreeBSD/erand48.c.auto.html
 
-		@caution This RNG cannot be used to generate 32 bits integers.
 	 */ 
 	fpngl_irng64_t *fpngl_drand48_lcg64(uint64_t seed);
 	
@@ -72,7 +71,6 @@ extern "C" {
 		MuPAD LCG used in MuPAD Pro 3.1 and Maple 10 according to 
 		[Morgenstern](https://link.springer.com/chapter/10.1007%2F978-3-540-69995-8_90)
 
-		@caution This RNG cannot be used to generate 32 bits integers.
 	 */
 	fpngl_irng64_t *fpngl_mupad_lcg64(uint64_t seed);
 	

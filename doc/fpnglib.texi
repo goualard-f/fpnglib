@@ -271,7 +271,7 @@ In the example above, we are asking for floats with a positive sign, an exponent
 @chapter General Organization of the Library
 @c =========================================
 
-In FPNGlib, all public constants, variables, types, and functions are prefixed with @samp{fpngl_} to make them stand apart in larger programs and avoid name collision.
+In FPNGlib, all public constants, variables, types, and functions are prefixed with @samp{fpngl_} to make them stand apart in larger programs and avoid name collisions.
 @cindex Prefix
  All header files from FPNGlib are in the directory @file{fpnglib/}.
  
@@ -279,15 +279,306 @@ All RNGs have types whose name is formed according to the same principle: first 
 an RNG generating integers, and @samp{frng} for an RNG generating floating-point
 numbers) followed by the size of the values returned (@samp{32} for 32 bits integers and
 single precision floating-point numbers, and @samp{64} for 64 bits integers and
-double precision floating-point numbers), and finally the postfix @samp{_t} to mark the name as a type.
+double precision floating-point numbers), and finally the postfix @samp{_t} to mark the name as a type. A slight exception to this scheme is the type @code{fpngl_irng_t} that can wrap 32 bits as well as 64 bits integer RNGs.
 @cindex Type name formation
 
+All in all, there are at present five Random Number Generator types in FPNGlib:
+@itemize
+@item@w{}@code{fpngl_irng32_t}. RNG generating 32 bits integers natively;
+@item@w{}@code{fpngl_irng64_t}. RNG generating 64 bits integers natively;
+@item@w{}@code{fpngl_irng_t}. Wrapper for a RNG generating natively either 32 bits or 64 bits integers;
+@item@w{}@code{fpngl_frng32_t}. RNG generating single precision (@code{float}) IEEE@tie{}754 floating-point numbers; 
+@item@w{}@code{fpngl_frng64_t}. RNG generating double precision (@code{double}) IEEE@tie{}754 floating-point numbers.
+@end itemize
+Note that both 32 bits and 64 bits integer RNGs can generate 32 bits as well as 64 bits integers with, respectively, the functions @code{fpngl_irng32_next64} and @code{fpngl_irn64_next32}.
 
+The complete state of all the RNGs is entirely contained in an object of one of the abovementioned types. There are no global variables, which means that the user may define and use several RNGs, even of the same type, without any risk of interferences between them.
+
+@node Integer Random Generators
 @chapter Integer Random Generators
 @c ===============================
 
+In this chapter, we present the Random Number Generator capable of producing 32 bits as well as 64 bits integers. They all follow a nuiform distribution. Refer to @ref{Non-Uniform Distributions} for other distributions.
+
+Random Number Generators that produce integers must all provide the same services independently of the size of the integers they ``natively'' produce:
+@itemize
+@item Compute a 32 bits integer;
+@item Compute a 64 bits integer;
+@item Compute @math{k} random bits, with @math{k} being smaller than the
+      size of the integers produced natively by the RNG;
+@item Compute of an array of 32 bits integer;
+@item Compute of an array of 64 bits integer;
+@item Return the seed used to initialize the RNG;
+@item Return the minimum integer the RNG can produce;
+@item Return the maximum integer the RNG can produce.
+@end itemize
+
+In addition, an RNG must possess a function to release the resources acquired upon
+construction of an instance. Each RNG type has its own constructor (@xref{Integer RNGs available}).
+
+In the following, we describe the functions providing these services for RNGs of the type @code{fpngl_irng32_t}, @code{fpngl_irng64_t}, as well as for the wrapper type @code{fpngl_irng_t}. The services specific to this last type are described in @ref{Wrapping an IRNG}.
+
+@deftypefn {Library Function} void fpngl_irng32_delete (fpngl_irng32_t* @var{rng})
+@deftypefnx {Library Function} void fpngl_irng64_delete (fpngl_irng64_t* @var{rng})
+@deftypefnx {Library Function} void fpngl_irng_delete (fpngl_irng_t* @var{rng})
+Releases the resources acquired upon the construction of the RNg @var{rng}.
+@end deftypefn
+
+@deftypefn {Library Function} uint32_t fpngl_irng32_next32 (fpngl_irng32_t* @var{rng})
+@deftypefnx {Library Function} uint32_t fpngl_irng64_next32 (fpngl_irng64_t* @var{rng})
+@deftypefnx {Library Function} uint32_t fpngl_irng_next32 (fpngl_irng_t* @var{rng})
+Return the next 32 bits random integer.
+A 64 bits RNG will usually compute a 64 bits integer
+and return the lower or higher 32 bits.
+@end deftypefn
+
+@deftypefn {Library Function} uint64_t fpngl_irng32_next64 (fpngl_irng32_t* @var{rng})
+@deftypefnx {Library Function} uint64_t fpngl_irng64_next64 (fpngl_irng64_t* @var{rng})
+@deftypefnx {Library Function} uint64_t fpngl_irng_next64 (fpngl_irng_t* @var{rng})
+Return the next 64 bits random integer. A 32 bits RNG will be called twice
+to create a 64 bits integer.
+@end deftypefn
+
+@deftypefn {Library Function} uint32_t fpngl_irng32_nextk @
+           (fpngl_irng32_t* @var{rng}, uint32_t @var{k})
+@deftypefnx {Library Function} uint64_t fpngl_irng64_nextk @
+            (fpngl_irng64_t* @var{rng}, uint32_t @var{k})
+@deftypefnx {Library Function} uint64_t fpngl_irng_nextk @
+            (fpngl_irng_t* @var{rng}, uint32_t @var{k})
+Return the next @var{k} random bits. The maximum value of @var{k} depends on the
+type of RNG:
+@itemize
+@item @var{k}@math{\in[0,32]} for a 32 bits RNG;
+@item @var{k}@math{\in[0,64]} for a 64 bits RNG;
+@item @var{k}@math{\in[0,64]} for a wrapped RNG of type @code{fpngl_irng_t}.
+@end itemize
+
+Note that @var{k} may be greater than 32 for a 32 bits RNG when it is wrapped
+in an RNG of type @code{fpngl_irng_t}. In that case, the RNG is called twice and
+the two outputs are aggregated to form the result.
+@end deftypefn
+
+@deftypefn {Library Function} void fpngl_irng32_array32 @
+           (fpngl_irng32_t* @var{rng}, uint32_t* @var{T}, uint32_t @var{n})
+@deftypefnx {Library Function} void fpngl_irng64_array32 @
+           (fpngl_irng64_t* @var{rng}, uint32_t* @var{T}, uint32_t @var{n})
+@deftypefnx {Library Function} void fpngl_irng_array32 @
+           (fpngl_irng_t* @var{rng}, uint32_t* @var{T}, uint32_t @var{n})
+Fill the array @var{T} with @var{n} 32 bits random integers. The array @var{T} must
+have been allocated to the correct size before the call.
+
+The speed-up obtained with this function, compared with calling @var{n} times a
+@code{*_next32} function depends on the RNG used. For most implementations, a 64 bits
+RNG will be called at most @math{@var{n}/2} times and each 64 bits integer split into
+two 32 bits integers to fill adjacent positions in the array.
+@end deftypefn
+
+@deftypefn {Library Function} void fpngl_irng32_array64 @
+           (fpngl_irng32_t* @var{rng}, uint64_t* @var{T}, uint32_t @var{n})
+@deftypefnx {Library Function} void fpngl_irng64_array64 @
+           (fpngl_irng64_t* @var{rng}, uint64_t* @var{T}, uint32_t @var{n})
+@deftypefnx {Library Function} void fpngl_irng_array64 @
+           (fpngl_irng_t* @var{rng}, uint64_t* @var{T}, uint32_t @var{n})
+Fill the array @var{T} with @var{n} 64 bits random integers. The array @var{T} must
+have been allocated to the correct size before the call.
+
+The speed-up obtained with this function, compared with calling @var{n} times a
+@code{*_next64} function depends on the RNG used. For most implementations, a 32 bits
+RNG will be called @math{2@var{n}} times.
+@end deftypefn
+
+@deftypefn {Library Function} uint32_t fpngl_irng32_seed (fpngl_irng32_t* @var{rng})
+@deftypefnx {Library Function} uint64_t fpngl_irng64_seed (fpngl_irng64_t* @var{rng})
+@deftypefnx {Library Function} uint64_t fpngl_irng32_seed (fpngl_irng_t* @var{rng})
+Return the value used to initialize the RNG.
+@end deftypefn
+
+@deftypefn {Library Function} {const char*} fpngl_irng32_name @
+           (fpngl_irng32_t* @var{rng})
+@deftypefnx {Library Function} {const char*} fpngl_irng64_name @
+           (fpngl_irng64_t* @var{rng})
+@deftypefnx {Library Function} {const char*} fpngl_irng_name @
+           (fpngl_irng_t* @var{rng})
+Return a pointer to the string representing the name of the RNG. Refer to each constructor in @ref{Integer RNGs available} to know the possible values.
+@end deftypefn
+
+@deftypefn {Library Function} uint32_t fpngl_irng32_min @
+           (fpngl_irng32_t* @var{rng})
+@deftypefnx {Library Function} uint64_t fpngl_irng64_min @
+           (fpngl_irng64_t* @var{rng})
+@deftypefnx {Library Function} uint64_t fpngl_irng_min @
+           (fpngl_irng_t* @var{rng})
+Return the smallest integer that can be drawn with the RNG.
+@end deftypefn
+
+@deftypefn {Library Function} uint32_t fpngl_irng32_max @
+           (fpngl_irng32_t* @var{rng})
+@deftypefnx {Library Function} uint64_t fpngl_irng64_max @
+           (fpngl_irng64_t* @var{rng})
+@deftypefnx {Library Function} uint64_t fpngl_irng_max @
+           (fpngl_irng_t* @var{rng})
+Return the largest integer that can be drawn with the RNG.
+@end deftypefn
+
+@deftypefn {Library Function} bool fpngl_is_irng32 (fpngl_irng_t* @var{rng})
+@deftypefnx {Library Function} bool fpngl_is_irng64 (fpngl_irng_t* @var{rng})
+Return @code{true} if the wrapped RNG is, respectively, of the type
+@code{fpngl_irng32_t} or @code{fpngl_irng64_t}.
+@end deftypefn
+
+@node Wrapping an IRNG
+@section Wrapping an IRNG
+@c ----------------------
+Since both 32 bits and 64 bits RNGs can produce 32 bits as well as 64 bits integers, users may be tempted to write programs that use an RNG, irrespective of its type. The @code{fpngl_irng_t} type serves as a wrapper around 32 bits and 64 bits RNGs to abstract their real limitations. An object of that type is constructed from an actual RNG of type @code{fpngl_irng32_t} or @code{fpngl_irng64_t} with, respectively, the functions @code{fpngl_irng_new32} and @code{fpngl_irng_new64}:
+@cartouche
+@verbatiminclude snippets/irng.c
+@end cartouche
+Note that the new RNG constructed ``owns'' the RNG passed as a parameter to @code{fpngl_irng_new32} or @code{fpngl_irng_new64} constructor, and is responsible for its proper disposal. The release of resources is then done with @code{fpngl_irng_delete} only.
+
+@deftypefn {Library Function} fpngl_irng_t* fpngl_irng_new32 @
+           (fpngl_irng32_t* @var{irng32})
+@deftypefnx {Library Function} fpngl_irng_t* fpngl_irng_new64 @
+            (fpngl_irng64_t* @var{irng64})
+Wrap an 32 bits or 64 bits RNG into an @code{fpngl_irng_t} object. The new object
+is responsible for the destruction of the RNG passed as a parameter. Consequently,
+@var{irng32} (resp.@tie{}@var{irng64}) should be never be deleted with @code{fpngl_irng32_delete} (resp.@tie{}@code{fpngl_irng64_delete}) afterwards.
+@end deftypefn
+
+There is also a function to draw an integer of the size supported natively by the
+wrapped RNG:
+
+@deftypefn {Library Function} uint64_t fpngl_irng_next (fpngl_irng_t* @var{rng})
+This function is unique to the @code{fpngl_irng_t} type. If the RNG wrapped is of type @code{fpngl_irng64_t}, it behaves like @code{fpngl_irng_next64}, otherwise it returns the
+integer computed with @code{fpngl_irng_next32} cast to 64 bits.
+@end deftypefn
+
+@node Integer RNGs available
+@section Integer RNGs available
+@c ----------------------------
+The number of integer Random Number Generators augments regularly with new versions of FPNGlib. @ref{tab:irngs} summarizes the characteristics of the integer RNGs implemented in the current version of the library, with the following meanings for the columns:
+@itemize
+@item@w{}@b{Name}. The name of the RNG as reported by @code{fpngl_irng32_name} for the 32 bits RNGs and @code{fpngl_irng64_name} for the 64 bits RNGs;
+@item@w{}@b{Size}. Size, in bits, of the integers that are natively created by the RNG;
+@item@w{}@b{Min}. Value of the smallest integer that can returned by the RNG;
+@item@w{}@b{Max}. Value of the largest integer that can returned by the RNG;
+@item@w{}@b{Period}. Number of integers that can be drawn before a sequence repeats itself.
+@end itemize
+
+
+@float Table,tab:irngs
+@caption{Integer RNGs available in FPNGlib@tie{}@value{VERSION} and their characteristics.}
+@multitable @columnfractions .4 .15 .15 .15 .15
+@headitem Name @tab Size @tab Min. @tab Max. @tab Period
+@item @code{drand48_lcg64} @tab 64 @tab 0 @tab @math{2^{48}-1} @tab ?
+@item @code{gnu_lcg64} @tab 64 @tab 0 @tab @math{2^{31}-1} @tab ?
+@item @code{minstd64} @tab 64 @tab 0 @tab @math{2^{31}-2} @tab ?
+@item @code{mt19937v32} @tab 32 @tab 0 @tab @math{2^{32}-1} @tab ?
+@item @code{mt19937v64} @tab 64 @tab 0 @tab @math{2^{64}-1} @tab ?
+@item @code{mupad_lcg64} @tab 64 @tab 0 @tab @math{10^{12}-12} @tab ?
+@item @code{randu64} @tab 64 @tab 0 @tab  @math{2^{31}-1} @tab ?
+@item @code{von neumann/metropolis} @tab 32 @tab 0 @tab @math{2^{32}-1} @tab ?
+@item @code{xor4096iv32} @tab 32 @tab 0 @tab @math{2^{32}-1} @tab ?
+@item @code{xor4096iv64} @tab 64 @tab 0 @tab @math{2^{64}-1} @tab ?
+@end multitable
+@end float
+
+@subsection 32 Bits Integer RNGs
+@c .............................
+The following constructors create an integer RNG initialized with a seed, which can be one integer or an array of integers.
+
+@deftypefn {@code{"von neumann/metropolis"}} fpngl_irng32_t* fpngl_von_neumann_metropolis @
+           (uint32_t @var{seed})
+Create a 32 bits RNG using the algorithm described in @cite{Various techniques used in connection with random digits. John von Neumann. In A.S. Householder, G.E. Forsythe, and H.H. Germond, eds. Monte Carlo Method, National Bureau of Standards Applied Mathematics Series, vol. 12:pp. 36--38}.
+
+The value of @var{seed} should be greater than 255, and preferably much larger than that, otherwise the RNG will only return 0.
+
+This is not a very good RNG; it is only provided for its historical interest.
+@end deftypefn
+
+@deftypefn {@code{"mt19937v32"}} fpngl_irng32_t* fpngl_mt19937v32 (uint32_t @var{seed})
+@deftypefnx {@code{"mt19937v32"}} fpngl_irng32_t* fpngl_mt19937v32_by_array @
+           (const uint32_t @var{init_key[]}, uint32_t @var{key_length})
+This is the 32 bits version of the Mersenne Twister MT19937 by Nishimura & Matsumoto. It can be initialized either by a single integer, or by an array of integers. For maximum entropy, the array should have a size at least equal to 624, but smaller arrays are allowed.
+@end deftypefn
+
+@deftypefn {@code{"xor4096iv32"}} fpngl_irng32_t* fpngl_xor4096iv32 (uint32_t @var{seed})
+This is the 32 bits implementation of the @code{xor4096i} algorithm by Richard P. Brent.
+@end deftypefn
+
+
+@subsection 64 Bits Integer RNGs
+@c .............................
+
+
+@deftypefn {@code{"minstd64"}} fpngl_irng64_t*  fpngl_minstd64 (uint64_t @var{seed})
+MINSTD implementation of Park & Miller Linear Congruential Generator:
+
+@tex
+$$a_i = 16807a_{i-1}\,\, {\rm mod}\,\, (2^{31}-1)$$
+@end tex
+
+See: @cite{Random Number Generators: Good Ones Are Hard to Find. S. K. Park and K.W. Miller. Comm. ACM 31(10), 1988}
+@end deftypefn
+
+
+@deftypefn {@code{"gnuc_lcg64"}} fpngl_irng64_t*  fpngl_gnuc_lcg64 (uint64_t @var{seed})
+RNG used in the implementation of the GNU libc @code{rand} function:
+
+@tex
+$$a_i = 1103515245a_{i-1} + 12345 \,\, {\rm mod}\,\, 2^{31}$$
+@end tex
+
+This RNG is no longer the default implementation for @code{rand} in GNU libc as of v. 2.29.
+@end deftypefn
+
+
+@deftypefn {@code{"randu64"}} fpngl_irng64_t*  fpngl_randu64 (uint64_t @var{seed})
+This is the 64 bits implementation of the RNG called ``@code{RANDU}'' in the @emph{Scientific Subroutine Package on IBM Mainframe}:
+
+@tex
+$$a_i = 65539a_{i-1} \,\, {\rm mod}\,\, 2^{31}$$
+@end tex
+
+
+See: @cite{Numerical Computing with MATLAB. Steve Moler. Chap. 9}.
+@end deftypefn
+
+@deftypefn {@code{"drand48_lcg64"}} fpngl_irng64_t*  fpngl_drand48_lcg64 (uint64_t @var{seed})
+RNG used by the GNU and FreeBSD implementations of the function @code{drand48}. It is also used by @code{java.util.Random}. It is an LCG with formula:
+
+@tex
+$$a_i = 25214903917a_{i-1} + 11 \,\, {\rm mod}\,\, 2^{48}$$
+@end tex
+@end deftypefn
+
+@deftypefn {@code{"mupad_lcg64"}} fpngl_irng64_t*  fpngl_mupad_lcg64 (uint64_t @var{seed})
+RNG used in MuPAD Pro 3.1 and Maple 10. This is an LCG with formula:
+
+@tex
+$$a_i = 427419669081a_{i-1} \,\, {\rm mod}\,\, (10^{12}-11)$$
+@end tex
+
+@end deftypefn
+
+@deftypefn {@code{"mt19937v64"}} fpngl_irng64_t* fpngl_mt19937v64 (uint64_t @var{seed})
+@deftypefnx {@code{"mt19937v64"}} fpngl_irng64_t* fpngl_mt19937v64_by_array @
+           (const uint64_t @var{init_key[]}, uint64_t @var{key_length})
+This is the 64 bits version of the Mersenne Twister MT19937 by Nishimura & Matsumoto. It can be initialized either by a single integer, or by an array of integers. For maximum entropy, the array should have a size at least equal to 312, but smaller arrays are allowed.
+@end deftypefn
+
+@deftypefn {@code{"xor4096iv64"}} fpngl_irng64_t* fpngl_xor4096iv64 (uint64_t @var{seed})
+This is the 64 bits implementation of the @code{xor4096i} algorithm by Richard P. Brent.
+@end deftypefn
+
+@node Non-Uniform Distributions
+@section Non-Uniform Distributions
+@c -------------------------------
+
+@c TODO: discrete_distribution.h, walker_vose.c
+
 @chapter Floating-Point Random Generators
 @c ======================================
+
 
 @chapter IEEE 754 and the Floating-Point Unit
 @c ==========================================
@@ -494,6 +785,7 @@ The library is written with an object-oriented style that should make it easy to
 @end float
 
 @section Debugging facilities
+@c --------------------------
 
 FPNGlib offers facilities to debug itself. There are in particular some macros that can be used to display messages to the standard error ouput @code{stderr}, provided the library was configured with the option @option{--enable-debug=yes} (the default) or @option{--enable-debug=info} for some macros.
 
@@ -521,6 +813,23 @@ The macro flushes the output buffer with @code{fflush} after each call.
 @end cartouche
 @end deffn
 
+@section Adding new IRNGs
+@c ----------------------
+
+@deftypefn {Library Function} fpngl_irng32_t* fpngl_irng32_new @
+           (uint32_t @var{seed},
+            const char* @var{name},
+						uint32_t @var{min}, uint32_t @var{max},
+						void* @var{state},
+						void* (*@var{copy_state})(void*),
+						uint32_t (*@var{next32})(void*),
+						uint64_t (*@var{next64})(void*),
+						uint32_t (*@var{nextk})(void*, uint32_t),
+						void (*@var{next_array32})(void *, uint32_t *, uint32_t),
+  					void (*@var{next_array64})(void *, uint64_t *, uint32_t),
+						void (*@var{delete})(void*))
+@c TODO            
+@end deftypefn   
 @chapter Function Index
 @c ====================
 @printindex fn

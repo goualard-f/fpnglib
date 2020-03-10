@@ -42,9 +42,8 @@ struct fpngl_uistack_t {
 fpngl_uistack_t *fpngl_uistack_new(void)
 {
 	fpngl_uistack_t *stack = malloc(sizeof(fpngl_uistack_t));
-	if (stack == NULL) {
-		return NULL;
-	}
+	assert(stack != NULL);
+
 	// Allocating a stack sufficient for at most 16 elements by default
 	stack->size = 16;
 	stack->T = calloc(stack->size,sizeof(uint32_t));

@@ -33,6 +33,7 @@ struct fpngl_irng32_t {
 	uint32_t min;
 	uint32_t max;
 	void* state; // State of the RNG
+	void* (*copy_state)(void *state); // Return a copy of the internal state `state`
 	uint32_t (*next32)(void*);
 	uint64_t (*next64)(void*);
 	uint32_t (*nextk)(void *state, uint32_t k);
@@ -51,9 +52,9 @@ static uint64_t next32to64(fpngl_irng_t *rng)
 	used only internally in the library. As such, it is not advertized 
 	in the header file.
  */
-void* fpngl_irng32_state_internal(fpngl_irng32_t* rng)
+void* fpngl_irng32_copy_state_internal(fpngl_irng32_t* rng)
 {
-	return rng->state;
+	return rng->copy_state(rng->state);
 }
 
 uint32_t (*fpngl_irng32_next32_internal(fpngl_irng32_t *rng))(void*)
@@ -95,6 +96,7 @@ fpngl_irng32_t *fpngl_irng32_new(uint32_t seed,
 																 const char* name,
 																 uint32_t min, uint32_t max,
 																 void *state,
+																 void* (*copy_state)(void*),
 																 uint32_t (*next32)(void*),
 																 uint64_t (*next64)(void*),
 																 uint32_t (*nextk)(void *state, uint32_t k),
@@ -105,15 +107,14 @@ fpngl_irng32_t *fpngl_irng32_new(uint32_t seed,
 																 void (*delete)(void*))
 {
 	fpngl_irng32_t *rng = malloc(sizeof(fpngl_irng32_t));
+	assert(rng != NULL);
 
-	if (rng == NULL) {
-		return NULL;
-	}
 	rng->seed = seed;
 	rng->name = name;
 	rng->min = min;
 	rng->max = max;
 	rng->state = state;
+	rng->copy_state = copy_state;
 	rng->next32 = next32;
 	rng->next64 = next64;
 	rng->nextk = nextk;
@@ -127,56 +128,66 @@ fpngl_irng32_t *fpngl_irng32_new(uint32_t seed,
 // Releases all resources acquired by the pseudo-random generator 'rng'
 void fpngl_irng32_delete(fpngl_irng32_t* rng)
 {
+	assert(rng != NULL && rng->state != NULL);
 	rng->delete(rng->state);
 	free(rng);
 }
 
 uint32_t fpngl_irng32_next32(fpngl_irng32_t *rng)
 {
+	assert(rng != NULL && rng->next32 != NULL && rng->state != NULL);
 	return rng->next32(rng->state);
 }
 
 uint64_t fpngl_irng32_next64(fpngl_irng32_t *rng)
 {
+	assert(rng != NULL && rng->next64 != NULL && rng->state != NULL);
 	return rng->next64(rng->state);
 }
 
 uint32_t fpngl_irng32_nextk(fpngl_irng32_t *rng, uint32_t k)
 {
+	assert(rng != NULL && rng->nextk != NULL && rng->state != NULL);
 	return rng->nextk(rng->state,k);
 }
 
 void fpngl_irng32_array32(fpngl_irng32_t *rng, uint32_t *T, uint32_t n)
 {
+	assert(rng != NULL && rng->next_array32 != NULL && rng->state != NULL);
 	rng->next_array32(rng->state,T,n);
 }
 
 void fpngl_irng32_array64(fpngl_irng32_t *rng, uint64_t *T, uint32_t n)
 {
+	assert(rng != NULL && rng->next_array64 != NULL && rng->state != NULL);
 	rng->next_array64(rng->state,T,n);
 }
 
 // Return the seed used by the RNG
 uint32_t fpngl_irng32_seed(fpngl_irng32_t *rng)
 {
+	assert(rng != NULL);
 	return rng->seed;
 }
 
 // Return the name of the RNG used
 const char *fpngl_irng32_name(fpngl_irng32_t *rng)
 {
+	assert(rng != NULL);
 	return rng->name;
 }
 
 // Return the minimum value the RNG can return
 uint32_t fpngl_irng32_min(fpngl_irng32_t *rng)
 {
+	assert(rng != NULL);
 	return rng->min;
 }
 
 // Return the maximum value the RNG can return
 uint32_t fpngl_irng32_max(fpngl_irng32_t *rng)
 {
+	assert(rng != NULL);
 	return rng->max;
 }
 

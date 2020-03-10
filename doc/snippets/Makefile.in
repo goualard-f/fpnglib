@@ -114,7 +114,8 @@ noinst_PROGRAMS = significand$(EXEEXT) exponent$(EXEEXT) \
 	nextafter64$(EXEEXT) previous64$(EXEEXT) unitroundoff$(EXEEXT) \
 	mu$(EXEEXT) lambda$(EXEEXT) nan$(EXEEXT) inf$(EXEEXT) \
 	max$(EXEEXT) subnormal$(EXEEXT) float64$(EXEEXT) \
-	minmaxfrac64$(EXEEXT) noandor$(EXEEXT) distrib$(EXEEXT)
+	minmaxfrac64$(EXEEXT) noandor$(EXEEXT) distrib$(EXEEXT) \
+	irng$(EXEEXT)
 subdir = doc/snippets
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_check_enable_debug.m4 \
@@ -176,6 +177,11 @@ inf_SOURCES = inf.c
 inf_OBJECTS = inf.$(OBJEXT)
 inf_LDADD = $(LDADD)
 inf_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
+irng_SOURCES = irng.c
+irng_OBJECTS = irng.$(OBJEXT)
+irng_LDADD = $(LDADD)
+irng_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
 	$(am__DEPENDENCIES_1)
 isimple_SOURCES = isimple.c
 isimple_OBJECTS = isimple.$(OBJEXT)
@@ -282,13 +288,14 @@ am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = biased_dice.c debug.c dice.c distrib.c exponent.c float64.c \
-	fsimple.c inf.c isimple.c lambda.c max.c mcpi.c minmaxfrac64.c \
-	mu.c nan.c nextafter64.c noandor.c previous64.c significand.c \
-	subnormal.c unitroundoff.c warning.c
-DIST_SOURCES = biased_dice.c debug.c dice.c distrib.c exponent.c \
-	float64.c fsimple.c inf.c isimple.c lambda.c max.c mcpi.c \
+	fsimple.c inf.c irng.c isimple.c lambda.c max.c mcpi.c \
 	minmaxfrac64.c mu.c nan.c nextafter64.c noandor.c previous64.c \
 	significand.c subnormal.c unitroundoff.c warning.c
+DIST_SOURCES = biased_dice.c debug.c dice.c distrib.c exponent.c \
+	float64.c fsimple.c inf.c irng.c isimple.c lambda.c max.c \
+	mcpi.c minmaxfrac64.c mu.c nan.c nextafter64.c noandor.c \
+	previous64.c significand.c subnormal.c unitroundoff.c \
+	warning.c
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -514,6 +521,10 @@ inf$(EXEEXT): $(inf_OBJECTS) $(inf_DEPENDENCIES) $(EXTRA_inf_DEPENDENCIES)
 	@rm -f inf$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(inf_OBJECTS) $(inf_LDADD) $(LIBS)
 
+irng$(EXEEXT): $(irng_OBJECTS) $(irng_DEPENDENCIES) $(EXTRA_irng_DEPENDENCIES) 
+	@rm -f irng$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(irng_OBJECTS) $(irng_LDADD) $(LIBS)
+
 isimple$(EXEEXT): $(isimple_OBJECTS) $(isimple_DEPENDENCIES) $(EXTRA_isimple_DEPENDENCIES) 
 	@rm -f isimple$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(isimple_OBJECTS) $(isimple_LDADD) $(LIBS)
@@ -584,6 +595,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/float64.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fsimple.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/inf.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/irng.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/isimple.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lambda.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/max.Po@am__quote@

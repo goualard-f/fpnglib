@@ -63,9 +63,8 @@ static void LES_delete(les_state_t *state)
 fpngl_frng64_t *fpngl_lecuyer_simard(fpngl_irng_t *irng, uint64_t seed)
 {
 	les_state_t *state = malloc(sizeof(les_state_t));
-	if (state == NULL) {
-		return NULL;
-	}
+	assert(state != NULL);
+
 	state->irng = irng;
 	// Warning: fpngl_irng_max(irng)+1.0 must be representable
 	// as a double precision number.

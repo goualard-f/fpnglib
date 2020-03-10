@@ -26,7 +26,7 @@
 
 // Declaring functions that are not advertized in the header files
 // as they are used only internally.
-void* fpngl_irng32_state_internal(fpngl_irng32_t* rng);
+void* fpngl_irng32_copy_state_internal(fpngl_irng32_t* rng);
 uint32_t (*fpngl_irng32_next32_internal(fpngl_irng32_t *rng))(void*);
 uint64_t (*fpngl_irng32_next64_internal(fpngl_irng32_t *rng))(void*);
 uint64_t (*fpngl_irng32_next_internal(fpngl_irng32_t *rng))(void*);
@@ -34,7 +34,7 @@ uint32_t (*fpngl_irng32_nextk_internal(fpngl_irng32_t *rng))(void*,uint32_t);
 void (*fpngl_irng32_next_array32_internal(fpngl_irng32_t *rng))(void*,uint32_t*,uint32_t);
 void (*fpngl_irng32_next_array64_internal(fpngl_irng32_t *rng))(void*,uint64_t*,uint32_t);
 void (*fpngl_irng32_delete_internal(fpngl_irng32_t *rng))(void*);
-void* fpngl_irng64_state_internal(fpngl_irng64_t* rng);
+void* fpngl_irng64_copy_state_internal(fpngl_irng64_t* rng);
 uint32_t (*fpngl_irng64_next32_internal(fpngl_irng64_t *rng))(void*);
 uint64_t (*fpngl_irng64_next64_internal(fpngl_irng64_t *rng))(void*);
 uint64_t (*fpngl_irng64_next_internal(fpngl_irng64_t *rng))(void*);
@@ -68,15 +68,14 @@ struct fpngl_irng_t {
 fpngl_irng_t *fpngl_irng_new32(fpngl_irng32_t *irng32)
 {
 	fpngl_irng_t *irng = malloc(sizeof(fpngl_irng_t));
-	if (irng == NULL) {
-		return NULL;
-	}
+	assert(irng != NULL);
+
 	irng->is_irng64 = false;
 	irng->seed = (uint64_t)fpngl_irng32_seed(irng32);
 	irng->name = fpngl_irng32_name(irng32);
 	irng->min = (uint64_t)fpngl_irng32_min(irng32);
 	irng->max = (uint64_t)fpngl_irng32_max(irng32);
-	irng->state = fpngl_irng32_state_internal(irng32);
+	irng->state = fpngl_irng32_copy_state_internal(irng32);
 	irng->next32 = fpngl_irng32_next32_internal(irng32);
 	irng->next64 = fpngl_irng32_next64_internal(irng32);
 	irng->next = fpngl_irng32_next_internal(irng32);
@@ -84,6 +83,7 @@ fpngl_irng_t *fpngl_irng_new32(fpngl_irng32_t *irng32)
 	irng->next_array64 = fpngl_irng32_next_array64_internal(irng32);
 	irng->delete = fpngl_irng32_delete_internal(irng32);
 	irng->nextk32 = fpngl_irng32_nextk_internal(irng32);
+	fpngl_irng32_delete(irng32);
 	return irng;
 }
 
@@ -98,7 +98,7 @@ fpngl_irng_t *fpngl_irng_new64(fpngl_irng64_t *irng64)
 	irng->name = fpngl_irng64_name(irng64);
 	irng->min = fpngl_irng64_min(irng64);
 	irng->max = fpngl_irng64_max(irng64);
-	irng->state = fpngl_irng64_state_internal(irng64);
+	irng->state = fpngl_irng64_copy_state_internal(irng64);
 	irng->next32 = fpngl_irng64_next32_internal(irng64);
 	irng->next64 = fpngl_irng64_next64_internal(irng64);
 	irng->next = fpngl_irng64_next_internal(irng64);
@@ -106,6 +106,7 @@ fpngl_irng_t *fpngl_irng_new64(fpngl_irng64_t *irng64)
 	irng->next_array64 = fpngl_irng64_next_array64_internal(irng64);
 	irng->delete = fpngl_irng64_delete_internal(irng64);
 	irng->nextk64 = fpngl_irng64_nextk_internal(irng64);
+	fpngl_irng64_delete(irng64);
 	return irng;
 }
 
@@ -113,6 +114,7 @@ fpngl_irng_t *fpngl_irng_new64(fpngl_irng64_t *irng64)
 // Releases all resources acquired by the pseudo-random generator 'rng'
 void fpngl_irng_delete(fpngl_irng_t* rng)
 {
+	assert(rng != NULL && rng->state != NULL);
 	rng->delete(rng->state);
 	free(rng);
 }
@@ -120,6 +122,7 @@ void fpngl_irng_delete(fpngl_irng_t* rng)
 // Return next 32 bits pseudo-random number
 uint32_t fpngl_irng_next32(fpngl_irng_t *rng)
 {
+	assert(rng != NULL && rng->next32 != NULL && rng->state != NULL);
 	return rng->next32(rng->state);
 }
 
@@ -140,6 +143,7 @@ uint64_t fpngl_irng_next(fpngl_irng_t *rng)
 // Return next k bits pseudo-random number
 uint64_t fpngl_irng_nextk(fpngl_irng_t *rng, uint32_t k)
 {
+	assert(k <= 64);
 	if (rng->is_irng64) {
 		return rng->nextk64(rng->state,k);
 	} else {

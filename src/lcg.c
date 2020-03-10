@@ -22,22 +22,30 @@
 
 #include <global.h>
 #include <stdlib.h>
+#include <string.h>
 #include <fpnglib/lcg.h>
 #include <fpnglib/utilities.h>
 
-typedef struct fpngl_lcg64_state_t {
+typedef struct lcg64_state_t {
 	uint64_t st; // State
 	uint64_t m;
 	uint64_t a;
 	uint64_t c;
-} fpngl_lcg64_state_t;
+} lcg64_state_t;
 
-static fpngl_lcg64_state_t *init_lcg64(uint64_t seed, uint64_t m, uint64_t a, uint64_t c)
+
+static void *copy_state(lcg64_state_t *state)
 {
-	fpngl_lcg64_state_t *state = malloc(sizeof(fpngl_lcg64_state_t));
-	if (state == NULL) {
-		return NULL;
-	}
+	lcg64_state_t *c = malloc(sizeof(lcg64_state_t));
+	assert(c != NULL);
+	memcpy(c,state,sizeof(lcg64_state_t));
+	return c;
+}
+
+static lcg64_state_t *lcg64_init(uint64_t seed, uint64_t m, uint64_t a, uint64_t c)
+{
+	lcg64_state_t *state = malloc(sizeof(lcg64_state_t));
+	assert(state != NULL);
 	state->st = seed;
 	state->m = m;
 	state->a = a;
@@ -45,26 +53,26 @@ static fpngl_lcg64_state_t *init_lcg64(uint64_t seed, uint64_t m, uint64_t a, ui
 	return state;
 }
 
-static void free_lcg64(fpngl_lcg64_state_t *state)
+static void free_lcg64(lcg64_state_t *state)
 {
 	free(state);
 }
 
 
-static uint64_t lcg64_next64(fpngl_lcg64_state_t *state)
+static uint64_t lcg64_next64(lcg64_state_t *state)
 {
 	state->st = (state->a*state->st + state->c) % state->m;
 	return state->st;
 }
 
 
-static uint32_t lcg64_next32(fpngl_lcg64_state_t *state)
+static uint32_t lcg64_next32(lcg64_state_t *state)
 {
 	state->st = ((uint32_t)state->a*(uint32_t)state->st + (uint32_t)state->c) % (uint32_t)state->m;
 	return state->st;
 }
 
-static void lcg64_array32(fpngl_lcg64_state_t *state, uint32_t *T, uint32_t n)
+static void lcg64_array32(lcg64_state_t *state, uint32_t *T, uint32_t n)
 {
 	// Filling the array two 32 bits values at a time.
 	for (uint64_t *p = (uint64_t*)T; p < (uint64_t*)T+n/2; ++p) { // Default implementation
@@ -76,16 +84,16 @@ static void lcg64_array32(fpngl_lcg64_state_t *state, uint32_t *T, uint32_t n)
 	}
 }
 
-static void lcg64_array64(fpngl_lcg64_state_t *state, uint64_t *T, uint32_t n)
+static void lcg64_array64(lcg64_state_t *state, uint64_t *T, uint32_t n)
 {
 	for (uint32_t i = 0; i < n; ++i) {
 		T[i] = lcg64_next64(state);
 	}
 }
 
-static uint64_t lcg64_nextk(fpngl_lcg64_state_t *state, uint32_t k)
+static uint64_t lcg64_nextk(lcg64_state_t *state, uint32_t k)
 {
-	assert(k <= 65 && k != 0);
+	assert(k <= 65);
 	/* 
 		 Some LCG may fill only the 32 lowest bits. To avoid returning only zeros, 
 		 we return the k highest bit in the first 32 bits word if k is lower than 32.
@@ -104,7 +112,8 @@ fpngl_irng64_t *fpngl_lcg64_new(uint64_t seed, const char *name,
 	return  fpngl_irng64_new(seed,name,
 													 0, // Minimum
 													 m-1, // Maximum
-													 init_lcg64(seed,m,a,c),
+													 lcg64_init(seed,m,a,c),
+													 (void* (*)(void*))copy_state,
 													 (uint32_t (*)(void*))lcg64_next32,
 													 (uint64_t (*)(void*))lcg64_next64,
 													 (uint64_t (*)(void*,uint32_t))lcg64_nextk,

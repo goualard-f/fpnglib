@@ -74,10 +74,7 @@ fpngl_frng64_t *fpngl_bydivision_k_new(const char *name,
 	assert(denominator != 0);
 	assert(k >= 1 && k <= 64);
 	frng_division_state_t *frngstate = malloc(sizeof(frng_division_state_t));
-	
-	if (frngstate == NULL) {
-		return NULL;
-	}
+	assert(frngstate != NULL);
 	
 	frngstate->irng = irng;
 	frngstate->mask = (1UL << k) - 1;

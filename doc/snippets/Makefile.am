@@ -20,7 +20,7 @@
 
 noinst_PROGRAMS = significand exponent biased_dice dice fsimple isimple mcpi debug \
 	warning nextafter64 previous64 unitroundoff mu lambda nan inf max subnormal \
-	float64 minmaxfrac64 noandor distrib
+	float64 minmaxfrac64 noandor distrib irng
 
 LDADD= $(top_builddir)/src/libfpnglib.la -lm $(LIBS)
 AM_CFLAGS = -I.. -Wall

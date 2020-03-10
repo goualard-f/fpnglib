@@ -43,9 +43,8 @@ fpngl_frng64_t *fpngl_frng64_new(const char *name,
 																 uint64_t (*seed)(void*))
 {
 	fpngl_frng64_t *rng = malloc(sizeof(fpngl_frng64_t));
-	if (rng == NULL) {
-		return NULL;
-	}
+	assert(rng != NULL);
+
 	rng->state = state;
 	rng->name = name;
 	rng->nextf64 = nextf64;

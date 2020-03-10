@@ -45,6 +45,7 @@
 
 #include <global.h>
 #include <stdlib.h>
+#include <string.h>
 #include <fpnglib/xorgens.h>
 #include <fpnglib/utilities.h>
 
@@ -66,12 +67,27 @@ typedef struct {
 	int i;
 } xor4096iv64_state_t;
 
+static void *copy_state32(xor4096iv32_state_t *state)
+{
+	xor4096iv32_state_t *c = malloc(sizeof(xor4096iv32_state_t));
+	assert(c != NULL);
+	memcpy(c,state,sizeof(xor4096iv32_state_t));
+	return c;
+}
+
+static void *copy_state64(xor4096iv64_state_t *state)
+{
+	xor4096iv64_state_t *c = malloc(sizeof(xor4096iv64_state_t));
+	assert(c != NULL);
+	memcpy(c,state,sizeof(xor4096iv64_state_t));
+	return c;
+}
+
 static xor4096iv32_state_t *xor4096iv32_init(uint32_t seed)
 {
 	xor4096iv32_state_t *state = malloc(sizeof(xor4096iv32_state_t));
-	if (state == NULL) {
-		return NULL;
-	}
+	assert(state != NULL);
+
 	state->seed = seed;
 	state->zero = 0;
 	state->i = -1;
@@ -189,6 +205,7 @@ fpngl_irng32_t *fpngl_xor4096iv32(uint32_t seed)
 {
 	return fpngl_irng32_new(seed,"xor4096iv32",0,0xffffffff,
 													xor4096iv32_init(seed),
+													(void* (*)(void*))copy_state32,
 													(uint32_t (*)(void*))xor4096iv32_next32,
 													(uint64_t (*)(void*))xor4096iv32_next64,
 													(uint32_t (*)(void*, uint32_t))xor4096iv32_nextk,
@@ -200,9 +217,8 @@ fpngl_irng32_t *fpngl_xor4096iv32(uint32_t seed)
 static xor4096iv64_state_t *xor4096iv64_init(uint32_t seed)
 {
 	xor4096iv64_state_t *state = malloc(sizeof(xor4096iv64_state_t));
-	if (state == NULL) {
-		return NULL;
-	}
+	assert(state != NULL);
+
 	state->seed = seed;
 	state->zero = 0;
 	state->i = -1;
@@ -335,6 +351,7 @@ fpngl_irng64_t *fpngl_xor4096iv64(uint64_t seed)
 													 "xor4096iv64",
 													 0, 0xffffffffffffffff,
 													 xor4096iv64_init(seed),
+													 (void* (*)(void*))copy_state64,
 													 (uint32_t (*)(void*))xor4096iv64_next32,
 													 (uint64_t (*)(void*))xor4096iv64_next64,
 													 (uint64_t (*)(void*,uint32_t))xor4096iv64_nextk,
@@ -516,19 +533,19 @@ static uint32_t xor4096iv64_seed(xor4096iv64_state_t *irng)
 fpngl_frng32_t *fpngl_xor4096rv32(uint32_t seed)
 {
 	return fpngl_frng32_new("xor4096rv32",xor4096iv32_init(seed),
-													 (float (*)(void*))xor4096rv32_nextf32,
-													 (void (*)(void *,float*,uint32_t))xor4096rv32_next_arrayf32,
-													 (void (*)(void*))xor4096iv32_free,
-													 (uint32_t (*)(void*))xor4096iv32_seed);
+													(float (*)(void*))xor4096rv32_nextf32,
+													(void (*)(void *,float*,uint32_t))xor4096rv32_next_arrayf32,
+													(void (*)(void*))xor4096iv32_free,
+													(uint32_t (*)(void*))xor4096iv32_seed);
 }
 
 
 fpngl_frng64_t *fpngl_xor4096rv64(uint64_t seed)
 {
 	return fpngl_frng64_new("xor4096rv64",xor4096iv64_init(seed),
-													 (double (*)(void*))xor4096rv64_nextf64,
-													 (void (*)(void *,double*,uint32_t))xor4096rv64_next_arrayf64,
-													 (void (*)(void*))xor4096iv64_free,
-													 (uint64_t (*)(void*))xor4096iv64_seed);
+													(double (*)(void*))xor4096rv64_nextf64,
+													(void (*)(void *,double*,uint32_t))xor4096rv64_next_arrayf64,
+													(void (*)(void*))xor4096iv64_free,
+													(uint64_t (*)(void*))xor4096iv64_seed);
 }	
 	

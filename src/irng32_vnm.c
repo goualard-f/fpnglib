@@ -28,12 +28,18 @@ typedef struct {
 	uint32_t val;
 } vnm_state_t;
 
+static void* copy_state(vnm_state_t *state)
+{
+	vnm_state_t *c = malloc(sizeof(vnm_state_t));
+	assert(c != NULL);
+	c->val = state->val;
+	return c;
+}
+
 static vnm_state_t* vnm_init(uint32_t seed)
 {
 	vnm_state_t *state = malloc(sizeof(vnm_state_t));
-	if (state == NULL) {
-		return NULL;
-	}
+	assert(state != NULL);
 	state->val = seed;
 	return state;
 }
@@ -81,6 +87,7 @@ fpngl_irng32_t *fpngl_von_neumann_metropolis(uint32_t seed)
 {
 	return fpngl_irng32_new(seed,"von neumann/metropolis",0,0xffffffff,
 													vnm_init(seed),
+													(void* (*)(void*))copy_state,
 													(uint32_t (*)(void*))vnm_next32,
 													(uint64_t (*)(void*))vnm_next64,
 													(uint32_t (*)(void*, uint32_t))vnm_nextk,

@@ -38,6 +38,7 @@ extern "C" {
 																	 const char *name,
 																	 uint32_t min, uint32_t max,
 																	 void *state,
+																	 void* (*copy_state)(void*),
 																	 uint32_t (*next32)(void*),
 																	 uint64_t (*next64)(void*),
 																	 uint32_t (*nextk)(void *state, uint32_t k),

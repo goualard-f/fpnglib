@@ -79,6 +79,7 @@
 
 #include <global.h>
 #include <stdlib.h>
+#include <string.h>
 #include <fpnglib/mt19937-64.h>
 #include <fpnglib/utilities.h>
 
@@ -88,23 +89,30 @@
 #define UM 0xFFFFFFFF80000000ULL /* Most significant 33 bits */
 #define LM 0x7FFFFFFFULL /* Least significant 31 bits */
 
-typedef struct fpngl_mt19937v64_state_t {
+typedef struct mt19937v64_state_t {
 	/* The array for the state vector */
 	uint64_t mt[NN]; 
 	int mti; 
-} fpngl_mt19937v64_state_t;
+} mt19937v64_state_t;
+
+
+static void* copy_state(mt19937v64_state_t *state)
+{
+	mt19937v64_state_t *c = malloc(sizeof(mt19937v64_state_t));
+	assert(c != NULL);
+	memcpy(c,state,sizeof(mt19937v64_state_t));
+	return c;
+}
 
 
 
 /* initializes mt[NN] with a seed */
-static fpngl_mt19937v64_state_t *mt19937v64_init(uint64_t seed)
+static mt19937v64_state_t *mt19937v64_init(uint64_t seed)
 {
-	fpngl_mt19937v64_state_t *state = malloc(sizeof(fpngl_mt19937v64_state_t));
-	if (state == NULL) { // Error in allocating memory for the state?
-		return NULL;
-	}
-	state->mti = NN;
+	mt19937v64_state_t *state = malloc(sizeof(mt19937v64_state_t));
+	assert(state != NULL);
 	
+	state->mti = NN;
 	state->mt[0] = seed;
 	for (int mti=1; mti<NN; mti++) {
 		state->mt[mti] =  (6364136223846793005ULL * (state->mt[mti-1] ^
@@ -116,11 +124,11 @@ static fpngl_mt19937v64_state_t *mt19937v64_init(uint64_t seed)
 /* initialize by an array with array-length */
 /* init_key is the array for initializing keys */
 /* key_length is its length */
-static fpngl_mt19937v64_state_t *mt19937v64_init_by_array64(const uint64_t init_key[],
+static mt19937v64_state_t *mt19937v64_init_by_array64(const uint64_t init_key[],
 																														uint64_t key_length)
 {
 	uint64_t i = 1, j = 0, k = (NN>key_length ? NN : key_length);
-	fpngl_mt19937v64_state_t *state = mt19937v64_init(19650218ULL);
+	mt19937v64_state_t *state = mt19937v64_init(19650218ULL);
 
 	for (; k; k--) {
 		state->mt[i] = (state->mt[i] ^ ((state->mt[i-1] ^
@@ -149,14 +157,14 @@ static fpngl_mt19937v64_state_t *mt19937v64_init_by_array64(const uint64_t init_
 	return state;
 }
 
-static void mt19937v64_free(fpngl_mt19937v64_state_t *state)
+static void mt19937v64_free(mt19937v64_state_t *state)
 {
 	free(state);
 }
 
 
 /* generates a random number on [0, 2^64-1]-interval */
-static uint64_t mt19937v64_next64(fpngl_mt19937v64_state_t *state)
+static uint64_t mt19937v64_next64(mt19937v64_state_t *state)
 {
 	int i;
 	uint64_t x;
@@ -187,13 +195,13 @@ static uint64_t mt19937v64_next64(fpngl_mt19937v64_state_t *state)
 	return x;
 }
 
-static uint32_t mt19937v64_next32(fpngl_mt19937v64_state_t *state)
+static uint32_t mt19937v64_next32(mt19937v64_state_t *state)
 {
 	uint64_t v = mt19937v64_next64(state);
 	return (uint32_t)(v >> 32);
 }
 
-static void mt19937v64_array32(fpngl_mt19937v64_state_t *state,
+static void mt19937v64_array32(mt19937v64_state_t *state,
 															 uint32_t *T, uint32_t n)
 {
 	// Filling the array two 32 bits values at a time.
@@ -206,7 +214,7 @@ static void mt19937v64_array32(fpngl_mt19937v64_state_t *state,
 	}
 }
 
-static void mt19937v64_array64(fpngl_mt19937v64_state_t *state,
+static void mt19937v64_array64(mt19937v64_state_t *state,
 															 uint64_t *T, uint32_t n)
 {
 	for (uint32_t i = 0; i < n; ++i) {
@@ -214,7 +222,7 @@ static void mt19937v64_array64(fpngl_mt19937v64_state_t *state,
 	}
 }
 
-static uint64_t mt19937v64_nextk(fpngl_mt19937v64_state_t *state, uint32_t k)
+static uint64_t mt19937v64_nextk(mt19937v64_state_t *state, uint32_t k)
 {
 	assert(k <= 65 && k != 0);
 	return mt19937v64_next64(state) >> (64-k);
@@ -229,6 +237,7 @@ fpngl_irng64_t *fpngl_mt19937v64(uint64_t seed)
 													 "mt19937v64",
 													 0, 0xffffffffffffffff,
 													 mt19937v64_init(seed),
+													 (void* (*)(void*))copy_state,
 													 (uint32_t (*)(void*))mt19937v64_next32,
 													 (uint64_t (*)(void*))mt19937v64_next64,
 													 (uint64_t (*)(void*,uint32_t))mt19937v64_nextk,
@@ -244,6 +253,7 @@ fpngl_irng64_t *fpngl_mt19937v64_by_array(const uint64_t init_key[],
 													 "mt19937v64",
 													 0, 0xffffffffffffffff,
 													 mt19937v64_init_by_array64(init_key,key_length),
+													 (void* (*)(void*))copy_state,
 													 (uint32_t (*)(void*))mt19937v64_next32,
 													 (uint64_t (*)(void*))mt19937v64_next64,
 													 (uint64_t (*)(void*,uint32_t))mt19937v64_nextk,
