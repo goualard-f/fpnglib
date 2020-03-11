@@ -252,6 +252,7 @@ There are generator functions for each of theses classes. In addition, using the
 @end cartouche
 This program displays 10 floats, with probabilities 12.5% that they are equal to @math{\pm0}, 25% that they are subnormal, 50% that they are normal, and  12.5% that they are infinite.
 
+Note that the object of type @code{fpngl_distribution_t} owns the RNG @var{irng} and is responsible for its destruction. This is why we only call @code{fpngl_distribution_delete} to delete the @var{dist} object, and not @code{fpngl_irng_delete} on @var{irng}.
 
 A more flexible way to draw floats from a specific set is to put constraints on the acceptable sign, exponent and fractional part with the @code{fpngl_float64} function. The following program, for example, will draw 10 double precision floats in @code{[2,4)}:
 @cartouche
@@ -574,7 +575,45 @@ This is the 64 bits implementation of the @code{xor4096i} algorithm by Richard P
 @section Non-Uniform Distributions
 @c -------------------------------
 
-@c TODO: discrete_distribution.h, walker_vose.c
+All the RNGs presented in @ref{Integer RNGs available} return integers drawn uniformly at random in their domain of definition. It is sometimes necessary to consider other distributions. At present, FPNGlib only allows to draw integers from a discrete distribution. Consider, for example, the modeling of a biased dice with the probabilities shown in @ref{fig:biased_dice}.
+
+
+@float Figure,fig:biased_dice
+@center @image{fpnglib-figures/discrete_distribution,3.5in,}
+@caption{Biased dice modeled with a discrete probability distribution}
+@end float
+
+A discrete probability distribution is created by calling the @code{fpnlg_distribution_new} function with an integer RNG and an array of probabilities as parameters. It returns an object of type @code{fpngl_distribution_t}, which can be used to draw 32 bits random integers following the distribution embodied by the array of probabilities:
+
+@cartouche
+@verbatiminclude snippets/biased_dice_2.c
+@end cartouche
+
+@noindent The output of this program is:
+@verbatim
+0.0999 0.199 0.0999 0.1 0.3 0.2
+@end verbatim
+@noindent which is very close to the distribution we expect.
+
+@deftypefn {Library Function} fpngl_distribution_t* fpngl_distribution_new @
+           (fpngl_irng_t* @var{rng}, const double @var{P}[], uint32_t @var{szP})
+Construct a discrete distribution with probability @var{P}@code{[i]} of drawing the integer @code{i}. The array @var{P} must have at least @var{szP} elements, where @var{szP} must be lower or equal to @math{2^{30}} (The limit on @var{szP} is due to the use of the @code{uistack_t} type, which has a similar implementation-motivated limit). The sum of all values in @var{P} must be equal to 1.
+          
+The current implementation uses the Walker/Vose alias method with linear complexity(@cite{``An Efficient Method for Generating Discrete Random Variables with General Distributions.'' A.J. Walker. ACM Transactions on Mathematical Software. 3 (3): 253–256, 1977} and @cite{``A linear algorithm for generating random numbers with a given distribution.'' M.D. Vose. IEEE Transactions on Software Engineering. 17 (9): 972–975}).
+
+The ownership of the integer RNG @var{rng} is transferred to the @code{fpngl_distribution_t} object, which is responsible for its disposal.
+@end deftypefn
+
+@deftypefn {Library Function} void fpngl_distribution_delete @
+           (fpngl_distribution_t* @var{dist})
+Reclaim the memory allocated to represent a discrete distribution. It also reclaims the memory used to represent the RNG passed upon its construction.
+@end deftypefn
+
+@deftypefn {Library Function} uint32_t fpngl_distribution_next32 @
+           (fpngl_distribution_t *@var{dist})
+Return a random 32 bits integer according to the discrete distribution @var{dist}.
+@end deftypefn
+
 
 @chapter Floating-Point Random Generators
 @c ======================================
@@ -779,10 +818,12 @@ The output is @code{1} since the smallest positive double precision float is sep
 @c ===========================
 The library is written with an object-oriented style that should make it easy to extend.
 
-@float figure,fig:classes
+@float Figure,fig:classes
 @image{fpnglib-figures/classes,6in,}
 @caption{The ``classes'' of FPNGlib}
 @end float
+
+Functions with ``@code{_internal}'' in their name are for internal use in the library and should not be used outside its realm.
 
 @section Debugging facilities
 @c --------------------------
@@ -830,6 +871,12 @@ The macro flushes the output buffer with @code{fflush} after each call.
 						void (*@var{delete})(void*))
 @c TODO            
 @end deftypefn   
+
+@section Miscellaneous Supporting Code
+@c -----------------------------------
+
+@c Describe uistack
+
 @chapter Function Index
 @c ====================
 @printindex fn

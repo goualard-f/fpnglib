@@ -499,11 +499,16 @@ int main(void)
   for (uint32_t i = 0; i < 10; ++i) {
     printf("%g\n",fpngl_float64_distrib(dist));
   }
-  fpngl_irng_delete(irng);
+  fpngl_distribution_delete(dist);
 }
    This program displays 10 floats, with probabilities 12.5% that they
 are equal to \pm0, 25% that they are subnormal, 50% that they are
 normal, and 12.5% that they are infinite.
+
+   Note that the object of type 'fpngl_distribution_t' owns the RNG IRNG
+and is responsible for its destruction.  This is why we only call
+'fpngl_distribution_delete' to delete the DIST object, and not
+'fpngl_irng_delete' on IRNG.
 
    A more flexible way to draw floats from a specific set is to put
 constraints on the acceptable sign, exponent and fractional part with
@@ -600,8 +605,13 @@ File: fpnglib.info,  Node: Integer Random Generators
 4 Integer Random Generators
 ***************************
 
-Random Number Generators that produce integers must all provide the same
-services independently of the size of the integers they "natively"
+In this chapter, we present the Random Number Generator capable of
+producing 32 bits as well as 64 bits integers.  They all follow a
+nuiform distribution.  Refer to *note Non-Uniform Distributions:: for
+other distributions.
+
+   Random Number Generators that produce integers must all provide the
+same services independently of the size of the integers they "natively"
 produce:
    * Compute a 32 bits integer;
    * Compute a 64 bits integer;
@@ -717,6 +727,7 @@ type are described in *note Wrapping an IRNG::.
 
 * Wrapping an IRNG::
 * Integer RNGs available::
+* Non-Uniform Distributions::
 
 
 File: fpnglib.info,  Node: Wrapping an IRNG,  Next: Integer RNGs available,  Up: Integer Random Generators
@@ -759,10 +770,10 @@ parameter to 'fpngl_irng_new32' or 'fpngl_irng_new64' constructor, and
 is responsible for its proper disposal.  The release of resources is
 then done with 'fpngl_irng_delete' only.
 
- -- Library Function: fpngl_irng_t* fpngl_irng_new32 (fpngl_irng32_t
-          *irng32)
- -- Library Function: fpngl_irng_t* fpngl_irng_new64 (fpngl_irng64_t
-          *irng64)
+ -- Library Function: fpngl_irng_t* fpngl_irng_new32 (fpngl_irng32_t*
+          IRNG32)
+ -- Library Function: fpngl_irng_t* fpngl_irng_new64 (fpngl_irng64_t*
+          IRNG64)
      Wrap an 32 bits or 64 bits RNG into an 'fpngl_irng_t' object.  The
      new object is responsible for the destruction of the RNG passed as
      a parameter.  Consequently, IRNG32 (resp. IRNG64) should be never
@@ -773,16 +784,207 @@ then done with 'fpngl_irng_delete' only.
 natively by the wrapped RNG:
 
  -- Library Function: uint64_t fpngl_irng_next (fpngl_irng_t* RNG)
-     This function is unique to the 'fpngl_irng_t' type.  If the wrapped
-     RNG is of type 'fpngl_irng64_t', it behaves like
+     This function is unique to the 'fpngl_irng_t' type.  If the RNG
+     wrapped is of type 'fpngl_irng64_t', it behaves like
      'fpngl_irng_next64', otherwise it returns the integer computed with
      'fpngl_irng_next32' cast to 64 bits.
 
 
-File: fpnglib.info,  Node: Integer RNGs available,  Prev: Wrapping an IRNG,  Up: Integer Random Generators
+File: fpnglib.info,  Node: Integer RNGs available,  Next: Non-Uniform Distributions,  Prev: Wrapping an IRNG,  Up: Integer Random Generators
 
 4.2 Integer RNGs available
 ==========================
+
+The number of integer Random Number Generators augments regularly with
+new versions of FPNGlib.  *note Table 4.1: tab:irngs. summarizes the
+characteristics of the integer RNGs implemented in the current version
+of the library, with the following meanings for the columns:
+   * Name.  The name of the RNG as reported by 'fpngl_irng32_name' for
+     the 32 bits RNGs and 'fpngl_irng64_name' for the 64 bits RNGs;
+   * Size.  Size, in bits, of the integers that are natively created by
+     the RNG;
+   * Min.  Value of the smallest integer that can returned by the RNG;
+   * Max.  Value of the largest integer that can returned by the RNG;
+   * Period.  Number of integers that can be drawn before a sequence
+     repeats itself.
+
+Name                          Size        Min.        Max.        Period
+------------------------------------------------------------------------------
+'drand48_lcg64'               64          0           2^{48}-1    ?
+'gnu_lcg64'                   64          0           2^{31}-1    ?
+'minstd64'                    64          0           2^{31}-2    ?
+'mt19937v32'                  32          0           2^{32}-1    ?
+'mt19937v64'                  64          0           2^{64}-1    ?
+'mupad_lcg64'                 64          0           10^{12}-12  ?
+'randu64'                     64          0           2^{31}-1    ?
+'von neumann/metropolis'      32          0           2^{32}-1    ?
+'xor4096iv32'                 32          0           2^{32}-1    ?
+'xor4096iv64'                 64          0           2^{64}-1    ?
+
+Table 4.1: Integer RNGs available in FPNGlib 0.0.1 and their
+characteristics.
+
+4.2.1 32 Bits Integer RNGs
+--------------------------
+
+The following constructors create an integer RNG initialized with a
+seed, which can be one integer or an array of integers.
+
+ -- '"von neumann/metropolis"': fpngl_irng32_t*
+          fpngl_von_neumann_metropolis (uint32_t SEED)
+     Create a 32 bits RNG using the algorithm described in 'Various
+     techniques used in connection with random digits. John von Neumann.
+     In A.S. Householder, G.E. Forsythe, and H.H. Germond, eds. Monte
+     Carlo Method, National Bureau of Standards Applied Mathematics
+     Series, vol. 12:pp. 36-38'.
+
+     The value of SEED should be greater than 255, and preferably much
+     larger than that, otherwise the RNG will only return 0.
+
+     This is not a very good RNG; it is only provided for its historical
+     interest.
+
+ -- '"mt19937v32"': fpngl_irng32_t* fpngl_mt19937v32 (uint32_t SEED)
+ -- '"mt19937v32"': fpngl_irng32_t* fpngl_mt19937v32_by_array (const
+          uint32_t INIT_KEY[], uint32_t KEY_LENGTH)
+     This is the 32 bits version of the Mersenne Twister MT19937 by
+     Nishimura & Matsumoto.  It can be initialized either by a single
+     integer, or by an array of integers.  For maximum entropy, the
+     array should have a size at least equal to 624, but smaller arrays
+     are allowed.
+
+ -- '"xor4096iv32"': fpngl_irng32_t* fpngl_xor4096iv32 (uint32_t SEED)
+     This is the 32 bits implementation of the 'xor4096i' algorithm by
+     Richard P. Brent.
+
+4.2.2 64 Bits Integer RNGs
+--------------------------
+
+ -- '"minstd64"': fpngl_irng64_t* fpngl_minstd64 (uint64_t SEED)
+     MINSTD implementation of Park & Miller Linear Congruential
+     Generator:
+
+     See: 'Random Number Generators: Good Ones Are Hard to Find. S. K.
+     Park and K.W. Miller. Comm. ACM 31(10), 1988'
+
+ -- '"gnuc_lcg64"': fpngl_irng64_t* fpngl_gnuc_lcg64 (uint64_t SEED)
+     RNG used in the implementation of the GNU libc 'rand' function:
+
+     This RNG is no longer the default implementation for 'rand' in GNU
+     libc as of v.  2.29.
+
+ -- '"randu64"': fpngl_irng64_t* fpngl_randu64 (uint64_t SEED)
+     This is the 64 bits implementation of the RNG called "'RANDU'" in
+     the _Scientific Subroutine Package on IBM Mainframe_:
+
+     See: 'Numerical Computing with MATLAB. Steve Moler. Chap. 9'.
+
+ -- '"drand48_lcg64"': fpngl_irng64_t* fpngl_drand48_lcg64 (uint64_t
+          SEED)
+     RNG used by the GNU and FreeBSD implementations of the function
+     'drand48'.  It is also used by 'java.util.Random'.  It is an LCG
+     with formula:
+
+ -- '"mupad_lcg64"': fpngl_irng64_t* fpngl_mupad_lcg64 (uint64_t SEED)
+     RNG used in MuPAD Pro 3.1 and Maple 10.  This is an LCG with
+     formula:
+
+ -- '"mt19937v64"': fpngl_irng64_t* fpngl_mt19937v64 (uint64_t SEED)
+ -- '"mt19937v64"': fpngl_irng64_t* fpngl_mt19937v64_by_array (const
+          uint64_t INIT_KEY[], uint64_t KEY_LENGTH)
+     This is the 64 bits version of the Mersenne Twister MT19937 by
+     Nishimura & Matsumoto.  It can be initialized either by a single
+     integer, or by an array of integers.  For maximum entropy, the
+     array should have a size at least equal to 312, but smaller arrays
+     are allowed.
+
+ -- '"xor4096iv64"': fpngl_irng64_t* fpngl_xor4096iv64 (uint64_t SEED)
+     This is the 64 bits implementation of the 'xor4096i' algorithm by
+     Richard P. Brent.
+
+
+File: fpnglib.info,  Node: Non-Uniform Distributions,  Prev: Integer RNGs available,  Up: Integer Random Generators
+
+4.3 Non-Uniform Distributions
+=============================
+
+All the RNGs presented in *note Integer RNGs available:: return integers
+drawn uniformly at random in their domain of definition.  It is
+sometimes necessary to consider other distributions.  At present,
+FPNGlib only allows to draw integers from a discrete distribution.
+Consider, for example, the modeling of a biased dice with the
+probabilities shown in *note Figure 4.1: fig:biased_dice.
+
+                [fpnglib-figures/discrete_distribution]
+
+Figure 4.1: Biased dice modeled with a discrete probability distribution
+
+   A discrete probability distribution is created by calling the
+'fpnlg_distribution_new' function with an integer RNG and an array of
+probabilities as parameters.  It returns an object of type
+'fpngl_distribution_t', which can be used to draw 32 bits random
+integers following the distribution embodied by the array of
+probabilities:
+
+// doc/snippets/biased_dice_2.c
+#include <stdio.h>
+#include <fpnglib/discrete_distribution.h>
+#include <fpnglib/mt19937-64.h>
+
+const uint64_t seed = 42;
+const uint32_t ndraws = 1000000;
+int main(void)
+{
+  fpngl_irng_t *irng = fpngl_irng_new64(fpngl_mt19937v64(seed));
+  fpngl_distribution_t *dist = fpngl_distribution_new(irng,
+                                       (double[]){0.1,0.2,0.1,0.1,0.3,0.2},
+                                       6);
+  uint32_t draws[6] = {0,0,0,0,0,0};
+  for (uint32_t i = 0; i < ndraws; ++i) {
+    draws[fpngl_distribution_next32(dist)]++;
+  }
+  printf("%.3g %.3g %.3g %.3g %.3g %.3g\n",
+         draws[0]/(double)ndraws, draws[1]/(double)ndraws,
+         draws[2]/(double)ndraws, draws[3]/(double)ndraws,
+         draws[4]/(double)ndraws, draws[5]/(double)ndraws);
+  fpngl_distribution_delete(dist);
+}
+
+The output of this program is:
+0.0999 0.199 0.0999 0.1 0.3 0.2
+which is very close to the distribution we expect.
+
+ -- Library Function: fpngl_distribution_t* fpngl_distribution_new
+          (fpngl_irng_t* RNG, const double P[], uint32_t SZP)
+     Construct a discrete distribution with probability P'[i]' of
+     drawing the integer 'i'.  The array P must have at least SZP
+     elements, where SZP must be lower or equal to 2^{30} (The limit on
+     SZP is due to the use of the 'uistack_t' type, which has a similar
+     implementation-motivated limit).  The sum of all values in P must
+     be equal to 1.
+
+     The current implementation uses the Walker/Vose alias method with
+     linear complexity('"An Efficient Method for Generating Discrete
+     Random Variables with General Distributions." A.J. Walker. ACM
+     Transactions on Mathematical Software. 3 (3): 253–256, 1977' and
+     '"A linear algorithm for generating random numbers with a given
+     distribution." M.D. Vose. IEEE Transactions on Software
+     Engineering. 17 (9): 972–975').
+
+     The ownership of the integer RNG RNG is transferred to the
+     'fpngl_distribution_t' object, which is responsible for its
+     disposal.
+
+ -- Library Function: void fpngl_distribution_delete
+          (fpngl_distribution_t* DIST)
+     Reclaim the memory allocated to represent a discrete distribution.
+     It also reclaims the memory used to represent the RNG passed upon
+     its construction.
+
+ -- Library Function: uint32_t fpngl_distribution_next32
+          (fpngl_distribution_t *DIST)
+     Return a random 32 bits integer according to the discrete
+     distribution DIST.
 
 5 Floating-Point Random Generators
 **********************************
@@ -1058,7 +1260,7 @@ easy to extend.
 
  [image src="fpnglib-figures/classes.jpg" text="" ]
 
-figure 7.1: The "classes" of FPNGlib
+Figure 7.1: The "classes" of FPNGlib
 
 7.1 Debugging facilities
 ========================
@@ -1102,87 +1304,133 @@ macros.
        FPNGL_WARNING("This will be displayed in debug/info mode: %g\n",a);
      }
 
+7.2 Adding new IRNGs
+====================
+
+ -- Library Function: fpngl_irng32_t* fpngl_irng32_new (uint32_t SEED,
+     const char* NAME, uint32_t MIN, uint32_t MAX, void* STATE, void*
+     (*COPY_STATE)(void*), uint32_t (*NEXT32)(void*), uint64_t
+     (*NEXT64)(void*), uint32_t (*NEXTK)(void*, uint32_t), void
+     (*NEXT_ARRAY32)(void *, uint32_t *, uint32_t), void
+     (*NEXT_ARRAY64)(void *, uint64_t *, uint32_t), void
+     (*DELETE)(void*))
+
+7.3 Miscellaneous Supporting Code
+=================================
+
 8 Function Index
 ****************
 
  [index ]
 * Menu:
 
-* FPNGL_DEBUG:                           Integer RNGs available.
-                                                              (line 291)
-* fpngl_irng32_array32:                  Integer Random Generators.
-                                                              (line  62)
-* fpngl_irng32_array64:                  Integer Random Generators.
-                                                              (line  77)
-* fpngl_irng32_delete:                   Integer Random Generators.
-                                                              (line  28)
-* fpngl_irng32_max:                      Integer Random Generators.
-                                                              (line 109)
-* fpngl_irng32_min:                      Integer Random Generators.
-                                                              (line 104)
-* fpngl_irng32_name:                     Integer Random Generators.
-                                                              (line  95)
-* fpngl_irng32_next32:                   Integer Random Generators.
-                                                              (line  34)
-* fpngl_irng32_next64:                   Integer Random Generators.
-                                                              (line  40)
-* fpngl_irng32_nextk:                    Integer Random Generators.
-                                                              (line  46)
-* fpngl_irng32_seed:                     Integer Random Generators.
-                                                              (line  90)
-* fpngl_irng32_seed <1>:                 Integer Random Generators.
-                                                              (line  92)
-* fpngl_irng64_array32:                  Integer Random Generators.
-                                                              (line  64)
-* fpngl_irng64_array64:                  Integer Random Generators.
+* FPNGL_DEBUG:                           Non-Uniform Distributions.
+                                                              (line 369)
+* fpngl_distribution_delete:             Non-Uniform Distributions.
+                                                              (line  73)
+* fpngl_distribution_new:                Non-Uniform Distributions.
+                                                              (line  52)
+* fpngl_distribution_next32:             Non-Uniform Distributions.
                                                               (line  79)
-* fpngl_irng64_delete:                   Integer Random Generators.
-                                                              (line  29)
-* fpngl_irng64_max:                      Integer Random Generators.
-                                                              (line 110)
-* fpngl_irng64_min:                      Integer Random Generators.
-                                                              (line 105)
-* fpngl_irng64_name:                     Integer Random Generators.
+* fpngl_drand48_lcg64:                   Integer RNGs available.
+                                                              (line  90)
+* fpngl_gnuc_lcg64:                      Integer RNGs available.
+                                                              (line  78)
+* fpngl_irng32_array32:                  Integer Random Generators.
+                                                              (line  67)
+* fpngl_irng32_array64:                  Integer Random Generators.
+                                                              (line  82)
+* fpngl_irng32_delete:                   Integer Random Generators.
+                                                              (line  33)
+* fpngl_irng32_max:                      Integer Random Generators.
+                                                              (line 114)
+* fpngl_irng32_min:                      Integer Random Generators.
+                                                              (line 109)
+* fpngl_irng32_name:                     Integer Random Generators.
+                                                              (line 100)
+* fpngl_irng32_new:                      Non-Uniform Distributions.
+                                                              (line 405)
+* fpngl_irng32_next32:                   Integer Random Generators.
+                                                              (line  39)
+* fpngl_irng32_next64:                   Integer Random Generators.
+                                                              (line  45)
+* fpngl_irng32_nextk:                    Integer Random Generators.
+                                                              (line  51)
+* fpngl_irng32_seed:                     Integer Random Generators.
+                                                              (line  95)
+* fpngl_irng32_seed <1>:                 Integer Random Generators.
                                                               (line  97)
+* fpngl_irng64_array32:                  Integer Random Generators.
+                                                              (line  69)
+* fpngl_irng64_array64:                  Integer Random Generators.
+                                                              (line  84)
+* fpngl_irng64_delete:                   Integer Random Generators.
+                                                              (line  34)
+* fpngl_irng64_max:                      Integer Random Generators.
+                                                              (line 115)
+* fpngl_irng64_min:                      Integer Random Generators.
+                                                              (line 110)
+* fpngl_irng64_name:                     Integer Random Generators.
+                                                              (line 102)
 * fpngl_irng64_next32:                   Integer Random Generators.
-                                                              (line  35)
+                                                              (line  40)
 * fpngl_irng64_next64:                   Integer Random Generators.
-                                                              (line  41)
+                                                              (line  46)
 * fpngl_irng64_nextk:                    Integer Random Generators.
-                                                              (line  48)
+                                                              (line  53)
 * fpngl_irng64_seed:                     Integer Random Generators.
-                                                              (line  91)
+                                                              (line  96)
 * fpngl_irng_array32:                    Integer Random Generators.
-                                                              (line  66)
+                                                              (line  71)
 * fpngl_irng_array64:                    Integer Random Generators.
-                                                              (line  81)
+                                                              (line  86)
 * fpngl_irng_delete:                     Integer Random Generators.
-                                                              (line  30)
+                                                              (line  35)
 * fpngl_irng_max:                        Integer Random Generators.
-                                                              (line 111)
+                                                              (line 116)
 * fpngl_irng_min:                        Integer Random Generators.
-                                                              (line 106)
+                                                              (line 111)
 * fpngl_irng_name:                       Integer Random Generators.
-                                                              (line  99)
+                                                              (line 104)
 * fpngl_irng_new32:                      Wrapping an IRNG.    (line  41)
 * fpngl_irng_new64:                      Wrapping an IRNG.    (line  43)
 * fpngl_irng_next:                       Wrapping an IRNG.    (line  54)
 * fpngl_irng_next32:                     Integer Random Generators.
-                                                              (line  36)
+                                                              (line  41)
 * fpngl_irng_next64:                     Integer Random Generators.
-                                                              (line  42)
+                                                              (line  47)
 * fpngl_irng_nextk:                      Integer Random Generators.
-                                                              (line  50)
+                                                              (line  55)
 * fpngl_is_irng32:                       Integer Random Generators.
-                                                              (line 114)
+                                                              (line 119)
 * fpngl_is_irng64:                       Integer Random Generators.
-                                                              (line 115)
-* fpngl_nextafter64:                     Integer RNGs available.
-                                                              (line 218)
-* fpngl_previous64:                      Integer RNGs available.
-                                                              (line 244)
-* FPNGL_WARNING:                         Integer RNGs available.
-                                                              (line 307)
+                                                              (line 120)
+* fpngl_minstd64:                        Integer RNGs available.
+                                                              (line  71)
+* fpngl_mt19937v32:                      Integer RNGs available.
+                                                              (line  55)
+* fpngl_mt19937v32_by_array:             Integer RNGs available.
+                                                              (line  56)
+* fpngl_mt19937v64:                      Integer RNGs available.
+                                                              (line 100)
+* fpngl_mt19937v64_by_array:             Integer RNGs available.
+                                                              (line 101)
+* fpngl_mupad_lcg64:                     Integer RNGs available.
+                                                              (line  96)
+* fpngl_nextafter64:                     Non-Uniform Distributions.
+                                                              (line 296)
+* fpngl_previous64:                      Non-Uniform Distributions.
+                                                              (line 322)
+* fpngl_randu64:                         Integer RNGs available.
+                                                              (line  84)
+* fpngl_von_neumann_metropolis:          Integer RNGs available.
+                                                              (line  41)
+* FPNGL_WARNING:                         Non-Uniform Distributions.
+                                                              (line 385)
+* fpngl_xor4096iv32:                     Integer RNGs available.
+                                                              (line  64)
+* fpngl_xor4096iv64:                     Integer RNGs available.
+                                                              (line 109)
 
 9 Type Index
 ************
@@ -1200,11 +1448,11 @@ macros.
 * Cryptographic use:                     (outside of any node).
                                                               (line   0)
 * Prefix:                                Generating a random float with some properties.
-                                                              (line 125)
+                                                              (line 130)
 * Supported platforms:                   (outside of any node).
                                                               (line   0)
 * Type name formation:                   Generating a random float with some properties.
-                                                              (line 136)
+                                                              (line 141)
 
 
 
@@ -1223,10 +1471,13 @@ Ref: Generating Random Floating-Point Numbers-Footnote-117746
 Ref: Generating Random Floating-Point Numbers-Footnote-217848
 Ref: Generating Random Floating-Point Numbers-Footnote-317898
 Node: Generating a random float with some properties18047
-Ref: Generating a random float with some properties-Footnote-124606
-Node: Integer Random Generators24740
-Node: Wrapping an IRNG30502
-Node: Integer RNGs available32794
-Ref: fig:classes41601
+Ref: Generating a random float with some properties-Footnote-124846
+Node: Integer Random Generators24980
+Node: Wrapping an IRNG31000
+Node: Integer RNGs available33292
+Ref: tab:irngs34220
+Node: Non-Uniform Distributions38476
+Ref: fig:biased_dice39047
+Ref: fig:classes50642
 
 End Tag Table

@@ -13,5 +13,5 @@ int main(void)
   for (uint32_t i = 0; i < 10; ++i) {
     printf("%g\n",fpngl_float64_distrib(dist));
   }
-  fpngl_irng_delete(irng);
+  fpngl_distribution_delete(dist);
 }

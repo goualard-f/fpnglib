@@ -27,6 +27,7 @@
 #include <fpnglib/irange.h>
 #include <fpnglib/types.h>
 
+fpngl_irng_t *fpngl_distribution_rng_internal(fpngl_distribution_t *dd);
 
 // Random sign
 static inline uint64_t randsign(fpngl_irng_t *rng)
@@ -211,7 +212,7 @@ double fpngl_float64_distrib(fpngl_distribution_t *fpd)
 																 fpngl_normal64,
 																 fpngl_inf64,
 																 fpngl_nan64 };
-  return createv[fpngl_distribution_next32(fpd)](fpngl_distribution_rng(fpd));
+  return createv[fpngl_distribution_next32(fpd)](fpngl_distribution_rng_internal(fpd));
 
 }
 

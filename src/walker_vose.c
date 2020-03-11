@@ -46,16 +46,21 @@ struct fpngl_distribution_t {
 fpngl_distribution_t *fpngl_distribution_new(fpngl_irng_t *rng,
 																							 const double P[], uint32_t szP)
 {
+	assert(szP <= (1UL << 30)); // uistack cannot contain more than 2^30 elements
+	assert(rng != NULL);
 	fpngl_distribution_t *dist = malloc(sizeof(fpngl_distribution_t));
 	assert(dist != NULL);
 	dist->irng = rng;
+	// The FRNG used cannot be chosen at present. Should we reconsider that?
 	dist->frng = fpngl_div32(rng,fpngl_irng_seed(rng));
 	dist->alias = calloc(szP,sizeof(uint32_t));
+	assert(dist->alias != NULL);
 	dist->probability = calloc(szP,sizeof(double));
+	assert(dist->probability != NULL);
 	dist->n = szP;
 	double *probabilities = calloc(szP,sizeof(double));
-	assert(szP < (1UL << 30)); // uistack cannot contain more than 2^30 elements
-
+	assert(probabilities != NULL);
+	
 	fpngl_uistack_t *small = fpngl_uistack_new();
 	fpngl_uistack_t *large = fpngl_uistack_new();
 
@@ -126,7 +131,7 @@ uint32_t fpngl_distribution_next32(fpngl_distribution_t *dd)
 	}
 }
 
-fpngl_irng_t *fpngl_distribution_rng(fpngl_distribution_t *dd)
+fpngl_irng_t *fpngl_distribution_rng_internal(fpngl_distribution_t *dd)
 {
 	assert(dd != NULL);
 	return dd->irng;

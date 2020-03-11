@@ -21,7 +21,8 @@
  */
 
 /*
-	An fpngl_uistack_t stack is created with enough room for at most 16 integers. If
+	An fpngl_uistack_t stack is created with enough room for at most 
+	DEFAULT_SIZE integers (16, by default). If
 	more than 16 integers are pushed onto the stack, it grows by doubling its size
 	(which incurs a deallocation and a reallocation as well as a copy of all the
 	elements already in the stack).
@@ -31,11 +32,14 @@
 #include <stdlib.h>
 #include <fpnglib/uistack.h>
 
+// Initial size of the stack by default
+const uint32_t DEFAULT_SIZE = 16;
+
 const int32_t STACK_EMPTY = -1;
 
 struct fpngl_uistack_t {
 	uint32_t *T;
-	int32_t top; // Index of the first position occupied (-1 for an empty stack)
+	int32_t top; // Index of the first position occupied (STACK_EMPTY for an empty stack)
 	uint64_t size; // Maximum number of elements in the stack
 };
 
@@ -44,9 +48,10 @@ fpngl_uistack_t *fpngl_uistack_new(void)
 	fpngl_uistack_t *stack = malloc(sizeof(fpngl_uistack_t));
 	assert(stack != NULL);
 
-	// Allocating a stack sufficient for at most 16 elements by default
-	stack->size = 16;
+	// Allocating a stack sufficient for at most DEFAULT_SIZE elements by default
+	stack->size = DEFAULT_SIZE;
 	stack->T = calloc(stack->size,sizeof(uint32_t));
+	assert(stack->T != NULL);
 	stack->top = STACK_EMPTY;
 	return stack;
 }
@@ -58,6 +63,7 @@ void fpngl_uistack_push(fpngl_uistack_t *stack, uint32_t v)
 	if (stack->top == stack->size) { // We must allocate a bigger stack?
 		assert(stack->size < (1UL << 30));
 		stack->T = realloc(stack->T,2*stack->size*sizeof(uint32_t));
+		assert(stack->T != NULL);
 		stack->size *= 2;
 	}
 	stack->T[stack->top] = v;

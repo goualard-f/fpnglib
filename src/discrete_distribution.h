@@ -47,6 +47,7 @@ extern "C" {
 		 its destruction.
 
 		 @precondition \sum P = 1
+		 @precondition szP <= 2^30
   */
 	fpngl_distribution_t *fpngl_distribution_new(fpngl_irng_t *rng,
 																								 const double P[], uint32_t szP);
@@ -57,9 +58,6 @@ extern "C" {
 
   // Return a random value according to the distribution in `dd`.
   uint32_t fpngl_distribution_next32(fpngl_distribution_t *dd);
-
-	// Return the RNG used internally.
-	fpngl_irng_t *fpngl_distribution_rng(fpngl_distribution_t *dd);
 
 #ifdef __cplusplus
 }
