@@ -149,6 +149,7 @@ The call to @code{fpngl_mt19937v32} allocates some memory from the heap to repre
 @c ...............................................
 A 32 bits Integer RNG (@dfn{IRNG}, for short) will usually draw an integer in the domain @math{[0,2^{32}-1]} or in some other smaller but still impractically large domain. More often than not, simulations require drawing integers in some precise domain, say @math{[1,6]} to simulate a dice, for example. For such an application, many sources still suggest to draw an integer in the full domain of the RNG and then use the modulo to restrict the output to the correct domain:
 @cartouche
+@anchor{biased_dice_c}
 @verbatiminclude snippets/biased_dice.c
 @end cartouche
 
@@ -317,7 +318,7 @@ Random Number Generators that produce integers must all provide the same service
 In addition, an RNG must possess a function to release the resources acquired upon
 construction of an instance. Each RNG type has its own constructor (@xref{Integer RNGs available}).
 
-In the following, we describe the functions providing these services for RNGs of the type @code{fpngl_irng32_t}, @code{fpngl_irng64_t}, as well as for the wrapper type @code{fpngl_irng_t}. The services specific to this last type are described in @ref{Wrapping an IRNG}.
+In the following, we describe the functions providing these services for RNGs of the type @code{fpngl_irng32_t}, @code{fpngl_irng64_t}, as well as for the wrapper type @code{fpngl_irng_t}. The services specific to this last type are described in @ref{Unsized RNGs}.
 
 @deftypefn {Library Function} void fpngl_irng32_delete (fpngl_irng32_t* @var{rng})
 @deftypefnx {Library Function} void fpngl_irng64_delete (fpngl_irng64_t* @var{rng})
@@ -427,8 +428,8 @@ Return @code{true} if the wrapped RNG is, respectively, of the type
 @code{fpngl_irng32_t} or @code{fpngl_irng64_t}.
 @end deftypefn
 
-@node Wrapping an IRNG
-@section Wrapping an IRNG
+@node Unsized RNGs
+@section Unsized RNGs
 @c ----------------------
 Since both 32 bits and 64 bits RNGs can produce 32 bits as well as 64 bits integers, users may be tempted to write programs that use an RNG, irrespective of its type. The @code{fpngl_irng_t} type serves as a wrapper around 32 bits and 64 bits RNGs to abstract their real limitations. An object of that type is constructed from an actual RNG of type @code{fpngl_irng32_t} or @code{fpngl_irng64_t} with, respectively, the functions @code{fpngl_irng_new32} and @code{fpngl_irng_new64}:
 @cartouche
@@ -570,6 +571,13 @@ This is the 64 bits version of the Mersenne Twister MT19937 by Nishimura & Matsu
 @deftypefn {@code{"xor4096iv64"}} fpngl_irng64_t* fpngl_xor4096iv64 (uint64_t @var{seed})
 This is the 64 bits implementation of the @code{xor4096i} algorithm by Richard P. Brent.
 @end deftypefn
+
+@node Random Integers in a Range
+@section Random Integers in a Range
+@c --------------------------------
+
+Most RNGs of @ref{Integer RNGs available} return random integers drawn from a large domain (typically @math{[0,2^{32}-1]} or @math{[0,2^{64}-1]}). Many applications, however, require random integers from much smaller domains, e.g., to model dice throwing, coin tossing, @enddots{} A much quoted tentative answer to the problem is to use the modulo operation, as in @ref{biased_dice_c,,Program @file{biased_dice.c}}. As already discussed for that program, this approach is biased whenever the number of values in the original domain of the RNG is not a multiple of the modulus. Even if it is a multiple of the modulus, the modulo operation extracts the low-order bits of the random integer, which are the least ``random'' for many RNGs.
+
 
 @node Non-Uniform Distributions
 @section Non-Uniform Distributions
@@ -823,7 +831,7 @@ The library is written with an object-oriented style that should make it easy to
 @caption{The ``classes'' of FPNGlib}
 @end float
 
-Functions with ``@code{_internal}'' in their name are for internal use in the library and should not be used outside its realm.
+Functions with ``@code{_internal}'' in their name are for internal use in the library and should not be used outside of its realm.
 
 @section Debugging facilities
 @c --------------------------

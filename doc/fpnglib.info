@@ -1262,6 +1262,9 @@ easy to extend.
 
 Figure 7.1: The "classes" of FPNGlib
 
+   Functions with "'_internal'" in their name are for internal use in
+the library and should not be used outside its realm.
+
 7.1 Debugging facilities
 ========================
 
@@ -1325,7 +1328,7 @@ macros.
 * Menu:
 
 * FPNGL_DEBUG:                           Non-Uniform Distributions.
-                                                              (line 369)
+                                                              (line 372)
 * fpngl_distribution_delete:             Non-Uniform Distributions.
                                                               (line  73)
 * fpngl_distribution_new:                Non-Uniform Distributions.
@@ -1349,7 +1352,7 @@ macros.
 * fpngl_irng32_name:                     Integer Random Generators.
                                                               (line 100)
 * fpngl_irng32_new:                      Non-Uniform Distributions.
-                                                              (line 405)
+                                                              (line 408)
 * fpngl_irng32_next32:                   Integer Random Generators.
                                                               (line  39)
 * fpngl_irng32_next64:                   Integer Random Generators.
@@ -1426,7 +1429,7 @@ macros.
 * fpngl_von_neumann_metropolis:          Integer RNGs available.
                                                               (line  41)
 * FPNGL_WARNING:                         Non-Uniform Distributions.
-                                                              (line 385)
+                                                              (line 388)
 * fpngl_xor4096iv32:                     Integer RNGs available.
                                                               (line  64)
 * fpngl_xor4096iv64:                     Integer RNGs available.

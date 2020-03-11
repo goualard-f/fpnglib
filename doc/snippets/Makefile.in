@@ -115,7 +115,7 @@ noinst_PROGRAMS = significand$(EXEEXT) exponent$(EXEEXT) \
 	mu$(EXEEXT) lambda$(EXEEXT) nan$(EXEEXT) inf$(EXEEXT) \
 	max$(EXEEXT) subnormal$(EXEEXT) float64$(EXEEXT) \
 	minmaxfrac64$(EXEEXT) noandor$(EXEEXT) distrib$(EXEEXT) \
-	irng$(EXEEXT) biased_dice_2$(EXEEXT)
+	irng$(EXEEXT) biased_dice_2$(EXEEXT) biased_dice_3$(EXEEXT)
 subdir = doc/snippets
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_check_enable_debug.m4 \
@@ -147,6 +147,11 @@ biased_dice_2_SOURCES = biased_dice_2.c
 biased_dice_2_OBJECTS = biased_dice_2.$(OBJEXT)
 biased_dice_2_LDADD = $(LDADD)
 biased_dice_2_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
+biased_dice_3_SOURCES = biased_dice_3.c
+biased_dice_3_OBJECTS = biased_dice_3.$(OBJEXT)
+biased_dice_3_LDADD = $(LDADD)
+biased_dice_3_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
 	$(am__DEPENDENCIES_1)
 debug_SOURCES = debug.c
 debug_OBJECTS = debug.$(OBJEXT)
@@ -292,16 +297,16 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = biased_dice.c biased_dice_2.c debug.c dice.c distrib.c \
-	exponent.c float64.c fsimple.c inf.c irng.c isimple.c lambda.c \
-	max.c mcpi.c minmaxfrac64.c mu.c nan.c nextafter64.c noandor.c \
-	previous64.c significand.c subnormal.c unitroundoff.c \
-	warning.c
-DIST_SOURCES = biased_dice.c biased_dice_2.c debug.c dice.c distrib.c \
-	exponent.c float64.c fsimple.c inf.c irng.c isimple.c lambda.c \
-	max.c mcpi.c minmaxfrac64.c mu.c nan.c nextafter64.c noandor.c \
-	previous64.c significand.c subnormal.c unitroundoff.c \
-	warning.c
+SOURCES = biased_dice.c biased_dice_2.c biased_dice_3.c debug.c dice.c \
+	distrib.c exponent.c float64.c fsimple.c inf.c irng.c \
+	isimple.c lambda.c max.c mcpi.c minmaxfrac64.c mu.c nan.c \
+	nextafter64.c noandor.c previous64.c significand.c subnormal.c \
+	unitroundoff.c warning.c
+DIST_SOURCES = biased_dice.c biased_dice_2.c biased_dice_3.c debug.c \
+	dice.c distrib.c exponent.c float64.c fsimple.c inf.c irng.c \
+	isimple.c lambda.c max.c mcpi.c minmaxfrac64.c mu.c nan.c \
+	nextafter64.c noandor.c previous64.c significand.c subnormal.c \
+	unitroundoff.c warning.c
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -503,6 +508,10 @@ biased_dice_2$(EXEEXT): $(biased_dice_2_OBJECTS) $(biased_dice_2_DEPENDENCIES) $
 	@rm -f biased_dice_2$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(biased_dice_2_OBJECTS) $(biased_dice_2_LDADD) $(LIBS)
 
+biased_dice_3$(EXEEXT): $(biased_dice_3_OBJECTS) $(biased_dice_3_DEPENDENCIES) $(EXTRA_biased_dice_3_DEPENDENCIES) 
+	@rm -f biased_dice_3$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(biased_dice_3_OBJECTS) $(biased_dice_3_LDADD) $(LIBS)
+
 debug$(EXEEXT): $(debug_OBJECTS) $(debug_DEPENDENCIES) $(EXTRA_debug_DEPENDENCIES) 
 	@rm -f debug$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(debug_OBJECTS) $(debug_LDADD) $(LIBS)
@@ -599,6 +608,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/biased_dice.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/biased_dice_2.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/biased_dice_3.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/debug.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dice.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/distrib.Po@am__quote@
