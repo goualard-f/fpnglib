@@ -62,7 +62,7 @@ static inline uint64_t randnormexp(fpngl_irng_t *rng)
 // Random fractional part (52 bits)
 static inline uint64_t randfrac(fpngl_irng_t *rng)
 {
-  return fpngl_n_bits64(fpngl_irng_next64(rng),52);
+  return fpngl_irng_next64(rng) >> 12; // 12 == 64 - 52
 }
 
 // Random fractional part in the domain [min, max]

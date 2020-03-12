@@ -31,7 +31,7 @@
 
 static double nextf64(fpngl_irng_t *irng)
 {
-	uint64_t f = fpngl_n_bits64(fpngl_irng_next64(irng),52);
+	uint64_t f = fpngl_irng_next64(irng) >> 12; // 12 = 64 - 52
 	fpngl_uintf64_t res = {.ui = (0x3ff0000000000000 | f)};
 	return res.d - 1.0;
 }

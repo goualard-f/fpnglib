@@ -23,17 +23,6 @@
 #include <global.h>
 #include <fpnglib/irange.h>
 
-uint32_t fpngl_n_bits32(uint32_t v, uint32_t n)
-{
-	assert(n <= 32);
-	return v >> (32-n);
-}
-
-uint64_t fpngl_n_bits64(uint64_t v, uint32_t n)
-{
-	assert(n <= 64);
-	return v >> (64-n);
-}
 
 uint32_t fpngl_ubound32(fpngl_irng_t *irng, uint32_t a)
 {
@@ -73,7 +62,7 @@ uint64_t fpngl_ubound64(fpngl_irng_t *irng, uint64_t a)
     }
   }
   return m >> 64;
-#else
+#else // !HAVE_UINT128_T
 #  if HAVE___BUILTIN_CLZ
 	assert(a != 0);
 	// Bitmask with Rejection (Unbiased) — Apple's Method
@@ -86,7 +75,7 @@ uint64_t fpngl_ubound64(fpngl_irng_t *irng, uint64_t a)
 		x = fpngl_irng_next64(irng) & mask;
 	} while (x > a);
 	return x;
-#  else
+#  else // !HAVE___BUILTIN_CLZ
 	// Debiased Modulo (Once) — Java's Method
 	// from https://www.pcg-random.org/posts/bounded-rands.html
 	uint64_t x, t;
@@ -101,13 +90,13 @@ uint64_t fpngl_ubound64(fpngl_irng_t *irng, uint64_t a)
 
 int32_t fpngl_range32(fpngl_irng_t *irng, int32_t a, int32_t b)
 {
-	int32_t k = b-a;
+	uint32_t k = b-a;
 	return fpngl_ubound32(irng,k) + a;
 }
 
 int64_t fpngl_range64(fpngl_irng_t *irng, int64_t a, int64_t b)
 {
-	int64_t k = b-a;
+	uint64_t k = b-a;
 	return fpngl_ubound64(irng,k) + a;
 }
 

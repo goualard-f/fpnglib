@@ -1,8 +1,8 @@
 FPNGlib -- The Floating-point Number Generator Library
-A C library to test numerical programs and libraries
+A C library to generate random floating-point numbers.
 
 The FPNGlib was created in April 2019 at LS2N, University of Nantes, France.
 
-A list of contributors in historical order of contributions:
+A list of contributors in historical order of contributions (from earliest to latest):
 
 * Frédéric Goualard <Frederic.Goualard@univ-nantes.fr>

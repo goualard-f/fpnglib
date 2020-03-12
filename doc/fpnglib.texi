@@ -38,6 +38,7 @@ by the Foundation.
 
 @contents
 
+@node What is FPNGlib?
 @chapter What is FPNGlib?
 @c ======================
 
@@ -69,6 +70,7 @@ FPNGlib does not contain any true random generator as its focus is on reproducib
 
 Questions and bug reports shall be directly submitted on the @url{https://gitlab.univ-nantes.fr/goualard-f/fpnglib/issues,GitLab platform} for the project.
 
+@node Getting Started with FPNGlib
 @chapter Getting Started with FPNGlib
 @c ==================================
 
@@ -269,7 +271,7 @@ The third and fourth parameters establish bounds on the @emph{biased} exponent@f
 
 In the example above, we are asking for floats with a positive sign, an exponent of @code{1} (@math{1024} minus the bias of @math{1023}) and a fractional part between  @code{0x0000000000000} and @code{0xfffffffffffff}, that is ---in binary--- floats from @math{+1.0\times2^1} to @math{+1.111111111111111111111111111111111111111111111111111\times2^1}, or ---in decimal---, from @math{2.0} to @math{4.0-2^{-51}}.
 
-
+@node General Organization of the Library
 @chapter General Organization of the Library
 @c =========================================
 
@@ -501,6 +503,8 @@ This is not a very good RNG; it is only provided for its historical interest.
 @deftypefnx {@code{"mt19937v32"}} fpngl_irng32_t* fpngl_mt19937v32_by_array @
            (const uint32_t @var{init_key[]}, uint32_t @var{key_length})
 This is the 32 bits version of the Mersenne Twister MT19937 by Nishimura & Matsumoto. It can be initialized either by a single integer, or by an array of integers. For maximum entropy, the array should have a size at least equal to 624, but smaller arrays are allowed.
+
+The function @code{fpngl_irng32_seed} returns @code{0} if the RNG is initialized with an array.
 @end deftypefn
 
 @deftypefn {@code{"xor4096iv32"}} fpngl_irng32_t* fpngl_xor4096iv32 (uint32_t @var{seed})
@@ -566,6 +570,8 @@ $$a_i = 427419669081a_{i-1} \,\, {\rm mod}\,\, (10^{12}-11)$$
 @deftypefnx {@code{"mt19937v64"}} fpngl_irng64_t* fpngl_mt19937v64_by_array @
            (const uint64_t @var{init_key[]}, uint64_t @var{key_length})
 This is the 64 bits version of the Mersenne Twister MT19937 by Nishimura & Matsumoto. It can be initialized either by a single integer, or by an array of integers. For maximum entropy, the array should have a size at least equal to 312, but smaller arrays are allowed.
+
+The function @code{fpngl_irng_seed} returns @code{0} if the RNG is initialized with an array.
 @end deftypefn
 
 @deftypefn {@code{"xor4096iv64"}} fpngl_irng64_t* fpngl_xor4096iv64 (uint64_t @var{seed})
@@ -577,6 +583,33 @@ This is the 64 bits implementation of the @code{xor4096i} algorithm by Richard P
 @c --------------------------------
 
 Most RNGs of @ref{Integer RNGs available} return random integers drawn from a large domain (typically @math{[0,2^{32}-1]} or @math{[0,2^{64}-1]}). Many applications, however, require random integers from much smaller domains, e.g., to model dice throwing, coin tossing, @enddots{} A much quoted tentative answer to the problem is to use the modulo operation, as in @ref{biased_dice_c,,Program @file{biased_dice.c}}. As already discussed for that program, this approach is biased whenever the number of values in the original domain of the RNG is not a multiple of the modulus. Even if it is a multiple of the modulus, the modulo operation extracts the low-order bits of the random integer, which are the least ``random'' for many RNGs.
+
+FPNGlib offers four different functions to compute random numbers in a ``small'' domain, depending on the size of the integers required and the bounds of the domain: if the domain is of the form ``@math{[0,a)}'', use the following functions:
+
+@deftypefn {Library Function} uint32_t fpngl_ubound32 @
+           (fpngl_irng_t* @var{rng}, uint32_t @var{a})
+@deftypefnx {Library Function} uint64_t fpngl_ubound64 @
+            (fpngl_irng_t* @var{rng}, uint64_t @var{a})
+Use the RNG @var{rng} to draw an integer uniformly at random in the domain @math{[0,a)}.
+
+The functions use an efficient algorithm by D. Lemire presented in @cite{``Fast Random Integer Generation in an Interval.'' Daniel Lemire. ACM Transactions on Modeling and Computer Simulation, 29(1), 2019} with modifications by M.E. O'Neill proposed in @cite{``Efficiently Generating a Number in a Range''. @url{https://www.pcg-random.org/posts/bounded-rands.html}. 2018-07-22. [Retrieved 2020-03-12]}.
+
+Function @code{fpngl_ubound64} may be slower when the computer does not offer 128 bits integers natively.
+@end deftypefn
+
+Note that, for both functions, no provision is made to ensure that @var{a} is smaller than the largest integer that can be computed by @var{rng}, @code{fpngl_irng_max(rng)}. It is up to the user to check that this precondition is met.
+
+
+When the domain considered is of the form @math{[a,b)}, with @math{a} and @math{b} potentially negative integers, use the following functions:
+
+@deftypefn {Library Function} int32_t fpngl_range32 @
+           (fpngl_irng_t* @var{rng}, int32_t @var{a}, int32_t @var{b})
+@deftypefnx {Library Function} int64_t fpngl_range64 @
+           (fpngl_irng_t* @var{rng}, int64_t @var{a}, int64_t @var{b})
+Use the RNG @var{rng} to draw integers uniformly at random in the domain @math{[@var{a},@var{b})}.
+
+These functions rely, respectively, on functions @code{fpngl_ubound32} and @code{fpngl_ubound64} to compute random integers in the domain @math{[0, b-a)} and then shift it by @var{a}.
+@end deftypefn      
 
 
 @node Non-Uniform Distributions
@@ -622,11 +655,15 @@ Reclaim the memory allocated to represent a discrete distribution. It also recla
 Return a random 32 bits integer according to the discrete distribution @var{dist}.
 @end deftypefn
 
-
+@node Floating-Point Random Generators
 @chapter Floating-Point Random Generators
 @c ======================================
 
 
+
+
+
+@node IEEE 754 and the Floating-Point Unit
 @chapter IEEE 754 and the Floating-Point Unit
 @c ==========================================
 
@@ -822,6 +859,7 @@ The output is @code{1} since the smallest positive double precision float is sep
 @section Manipulating the FPU 
 @c ------------------------
 
+@node Extending the Library
 @chapter Extending the Library
 @c ===========================
 The library is written with an object-oriented style that should make it easy to extend.
@@ -885,14 +923,17 @@ The macro flushes the output buffer with @code{fflush} after each call.
 
 @c Describe uistack
 
+@node Function Index
 @chapter Function Index
 @c ====================
 @printindex fn
 
+@node Type Index
 @chapter Type Index
 @c ================
 @printindex tp
 
+@node Concept Index
 @chapter Concept Index
 @c ===================
 @printindex cp

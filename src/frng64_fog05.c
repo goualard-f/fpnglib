@@ -31,7 +31,7 @@
 
 static double nextf64(fpngl_irng_t *irng)
 {
-	uint64_t v = fpngl_n_bits64(fpngl_irng_next64(irng),53);
+	uint64_t v = fpngl_irng_next64(irng) >> 11; // 11 = 64 - 53
 	// Separating the decision bit from the 52 bits fractional part.
 	uint32_t b = v & 1;
 	uint64_t f = v >> 1;

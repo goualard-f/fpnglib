@@ -32,7 +32,7 @@ static double golang_nextf64(fpngl_irng_t *irng)
 	double res;
 	do {
 		uint64_t v = fpngl_irng_next64(irng);
-		res = fpngl_n_bits64(v,63)*0x1p-63;
+		res = (v >> 1)*0x1p-63; // 1 == 64 - 63
 	} while (res == 1.0);
 	return res;
 }

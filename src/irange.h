@@ -36,12 +36,6 @@
 extern "C" {
 #endif
 
-	/*
-		Return an unsigned integer composed with the `n` highest bits of `v`.
-		
-	*/
-	uint32_t fpngl_n_bits32(uint32_t v, uint32_t n);
-	uint64_t fpngl_n_bits64(uint64_t v, uint32_t n);
 	
 	/*
 		Return a random integer in the domain [0,a) using the RNG `irng`.

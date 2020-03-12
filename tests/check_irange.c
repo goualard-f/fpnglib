@@ -28,22 +28,6 @@
 #include <fpnglib/mt19937ar.h>
 #include <fpnglib/mt19937-64.h>
 
-START_TEST(test_n_bits32)
-{
-	ck_assert(fpngl_n_bits32(0x10000000,7) == 0x8);
-	ck_assert(fpngl_n_bits32(0x80000000,7) == 0x40);
-	ck_assert(fpngl_n_bits32(0xf0000f00,3) == 0x7);
-}
-END_TEST
-
-START_TEST(test_n_bits64)
-{
-	ck_assert(fpngl_n_bits64(0x1000000000000000,7) == 0x8);
-	ck_assert(fpngl_n_bits64(0x8000000000000000,7) == 0x40);
-	ck_assert(fpngl_n_bits64(0xf0000f0000000000,3) == 0x7);
-}
-END_TEST
-
 START_TEST(test_ubound32)
 {
 	fpngl_irng_t *irng = fpngl_irng_new32(fpngl_mt19937v32(42));
@@ -78,6 +62,10 @@ START_TEST(test_range32)
 		int32_t v = fpngl_range32(irng,-1,2);
 		ck_assert(v == -1 || v == 0 || v == 1);
 	}
+	for (uint32_t i = 0; i < 10000; ++i) {
+		int64_t v = fpngl_range32(irng,-6,-2);
+		ck_assert(v >= -6 && v < -2);
+	}
 	
 	fpngl_irng_delete(irng);
 }
@@ -90,6 +78,10 @@ START_TEST(test_range64)
 	for (uint32_t i = 0; i < 10000; ++i) {
 		int64_t v = fpngl_range64(irng,-1,2);
 		ck_assert(v == -1 || v == 0 || v == 1);
+	}
+	for (uint32_t i = 0; i < 10000; ++i) {
+		int64_t v = fpngl_range64(irng,-6,-2);
+		ck_assert(v >= -6 && v < -2);
 	}
 	
 	fpngl_irng_delete(irng);
@@ -106,8 +98,6 @@ Suite *irange_suite(void)
   /* Core test case */
   tc_core = tcase_create("Core");
   
-  tcase_add_test(tc_core, test_n_bits32);
-  tcase_add_test(tc_core, test_n_bits64);
   tcase_add_test(tc_core, test_ubound32);
   tcase_add_test(tc_core, test_range32);
   tcase_add_test(tc_core, test_ubound64);
