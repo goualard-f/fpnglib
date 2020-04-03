@@ -47,6 +47,7 @@ extern "C" {
 		`denominator`.
 	*/
 	fpngl_frng64_t *fpngl_bydivision_k_new(const char *name,
+																				 double min, double max,
 																				 fpngl_irng_t *irng,
 																				 uint32_t k,
 																				 uint64_t denominator);

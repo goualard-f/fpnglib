@@ -26,7 +26,7 @@
 #include <fpnglib/frng64_fog05.h>
 #include <fpnglib/lcg.h>
 #include <fpnglib/irange.h>
-#include <fpnglib/types.h>
+#include <fpnglib/frng_t.h>
 #include <fpnglib/constants64.h>
 
 static double nextf64(fpngl_irng_t *irng)
@@ -60,7 +60,7 @@ fpngl_frng64_t *fpngl_fog05(fpngl_irng_t *irng, uint64_t seed)
 {
 	assert(seed == fpngl_irng_seed(irng));
 	return fpngl_frng64_new("fog05",
-													irng,
+													irng, 0.0, 0x1.fffffffffffffp-1,
 													(double (*)(void*))nextf64,
 													(void (*)(void*, double*, uint32_t))next_arrayf64,
 													(void (*)(void*))frng64_delete,

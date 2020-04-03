@@ -47,6 +47,7 @@ extern "C" {
 	 */
 	fpngl_frng64_t *fpngl_frng64_new(const char *name,
 																	 void *state,
+																	 double min, double max,
 																	 double (*nextf64)(void*),
 																	 void (*next_arrayf64)(void *state,
 																												 double *T, uint32_t n),
@@ -62,13 +63,19 @@ extern "C" {
 	/*
 		Fill the array `T` with `n` random floating-point numbers.
 
-		@caution Some FRNG may allocate a temporary array of `2n` uin64_t integers.
+		@caution Some FRNG may allocate a temporary array of `2n` uint64_t integers.
 	*/
 	void fpngl_frng64_next_arrayf64(fpngl_frng64_t *frng, double *T, uint32_t n);
 
 	// Return the name of the FRNG
 	const char* fpngl_frng64_name(fpngl_frng64_t *frng);
 
+	// Return the minimum value of the domain in which floats are drawn
+	double fpngl_frng64_min(fpngl_frng64_t *frng);
+	// Return the maximum value of the domain in which floats are drawn
+	double fpngl_frng64_max(fpngl_frng64_t *frng);
+
+	
 	// Return the seed used by the FRNG. May be `0` if the underlying IRNG
 	// was initialized with an array and not a unique integer.
 	uint64_t fpngl_frng64_seed(fpngl_frng64_t *frng);

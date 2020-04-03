@@ -93,7 +93,7 @@ fpngl_frng64_t *fpngl_KGW(fpngl_irng_t *irng, uint64_t seed)
 	state->truncHM = trunc(M/2);
 	state->eps0 = (M-1+state->truncHM)/(2*sqM);
 	state->eps1 = 1-(2*M - 1 - state->truncHM)/(2*sqM);
-	return  fpngl_frng64_new("KGW", state,
+	return  fpngl_frng64_new("KGW", state, 0.0, 0x1.fffffffffffffp-1, 
 													 (double (*)(void*))KGW_nextf64,
 													 (void (*)(void*, double*, uint32_t))KGW_next_arrayf64,
 													 (void (*)(void*))KGW_delete,

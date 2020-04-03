@@ -25,7 +25,7 @@
 #include <fpnglib/constants64.h>
 #include <fpnglib/float64.h>
 #include <fpnglib/irange.h>
-#include <fpnglib/types.h>
+
 
 fpngl_irng_t *fpngl_distribution_rng_internal(fpngl_distribution_t *dd);
 
@@ -160,7 +160,10 @@ double fpngl_nan64(fpngl_irng_t *rng)
 {
   fpngl_uintf64_t di;
   uint64_t sign = randsign(rng);
-  uint64_t fract = randfrac(rng);
+  uint64_t fract;
+	do {
+		fract = randfrac(rng);
+	} while (fract == 0);
   
   di.ui = (sign << 63) | ((uint64_t)0x7ff << 52) | fract;
   return di.d;
@@ -174,6 +177,8 @@ double fpngl_float64(fpngl_irng_t *rng,
 										 uint64_t andmask,
 										 uint64_t ormask)
 {
+	assert(minexp<=2047 && maxexp<=2047);
+	assert(minfrac<= 0x000fffffffffffff && maxfrac<=0x000fffffffffffff);
 	fpngl_uintf64_t di;
 
   uint64_t sign;
@@ -218,6 +223,7 @@ double fpngl_float64_distrib(fpngl_distribution_t *fpd)
 
 uint64_t fpngl_distance_float64(double a, double b)
 {
+	assert(a <= b);
   if (isinf(a) || isinf(b) || isnan(a) || isnan(b)) {
 	 return 0; // Error
   }

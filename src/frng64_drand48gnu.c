@@ -26,7 +26,7 @@
 #include <fpnglib/frng64_drand48gnu.h>
 #include <fpnglib/irng64_t.h>
 #include <fpnglib/lcg.h>
-#include <fpnglib/types.h>
+#include <fpnglib/frng_t.h>
 
 static double nextf64(fpngl_irng64_t *irng)
 {
@@ -59,7 +59,7 @@ fpngl_frng64_t *fpngl_drand48gnu(uint64_t seed)
 		return NULL;
 	}
 	return fpngl_frng64_new("drand48gnu",
-													irng,
+													irng, 0.0, 0x1.fffffffffffffp-1,
 													(double (*)(void*))nextf64,
 													(void (*)(void*, double*, uint32_t))next_arrayf64,
 													(void (*)(void*))frng64_delete,

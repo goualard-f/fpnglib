@@ -56,7 +56,7 @@ fpngl_frng64_t *fpngl_java(uint64_t seed)
 	if (irng == NULL) {
 		return NULL;
 	}
-	return  fpngl_frng64_new("java", irng,
+	return  fpngl_frng64_new("java", irng, 0.0, 0x1.fffffffffffffp-1,
 													 (double (*)(void*))java_nextf64,
 													 (void (*)(void*, double*, uint32_t))java_next_arrayf64,
 													 (void (*)(void*))fpngl_irng64_delete,

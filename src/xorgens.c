@@ -532,7 +532,7 @@ static uint32_t xor4096iv64_seed(xor4096iv64_state_t *irng)
 
 fpngl_frng32_t *fpngl_xor4096rv32(uint32_t seed)
 {
-	return fpngl_frng32_new("xor4096rv32",xor4096iv32_init(seed),
+	return fpngl_frng32_new("xor4096rv32",xor4096iv32_init(seed),0.0, 0x1.fffffep-1,
 													(float (*)(void*))xor4096rv32_nextf32,
 													(void (*)(void *,float*,uint32_t))xor4096rv32_next_arrayf32,
 													(void (*)(void*))xor4096iv32_free,
@@ -543,6 +543,7 @@ fpngl_frng32_t *fpngl_xor4096rv32(uint32_t seed)
 fpngl_frng64_t *fpngl_xor4096rv64(uint64_t seed)
 {
 	return fpngl_frng64_new("xor4096rv64",xor4096iv64_init(seed),
+													0.0, 0x1.fffffffffffffp-1,
 													(double (*)(void*))xor4096rv64_nextf64,
 													(void (*)(void *,double*,uint32_t))xor4096rv64_next_arrayf64,
 													(void (*)(void*))xor4096iv64_free,

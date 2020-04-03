@@ -38,9 +38,10 @@ extern "C" {
 		The FRNG created owns the IRNG passed as second parameter and is responsible
 		for its destruction.
 	*/
-	fpngl_frng64_t *fpngl_bydivision_new(const char *name,
-																					fpngl_irng_t *irng,
-																					uint64_t denominator);
+	fpngl_frng64_t *fpngl_bydivision_new(const char *name, double min,
+																			 double max,
+																			 fpngl_irng_t *irng,
+																			 uint64_t denominator);
 
 	/*
 		Double precision floating-point generator used by MATLAB until MATLAB 5.

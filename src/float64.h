@@ -26,7 +26,7 @@
 #include <fpnglib/fpngl_config.h>
 #include <stdint.h>
 #include <fpnglib/irng_t.h>
-#include <fpnglib/types.h>
+#include <fpnglib/frng_t.h>
 #include <fpnglib/discrete_distribution.h>
 
 #ifdef __cplusplus
@@ -46,12 +46,14 @@ extern "C" {
   double fpngl_previous64(double v, uint64_t n);
   
   // Return a random subnormal double precision number
+	// in (-fpngl_lambda64, -0.0]\cup[0.0, fpngl_lambda64)
   double fpngl_subnormal64(fpngl_irng_t *rng);
   // Return +0.0 or -0.0 randomly with even probability
   double fpngl_zero64(fpngl_irng_t *rng);
   // Return +oo or -oo randomly with even probability
   double fpngl_inf64(fpngl_irng_t *rng);
-  // Return a normal double precision number in [fngl_lambda64,fpngl_max64]
+  // Return a normal double precision number in
+	// [-fpngl_max64, -fngl_lambda64]\cup[fngl_lambda64, -fpngl_max64]
   double fpngl_normal64(fpngl_irng_t *rng);
   // Return a nan
   double fpngl_nan64(fpngl_irng_t *rng);

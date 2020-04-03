@@ -28,6 +28,8 @@
 struct fpngl_frng64_t {
 	void *state;
 	const char *name;
+	double min;
+	double max;
 	double (*nextf64)(void*);
 	void (*next_arrayf64)(void *state, double *T, uint32_t n);
 	void (*delete)(void*);
@@ -36,6 +38,7 @@ struct fpngl_frng64_t {
 
 fpngl_frng64_t *fpngl_frng64_new(const char *name,
 																 void *state,
+																 double min, double max,
 																 double (*nextf64)(void*),
 																 void (*next_arrayf64)(void *state,
 																											 double *T, uint32_t n),
@@ -51,6 +54,8 @@ fpngl_frng64_t *fpngl_frng64_new(const char *name,
 	rng->next_arrayf64 = next_arrayf64;
 	rng->delete = delete;
 	rng->seed = seed;
+	rng->min = min;
+	rng->max = max;
 	return rng;
 }
 
@@ -80,3 +85,14 @@ void fpngl_frng64_next_arrayf64(fpngl_frng64_t *frng, double *T, uint32_t n)
 {
 	frng->next_arrayf64(frng->state,T,n);
 }
+
+double fpngl_frng64_min(fpngl_frng64_t *frng)
+{
+	return frng->min;
+}
+
+double fpngl_frng64_max(fpngl_frng64_t *frng)
+{
+	return frng->max;
+}
+

@@ -46,7 +46,9 @@ static const double fpngl_u64 = 0.5*DBL_EPSILON;
 static const double fpngl_lambda64 = DBL_MIN;
 // Smallest positive double precision number
 static const double fpngl_mu64 = DBL_MIN*DBL_EPSILON;
+// Not-a-Number
 static const double fpngl_NaN64 = 0.0/0.0;
+// Infinity
 static const double fpngl_infinity64 = 1.0/0.0;
 // Largest positive finite double precision number
 static const double fpngl_max64 = DBL_MAX;

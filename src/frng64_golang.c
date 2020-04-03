@@ -48,7 +48,7 @@ static void golang_next_arrayf64(fpngl_irng_t *irng,
 fpngl_frng64_t *fpngl_golang(fpngl_irng_t *irng, uint64_t seed)
 {
 	assert(fpngl_irng_seed(irng) == seed);
-	return  fpngl_frng64_new("golang", irng,
+	return  fpngl_frng64_new("golang", irng, 0.0, 0x1.fffffffffffffp-1, 
 													 (double (*)(void*))golang_nextf64,
 													 (void (*)(void*, double*, uint32_t))golang_next_arrayf64,
 													 (void (*)(void*))fpngl_irng_delete,

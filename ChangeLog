@@ -1,0 +1,9 @@
+2020-03-24  Frédéric Goualard  <Frederic.Goualard@univ-nantes.fr>
+
+	* src/float64.c (fpngl_nan64): corrected bug whereby the
+	function could also return \pm\infty.
+
+2020-03-13  Frédéric Goualard  <Frederic.Goualard@univ-nantes.fr>
+
+	* src/types.h: removed file. Replaced by frng_t.h
+

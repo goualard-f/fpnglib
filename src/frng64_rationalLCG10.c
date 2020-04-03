@@ -52,7 +52,7 @@ fpngl_frng64_t *fpngl_rationalLCG10(uint64_t seed)
 	if (irng64 == NULL) {
 		return NULL;
 	}
-	return  fpngl_frng64_new("rationalLCG10", irng64,
+	return  fpngl_frng64_new("rationalLCG10", irng64, 0.0, 0x1.fffffffffffffp-1, 
 													 (double (*)(void*))rationalLCG10_nextf64,
 													 (void (*)(void*, double*, uint32_t))rationalLCG10_next_arrayf64,
 													 (void (*)(void*))fpngl_irng64_delete,

@@ -28,6 +28,8 @@
 struct fpngl_frng32_t {
 	void *state;
 	const char *name;
+	float min;
+	float max;
 	float(*nextf32)(void*);
 	void (*next_arrayf32)(void *state, float *T, uint32_t n);
 	void (*delete)(void*);
@@ -36,6 +38,7 @@ struct fpngl_frng32_t {
 
 fpngl_frng32_t *fpngl_frng32_new(const char *name,
 																 void *state,
+																 float min, float max,
 																 float (*nextf32)(void*),
 																 void (*next_arrayf32)(void *state,
 																											 float *T, uint32_t n),
@@ -50,6 +53,8 @@ fpngl_frng32_t *fpngl_frng32_new(const char *name,
 	rng->next_arrayf32 = next_arrayf32;
 	rng->delete = delete;
 	rng->seed = seed;
+	rng->min = min;
+	rng->max = max;
 	return rng;
 }
 
@@ -79,3 +84,14 @@ void fpngl_frng32_next_arrayf32(fpngl_frng32_t *frng, float *T, uint32_t n)
 {
 	frng->next_arrayf32(frng->state,T,n);
 }
+
+float fpngl_frng32_min(fpngl_frng32_t *frng)
+{
+	return frng->min;
+}
+
+float fpngl_frng32_max(fpngl_frng32_t *frng)
+{
+	return frng->max;
+}
+

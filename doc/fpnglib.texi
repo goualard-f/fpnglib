@@ -51,7 +51,7 @@ More information about the FPNGlib library can be found at the project homepage,
 @uref{https://gitlab.univ-nantes.fr/goualard-f/fpnglib}.
 
 
-This manual assumes a basic knowledge of the IEEE~754 standard and refers to the internal representation of floating-point numbers in several places. Readers unfamiliar with it may find beneficial to at least read the @url{https://en.wikipedia.org/wiki/IEEE_754,Wikipedia entry} for the standard first.
+This manual assumes a basic knowledge of the IEEE@tie{}754 standard and refers to the internal representation of floating-point numbers in several places. Readers unfamiliar with the standard may find beneficial to at least read its @url{https://en.wikipedia.org/wiki/IEEE_754,Wikipedia entry} first.
 
 The FPNGlib library contains code from third parties, specifically:
 @itemize @bullet
@@ -471,6 +471,8 @@ The number of integer Random Number Generators augments regularly with new versi
 
 @float Table,tab:irngs
 @caption{Integer RNGs available in FPNGlib@tie{}@value{VERSION} and their characteristics.}
+@tex\hrule
+@end tex
 @multitable @columnfractions .4 .15 .15 .15 .15
 @headitem Name @tab Size @tab Min. @tab Max. @tab Period
 @item @code{drand48_lcg64} @tab 64 @tab 0 @tab @math{2^{48}-1} @tab ?
@@ -484,6 +486,8 @@ The number of integer Random Number Generators augments regularly with new versi
 @item @code{xor4096iv32} @tab 32 @tab 0 @tab @math{2^{32}-1} @tab ?
 @item @code{xor4096iv64} @tab 64 @tab 0 @tab @math{2^{64}-1} @tab ?
 @end multitable
+@tex\hrule
+@end tex
 @end float
 
 @subsection 32 Bits Integer RNGs
@@ -659,8 +663,233 @@ Return a random 32 bits integer according to the discrete distribution @var{dist
 @chapter Floating-Point Random Generators
 @c ======================================
 
+The standard libraries of most programming languages offers only one algorithm to compute random IEEE@tie{}754 floating-point numbers. Usually, it computes floats by dividing random integers by some constant. This imparts a specific structure to the fractional parts of the floats, which may adversely impact programs that use them.
+
+FPNGlib gives the user the choice of the method used to produce floats. All float RNGs are either of the type @code{fpngl_frng32_t} or @code{fpngl_frng64_t}; they all must propose the same functionalities:
+
+@deftypefn {Library Function} void fpngl_frng32_delete (fpngl_frng32_t* @var{rng})
+@deftypefnx {Library Function} void fpngl_frng64_delete (fpngl_frng64_t* @var{rng})
+Reclaim the memory allocated to the RNG @var{rng}. If it was constructed with an
+integer RNG, the memory for that one is also reclaimed since float RNGs ``own'' the
+integer RNGs they are made of.
+@end deftypefn
+
+@deftypefn {Library Function} float fpngl_frng32_min (fpngl_frng32_t* @var{rng})
+@deftypefnx {Library Function} float fpngl_frng32_max (fpngl_frng32_t* @var{rng})
+@deftypefnx {Library Function} double fpngl_frng64_min (fpngl_frng64_t* @var{rng})
+@deftypefnx {Library Function} double fpngl_frng64_max (fpngl_frng64_t* @var{rng})
+Return, respectively, the minimum and the maximum possible values drawn by the
+floating-point RNG.
+
+In the literature, many FRNGs are described as returning values in the domain
+@math{[0,1)}. Technically, their actual domain is not an interval but a set of discrete values. It is then always possible to describe the domain with closed brackets. The functions @code{*_min} and @code{*_max} return the smallest and largest values in this set.
+@end deftypefn
+
+@deftypefn {Library Function} float fpngl_frng32_nextf32 (fpngl_frng32_t* @var{rng})
+@deftypefnx {Library Function} double fpngl_frng64_nextf64 (fpngl_frng64_t* @var{rng})
+Return the next random floating-point number uniformly drawn from, respectively,
+the domain @code{[fpngl_frng32_min(rng), fpngl_frng32_max(rng)]}, or the domain
+@code{[fpngl_frng64_min(rng), fpngl_frng64_max(rng)]}.
+@end deftypefn
+
+@deftypefn {Library Function} float fpngl_frng32_next_arrayf32 @
+           (fpngl_frng32_t* @var{rng}, float *@var{T}, uint32_t @var{n})
+@deftypefnx {Library Function} double fpngl_frng64_next_arrayf64 @
+            (fpngl_frng64_t* @var{rng}, double *@var{T}, uint32_t @var{n})
+Fill the array @var{T} with @var{n} random floating-point numbers drawn with the FRNG
+@var{rng}.
+
+@strong{Caution}: some FRNGs may allocate a temporary array of size @math{2@times@var{n}} to implement this function. 
+@end deftypefn
+
+@deftypefn {Library Function} {const char*} fpngl_fprng32_name @
+           (fpngl_frng32_t* @var{rng})
+@deftypefnx {Library Function} {const char*} fpngl_fprng64_name @
+            (fpngl_frng64_t* @var{rng})
+Return the string corresponding to the name of the FRNG (@xref{Existing float RNGs}).
+@end deftypefn
+
+@deftypefn {Library Function} uint32_t fpngl_fprng32_seed @
+           (fpngl_frng32_t* @var{rng})
+@deftypefnx {Library Function} uint64_t fpngl_fprng64_seed @
+            (fpngl_frng64_t* @var{rng})
+Return the integer used to initialize the FRNG.
+@end deftypefn
 
 
+@node Existing float RNGs
+@section Existing float RNGs
+@c -------------------------
+
+@node Single Precision FRNGs
+@subsection Single Precision FRNGs
+@c ...............................
+
+@deftypefn {@file{fpnglib/xorgens.h}} fpngl_frng32_t* fpngl_xor4096rv32 @
+           (uint32_t @var{seed})
+           ??
+@end deftypefn           
+
+
+@node Double Precision FRNGs
+@subsection Double Precision FRNGs
+@c ...............................
+
+@deftypefn {@file{fpnglib/frng64_division.h}} fpngl_frng64_t* fpngl_matlabp5 (uint64_t @var{seed})
+Double precision FRNG used by MATLAB until MATLAB 5.
+
+@end deftypefn
+
+@deftypefn {@file{fpnglib/frng64_division.h}} fpngl_frng64_t* fpngl_drand48bsd @
+           (uint64_t @var{seed})
+Implementation of the POSIX function @code{drand48} in FreeBSD.
+@end deftypefn
+
+@deftypefn {@file{fpnglib/frng64_division.h}} fpngl_frng64_t* fpngl_mupad @
+           (uint64_t @var{seed})
+Generator used in Maple 10 and MuPAD Pro 3.1.
+@end deftypefn
+
+@deftypefn {@file{fpnglib/frng64_division_k.h}} fpngl_frng64_t* fpngl_div53 @
+           (fpngl_irng_t* @var{irng}, uint64_t @var{seed})
+Draw a double precision number in the domain @math{@{0@}@cup@{2^{-53},1-2^{-53}@}} by
+dividing an integer generated with the IRNG @var{irng} by @math{2^{53}}.
+@end deftypefn
+
+@deftypefn {@file{fpnglib/frng64_division_k.h}} fpngl_frng64_t* fpngl_div32 @
+           (fpngl_irng_t* @var{irng}, uint64_t @var{seed})
+Draw a double precision number in the domain @math{@{0@}@cup@{2^{-32},1-2^{-32}@}} by
+dividing an integer generated with the IRNG @var{irng} by @math{2^{32}}.
+@end deftypefn
+
+@deftypefn {@file{fpnglib/frng64_drand48gnu.h}} fpngl_frng64_t* fpngl_drand48gnu @
+           (uint64_t @var{seed})
+Implementation of the POSIX @code{drand48} function as implemented in GNU @command{gcc}.
+@end deftypefn
+
+@deftypefn {@file{fpnglib/frng64_fog97.h}} fpngl_frng64_t* fpngl_fog97 @
+           (fpngl_irng_t* @var{irng}, uint64_t @var{seed})
+Computation of a double precision number in @math{[0,1-2^{-52}]}
+by generating a 52 bits random
+fractional part, concatenating it with an exponent of @math{0} to obtain
+a float in @math{[1,2-2^{-52}]}, and then subtracting @math{1.0} from it. 
+@end deftypefn           
+
+@deftypefn {@file{fpnglib/frng64_fog05.h}} fpngl_frng64_t* fpngl_fog05 @
+           (fpngl_irng_t* @var{irng}, uint64_t @var{seed})
+           ??
+@end deftypefn           
+
+@deftypefn {@file{fpnglib/frng64_golang.h}} fpngl_frng64_t* fpngl_golang @
+           (fpngl_irng_t* @var{irng}, uint64_t @var{seed})
+           ??
+@end deftypefn           
+
+@deftypefn {@file{fpnglib/frng64_java.h}} fpngl_frng64_t* fpngl_java @
+           (uint64_t @var{seed})
+           ??
+@end deftypefn           
+
+@deftypefn {@file{fpnglib/frng64_KGW.h}} fpngl_frng64_t* fpngl_KGW @
+           (fpngl_irng_t* @var{irng}, uint64_t @var{seed})
+           ??
+@end deftypefn           
+
+@deftypefn {@file{fpnglib/frng64_lecuyer_simard.h}} fpngl_frng64_t* fpngl_lecuyer_simard @
+           (fpngl_irng_t* @var{irng}, uint64_t @var{seed})
+           ??
+@end deftypefn
+
+@deftypefn {@file{fpnglib/frng64_rationalLCG10.h}} fpngl_frng64_t* fpngl_rationalLCG10 @
+           (uint64_t @var{seed})
+           ??
+@end deftypefn           
+
+@deftypefn {@file{fpnglib/xorgens.h}} fpngl_frng64_t* fpngl_xor4096rv64 @
+           (uint64_t @var{seed})
+           ??
+@end deftypefn           
+
+@code Drawing floats in a class
+@section Drawing floats in a class
+@c -------------------------------
+
+@deftypefn {@file{fpnglib/float64.h}} double fpngl_subnormal64 (fpngl_irng_t* @var{rng})
+Return a random double precision subnormal number drawn uniformly from the domain 
+@math{(-@code{fpngl_lambda64()}, @code{fpngl_lambda64()})}.
+@end deftypefn
+
+@deftypefn {@file{fpnglib/float64.h}} double fpngl_zero64 (fpngl_irng_t* @var{rng})
+Return zero in double precision as @math{+0.0} or @math{-0.0} with even probability.
+@end deftypefn
+
+@deftypefn {@file{fpnglib/float64.h}} double fpngl_inf64 (fpngl_irng_t* @var{rng})
+Return the double precision value reserved for infinity as @math{+@infty} or
+@math{-@infty} with even probability.
+@end deftypefn
+
+@deftypefn {@file{fpnglib/float64.h}} double fpngl_normal64 (fpngl_irng_t* @var{rng})
+Return a random double precision number drawn uniformly in the domain
+@math{[-@code{fpngl_max64()}, -@code{fpngl_lambda64()}]@cup[@code{fpngl_lambda64()}, @code{fpngl_max64()}]}.
+@end deftypefn
+
+@deftypefn {@file{fpnglib/float64.h}} double fpngl_nan64 (fpngl_irng_t* @var{rng})
+Return randomly one of the @math{2^{53}-2} possible @emph{Not-A-Number} double precision
+values.
+@end deftypefn
+
+
+@deftypefn {@file{fpnglib/float64.h}} double fpngl_float64 @
+           (fpngl_irng_t* @var{rng},@
+					  fpngl_sign_t @var{s},@
+					  uint32_t @var{minexp}, uint32_t @var{maxexp},@
+					  uint64_t @var{minfrac}, uint64_t @var{maxfrac},@
+					  uint64_t @var{andmask},@
+					  uint64_t @var{ormask})
+Return a random double precision number whose IEEE@tie{}754 structure (sign, exponent, fractional part) obeys the constraints given as parameters:
+@itemize
+@item@var{s}: possible sign. May be @code{fpngl_positive}, @code{fpngl_negative}, or @code{fpngl_whatever} if both positive and negative signs are allowed;
+@item@var{minexp}: minimum exponent allowed. This is the biased value, which means you must add @math{1023} to the actual value. Possible values are in the domain
+@math{[0,2047]};
+@item@var{maxexp}: maximum exponent allowed. This is the biased value, which means you must add @math{1023} to the actual value. Possible values are in the domain
+@math{[0,2047]};
+@item@var{minfrac}: minimum fractional part expressed as a 52 bits unsigned integer
+between @code{0x0000000000000000} and @code{0x000fffffffffffff};
+@item@var{maxfrac}: maximum fractional part expressed as a 52 bits unsigned integer
+between @code{0x0000000000000000} and @code{0x000fffffffffffff};
+@item@var{andmask}: bitwise @code{AND} mask applied to the integer obtained by
+concatenating the random sign, biased exponent, and fractional part. Should be
+@code{fpngl_noand64}@footnote{The @code{fpngl_noand64} constant has value @code{0xffffffffffffffff}  and is defined in @file{fpnglib/constants64.h}.} if no mask is to be applied;
+@item@var{ormask}: bitwise @code{OR} mask applied to the result of the bitwise AND. Should be @code{fpngl_noor64}@footnote{The code{fpngl_noor64} constant has value @code{0x0000000000000000} and is defined in @file{fpnglib/constants64.h}.} if no mask is needed.
+@end itemize
+
+Note that, for better performances, the consistency of the constraints are not tested. 
+@end deftypefn
+
+@node Drawing floats non-uniformly
+@section Drawing floats non-uniformly
+@c ----------------------------------
+
+The FPNGlib library proposes a simple way to draw floating-point numbers from one of
+the five classes presented in @ref{Drawing floats in a class} according to some discrete probability distribution. The user first defines the probability distribution for each of the classes in the order ``@code{zero, subnormal, normal, infinite, nan}'' with the function @code{fpngl_class_float64_new}; it is then possible to draw floats following that distribution with the function @code{fpngl_float64_distrib}. This functionality is just a facility offered around the more general method presented in @xref{Non-Uniform Distributions}.
+
+@deftypefn {@file{fpnglib/float64.h}} fpngl_distribution_t* fpngl_class_float64_new@
+           (fpngl_irng_t* @var{irng}, const double @var{P}[static 5])
+Create an @code{fpngl_distribution_t} object representing the discrete probability distribution defined by the array @var{P} of at least 5 values:
+@itemize
+@item @code{P[0]}: probability of returning @math{@pm0.0};
+@item @code{P[1]}: probability of returning a subnormal number;
+@item @code{P[2]}: probability of returning a normal number;
+@item @code{P[3]}: probability of returning @math{@pm@infty};
+@item @code{P[4]}: probability of returning an @emph{NaN}.
+@end itemize
+The sum of the first five values in @var{P} must be equal to 1. Note that, inside the classes 1 and 2 (subnormal and normal numbers), the floats are still drawn uniformly at random.
+@end deftypefn
+
+@deftypefn {@file{fpnglib/float64.h}} fpngl_distribution_t* fpngl_class_float64_new@
+           (fpngl_irng_t* @var{irng}, const double @var{P}[static 5])
+Create an @code{fpngl_distribution_t} object representing the discrete probability distribution defined by the array @var{P} of at least 5 values.
+@end deftypefn
 
 
 @node IEEE 754 and the Floating-Point Unit
@@ -681,6 +910,7 @@ and @file{fpnglib/constants64.h} ---for the double precision.
 @deftypevrx Constant uint32_t fpngl_emax32
 @deftypevrx Constant uint32_t fpngl_emax64
 Smallest and largest unbiased exponents for single and double precision float.
+
 @noindent @strong{Example}
 @cartouche
 @verbatiminclude snippets/exponent.c
@@ -694,13 +924,16 @@ Double precision exponent in [-1022, 1023]
 
 @deftypevr Constant uint32_t fpngl_t32
 @deftypevrx Constant uint32_t fpngl_t64
-Number of bits in the significand of a single or double precision float.
+Number of bits in the significand of a single or double precision float. The @dfn{significand} of a float corresponds to the fractional part together with the hidden bit before the binary point.
+
 @noindent @strong{Example:}
 @cartouche
 @verbatiminclude snippets/significand.c
 @end cartouche
 @noindent @strong{Output:}
 @verbatim
+Number of bits with single precision: 24
+Number of bits with double precision: 53
 Number of digits with single precision: 7
 Number of digits with double precision: 15
 @end verbatim
@@ -856,8 +1089,25 @@ If @var{v} is an NaN, the function returns the same NaN. Otherwise, it returns e
 The output is @code{1} since the smallest positive double precision float is separated from the largest negative float by @code{0}.
 @end deftypefn
 
+@deftypefn {@file{fpnglib/float64.h}} uint64_t fpngl_distance_float64 @
+           (double @var{a}, double @var{b})
+Return the number of floats (bounds included) from value @var{a} to value @var{b}. Return
+@code{1} if @code{@var{a}==@var{b}} and @code{0} if either @var{a} or var{b} are not
+finite floats (infinities or NaNs).
+
+The function is only defined for @code{@var{a} <= @var{b}}.
+@end deftypefn
+
+@deftypefn {@file{fpnglib/float64.h}} uint64_t fpngl_signed_distance_float64 @
+           (double @var{a}, double @var{b})
+Return the number of floats (bounds included) from value @var{a} to value @var{b}. Return
+@code{1} if @code{@var{a}==@var{b}} and @code{0} if either @var{a} or var{b} are not
+finite floats (infinities or NaNs). Return a negative value if @code{@var{a} < @var{b}}.
+@end deftypefn
+
 @section Manipulating the FPU 
 @c ------------------------
+
 
 @node Extending the Library
 @chapter Extending the Library

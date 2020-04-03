@@ -60,6 +60,7 @@ static void frng64_delete(frng_division_state_t *frngstate)
 }
 
 fpngl_frng64_t *fpngl_bydivision_new(const char *name,
+																		 double min, double max,
 																		 fpngl_irng_t *irng,
 																		 uint64_t denominator)
 {
@@ -72,7 +73,7 @@ fpngl_frng64_t *fpngl_bydivision_new(const char *name,
 	if ((uint64_t)frngstate->denominator != denominator) {
 		FPNGL_WARNING("Warning: %lu rounded to %.0f\n",denominator,frngstate->denominator);
 	}
-	return  fpngl_frng64_new(name, frngstate,
+	return  fpngl_frng64_new(name, frngstate, min, max,
 													 (double (*)(void*))nextf64,
 													 (void (*)(void*, double*, uint32_t))next_arrayf64,
 													 (void (*)(void*))frng64_delete,
@@ -81,19 +82,19 @@ fpngl_frng64_t *fpngl_bydivision_new(const char *name,
 
 fpngl_frng64_t *fpngl_matlabp5(uint64_t seed)
 {
-	return fpngl_bydivision_new("matlabp5",
+	return fpngl_bydivision_new("matlabp5", 0.0, 0x1.fffffffffffffp-1,
 															fpngl_irng_new64(fpngl_minstd64(seed)),1UL<<31);
 }
 
 fpngl_frng64_t *fpngl_drand48bsd(uint64_t seed)
 {
-	return fpngl_bydivision_new("drand48bsd",
+	return fpngl_bydivision_new("drand48bsd", 0.0, 0x1.fffffffffffffp-1,
 															fpngl_irng_new64(fpngl_drand48_lcg64(seed)),1UL<<48);
 }
 
 fpngl_frng64_t *fpngl_mupad(uint64_t seed)
 {
-	return fpngl_bydivision_new("mupad",
+	return fpngl_bydivision_new("mupad", 0.0, 0x1.fffffffffffffp-1,
 															fpngl_irng_new64(fpngl_mupad_lcg64(seed)),
 															0xe8d4a50ff5UL);
 }

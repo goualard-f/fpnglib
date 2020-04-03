@@ -67,6 +67,7 @@ static void frng64_delete(frng_division_state_t *frngstate)
 }
 
 fpngl_frng64_t *fpngl_bydivision_k_new(const char *name,
+																			 double min, double max,
 																			 fpngl_irng_t *irng,
 																			 uint32_t k,
 																			 uint64_t denominator)
@@ -82,7 +83,7 @@ fpngl_frng64_t *fpngl_bydivision_k_new(const char *name,
 	if ((uint64_t)frngstate->denominator != denominator) {
 		FPNGL_WARNING("Warning: %lu rounded to %.0f\n",denominator,frngstate->denominator);
 	}
-	return  fpngl_frng64_new(name, frngstate,
+	return  fpngl_frng64_new(name, frngstate, min, max,
 													 (double (*)(void*))nextf64,
 													 (void (*)(void*, double*, uint32_t))next_arrayf64,
 													 (void (*)(void*))frng64_delete,
@@ -92,13 +93,13 @@ fpngl_frng64_t *fpngl_bydivision_k_new(const char *name,
 fpngl_frng64_t *fpngl_div53(fpngl_irng_t *irng, uint64_t seed)
 {
 	assert(fpngl_irng_seed(irng) == seed);
-	return fpngl_bydivision_k_new("div53",irng, 53, 1UL << 53);									
+	return fpngl_bydivision_k_new("div53",0.0, 0x1.fffffffffffffp-1, irng, 53, 1UL << 53);									
 }
 
 fpngl_frng64_t *fpngl_div32(fpngl_irng_t *irng, uint64_t seed)
 {
 	assert(fpngl_irng_seed(irng) == seed);
-	return fpngl_bydivision_k_new("div32",irng, 32, 1UL << 32);									
+	return fpngl_bydivision_k_new("div32", 0.0, 0x1.fffffffep-1,irng, 32, 1UL << 32);									
 }
 
 

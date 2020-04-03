@@ -47,6 +47,7 @@ extern "C" {
 	 */
 	fpngl_frng32_t *fpngl_frng32_new(const char *name,
 																	 void *state,
+																	 float min, float max,
 																	 float (*nextf32)(void*),
 																	 void (*next_arrayf32)(void *state,
 																												 float *T, uint32_t n),
@@ -66,9 +67,15 @@ extern "C" {
 	*/
 	void fpngl_frng32_next_arrayf32(fpngl_frng32_t *frng, float *T, uint32_t n);
 
+
 	// Return the name of the FRNG
 	const char* fpngl_frng32_name(fpngl_frng32_t *frng);
 
+	// Return the minimum value of the domain in which floats are drawn
+	float fpngl_frng32_min(fpngl_frng32_t *frng);
+	// Return the maximum value of the domain in which floats are drawn
+	float fpngl_frng32_max(fpngl_frng32_t *frng);
+		
 	// Return the seed used by the FRNG. May be `0` if the underlying IRNG
 	// was initialized with an array and not a unique integer.
 	uint32_t fpngl_frng32_seed(fpngl_frng32_t *frng);

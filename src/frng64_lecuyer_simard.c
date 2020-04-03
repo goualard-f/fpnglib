@@ -73,7 +73,7 @@ fpngl_frng64_t *fpngl_lecuyer_simard(fpngl_irng_t *irng, uint64_t seed)
 	// as a double precision number.
 	state->sqM = state->M*state->M;
 	
-	return  fpngl_frng64_new("lecuyer_simard", state,
+	return  fpngl_frng64_new("lecuyer_simard", state, 0.0, 0x1.fffffffffffffp-1,
 													 (double (*)(void*))LES_nextf64,
 													 (void (*)(void*, double*, uint32_t))LES_next_arrayf64,
 													 (void (*)(void*))LES_delete,

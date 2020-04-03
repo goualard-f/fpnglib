@@ -29,7 +29,7 @@
 /*
   Defining constants according to:
   Accuracy and Stability of Numerical Algorithms. 
-  Nicholas J. Higham. SIAM
+  Nicholas J. Higham. SIAM, 2002. ISBN: 978-0-89871-521-7
  */
 
 // Double precision format **************************************
