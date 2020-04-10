@@ -66,7 +66,7 @@ static void frng64_delete(frng_division_state_t *frngstate)
 	free(frngstate);
 }
 
-fpngl_frng64_t *fpngl_bydivision_k_new(const char *name,
+fpngl_frng64_t *fpngl_bydivision_k_new64(const char *name,
 																			 double min, double max,
 																			 fpngl_irng_t *irng,
 																			 uint32_t k,
@@ -90,16 +90,16 @@ fpngl_frng64_t *fpngl_bydivision_k_new(const char *name,
 													 (uint64_t (*)(void*))frng64_seed);
 }
 
-fpngl_frng64_t *fpngl_div53(fpngl_irng_t *irng, uint64_t seed)
+fpngl_frng64_t *fpngl_div53(fpngl_irng_t *irng)
 {
-	assert(fpngl_irng_seed(irng) == seed);
-	return fpngl_bydivision_k_new("div53",0.0, 0x1.fffffffffffffp-1, irng, 53, 1UL << 53);									
+	return fpngl_bydivision_k_new64("div53",0.0, 0x1.fffffffffffffp-1, irng,
+																	53, 1UL << 53);									
 }
 
-fpngl_frng64_t *fpngl_div32(fpngl_irng_t *irng, uint64_t seed)
+fpngl_frng64_t *fpngl_div32(fpngl_irng_t *irng)
 {
-	assert(fpngl_irng_seed(irng) == seed);
-	return fpngl_bydivision_k_new("div32", 0.0, 0x1.fffffffep-1,irng, 32, 1UL << 32);									
+	return fpngl_bydivision_k_new64("div32", 0.0, 0x1.fffffffep-1,irng,
+																	32, 1UL << 32);									
 }
 
 

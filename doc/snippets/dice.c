@@ -1,7 +1,6 @@
 // doc/snippets/dice.c
 #include <stdio.h>
 #include <fpnglib/mt19937ar.h>
-#include <fpnglib/irng_t.h>
 #include <fpnglib/irange.h>
 
 const uint32_t seed = 13;

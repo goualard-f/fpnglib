@@ -52,7 +52,7 @@ fpngl_distribution_t *fpngl_distribution_new(fpngl_irng_t *rng,
 	assert(dist != NULL);
 	dist->irng = rng;
 	// The FRNG used cannot be chosen at present. Should we reconsider that?
-	dist->frng = fpngl_div32(rng,fpngl_irng_seed(rng));
+	dist->frng = fpngl_div32(rng);
 	dist->alias = calloc(szP,sizeof(uint32_t));
 	assert(dist->alias != NULL);
 	dist->probability = calloc(szP,sizeof(double));

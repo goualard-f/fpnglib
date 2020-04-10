@@ -59,10 +59,10 @@ static void frng64_delete(frng_division_state_t *frngstate)
 	free(frngstate);
 }
 
-fpngl_frng64_t *fpngl_bydivision_new(const char *name,
-																		 double min, double max,
-																		 fpngl_irng_t *irng,
-																		 uint64_t denominator)
+fpngl_frng64_t *fpngl_bydivision_new64(const char *name,
+																			 double min, double max,
+																			 fpngl_irng_t *irng,
+																			 uint64_t denominator)
 {
 	assert(denominator != 0);
 	frng_division_state_t *frngstate = malloc(sizeof(frng_division_state_t));
@@ -82,20 +82,19 @@ fpngl_frng64_t *fpngl_bydivision_new(const char *name,
 
 fpngl_frng64_t *fpngl_matlabp5(uint64_t seed)
 {
-	return fpngl_bydivision_new("matlabp5", 0.0, 0x1.fffffffffffffp-1,
-															fpngl_irng_new64(fpngl_minstd64(seed)),1UL<<31);
+	return fpngl_bydivision_new64("matlabp5", 0.0, 0x1.fffffffffffffp-1,
+																fpngl_irng_new64(fpngl_minstd64(seed)),1UL<<31);
 }
 
 fpngl_frng64_t *fpngl_drand48bsd(uint64_t seed)
 {
-	return fpngl_bydivision_new("drand48bsd", 0.0, 0x1.fffffffffffffp-1,
-															fpngl_irng_new64(fpngl_drand48_lcg64(seed)),1UL<<48);
+	return fpngl_bydivision_new64("drand48bsd", 0.0, 0x1.fffffffffffffp-1,
+																fpngl_irng_new64(fpngl_drand48_lcg64(seed)),1UL<<48);
 }
 
 fpngl_frng64_t *fpngl_mupad(uint64_t seed)
 {
-	return fpngl_bydivision_new("mupad", 0.0, 0x1.fffffffffffffp-1,
-															fpngl_irng_new64(fpngl_mupad_lcg64(seed)),
-															0xe8d4a50ff5UL);
+	return fpngl_bydivision_new64("mupad", 0.0, 0x1.fffffffffffffp-1,
+																fpngl_irng_new64(fpngl_mupad_lcg64(seed)),
+																0xe8d4a50ff5UL);
 }
-

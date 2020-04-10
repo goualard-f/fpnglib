@@ -1,4 +1,5 @@
 // doc/snippets/biased_dice.c
+// WARNING: wrong solution!
 #include <stdio.h>
 #include <fpnglib/mt19937ar.h>
 

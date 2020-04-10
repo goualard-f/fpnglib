@@ -59,11 +59,11 @@ int main(void)
 	memset(histo,0,SZP*sizeof(uint64_t));
 				 
 	fpngl_irng_t *irng = fpngl_irng_new32(fpngl_mt19937v32(seed));
-	fpngl_ddistribution_t *dd = fpngl_ddistribution_new(irng, P, SZP);
+	fpngl_distribution_t *dd = fpngl_distribution_new(irng, P, SZP);
 
 	long begin = get_usertime();
 	for (uint64_t i = 0; i < niters; ++i) {
-		++histo[fpngl_ddistribution_next32(dd)];
+		++histo[fpngl_distribution_next32(dd)];
 	}
 	long end = get_usertime();
 	
@@ -75,5 +75,5 @@ int main(void)
 
 	printf("Time: %ld μs\n",end-begin);
 	
-	fpngl_ddistribution_delete(dd);
+	fpngl_distribution_delete(dd);
 }

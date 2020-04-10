@@ -63,11 +63,14 @@ int main(void)
 	const uint64_t seed = 314159;
 	fpngl_irng_t *irng32 = fpngl_irng_new32(fpngl_mt19937v32(seed));
 	fpngl_irng_t *irng64 = fpngl_irng_new64(fpngl_mt19937v64(seed));
-	fpngl_frng64_t *frngT[NMETHODS] = {fpngl_bydivision_new("FMT19937v32",
-																													irng32,fpngl_irng_max(irng32)),
-																		 fpngl_bydivision_new("FMT19937v64",
-																													irng64,fpngl_irng_max(irng64)),
-															
+	fpngl_frng64_t *frngT[NMETHODS] = {fpngl_bydivision_new64("FMT19937v32",0.0,
+																														0x1.fffffffffffffp-1,
+																														irng32,
+																														fpngl_irng_max(irng32)),
+																		 fpngl_bydivision_new64("FMT19937v64",0.0,
+																														0x1.fffffffffffffp-1,
+																														irng64,
+																														fpngl_irng_max(irng64)),
 																		 fpngl_matlabp5(seed),
 																		 fpngl_drand48bsd(seed),
 																		 fpngl_mupad(seed),

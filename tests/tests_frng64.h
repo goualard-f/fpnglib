@@ -76,11 +76,48 @@ START_TEST(test_##name##_seed)																	 \
 }																																 \
 END_TEST
 
+
+#define TESTING_FRNG64_NOSEED(name,...)													 \
+START_TEST(test_##name##_nextf64)																 \
+{																																 \
+	fpngl_frng64_t *frng = fpngl_##name(__VA_ARGS__);							 \
+	for (uint32_t i = 0; i < 10; ++i) {														 \
+		ck_assert(fpngl_frng64_nextf64(frng) == name##_T[i]);				 \
+	}																															 \
+	fpngl_frng64_delete(frng);																		 \
+}																																 \
+END_TEST																												 \
+																																 \
+START_TEST(test_##name##_nextarrayf64)													 \
+{																																 \
+	fpngl_frng64_t *frng = fpngl_##name(__VA_ARGS__);							 \
+	double T[10];																									 \
+	fpngl_frng64_next_arrayf64(frng,T,10);												 \
+	for (uint32_t i = 0; i < 10; ++i) {														 \
+		ck_assert(T[i] == name##_T[i]);															 \
+	}																															 \
+	fpngl_frng64_delete(frng);																		 \
+}																																 \
+END_TEST																												 \
+START_TEST(test_##name##_name)																	 \
+{																																 \
+	fpngl_frng64_t *frng = fpngl_##name(__VA_ARGS__);							 \
+	ck_assert(!strcmp(fpngl_frng64_name(frng),#name));						 \
+	fpngl_frng64_delete(frng);																		 \
+}																																 \
+END_TEST																												 \
+
+
 #define ADD_TEST_FRNG64(name)														\
 	tcase_add_test(tc_core, test_##name##_nextf64);				\
   tcase_add_test(tc_core, test_##name##_nextarrayf64);	\
   tcase_add_test(tc_core, test_##name##_name);					\
   tcase_add_test(tc_core, test_##name##_seed);
+
+#define ADD_TEST_FRNG64_NOSEED(name)										\
+	tcase_add_test(tc_core, test_##name##_nextf64);				\
+  tcase_add_test(tc_core, test_##name##_nextarrayf64);	\
+  tcase_add_test(tc_core, test_##name##_name);
 
 
 #endif // __fpngl_tests_frng64_h__

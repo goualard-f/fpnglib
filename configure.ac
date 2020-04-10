@@ -25,7 +25,7 @@ dnl For Automake
 AM_INIT_AUTOMAKE([gnu 1.7 dist-bzip2])
 
 AX_IS_RELEASE([git-directory])
-AX_CHECK_ENABLE_DEBUG([yes])
+AX_CHECK_ENABLE_DEBUG([no])
 if test x$ax_enable_debug = xinfo; then
 	 AC_DEFINE([FPNGL_ENABLE_INFO],[1],[Define this to 1 if you want info code])
 fi

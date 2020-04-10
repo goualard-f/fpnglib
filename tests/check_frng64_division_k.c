@@ -44,7 +44,7 @@ const double div53_T[] = {0x1.5003fp-32,
 
 fpngl_irng_t *irngdiv53;
 
-TESTING_FRNG64(div53,seed,irngdiv53);
+TESTING_FRNG64_NOSEED(div53,irngdiv53);
 
 Suite *frng64_division_suite(void)
 {
@@ -57,7 +57,7 @@ Suite *frng64_division_suite(void)
   
   /* Core test case */
   tc_core = tcase_create("Core");
-  ADD_TEST_FRNG64(div53);
+  ADD_TEST_FRNG64_NOSEED(div53);
   suite_add_tcase(s, tc_core);
   
   return s;
