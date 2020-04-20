@@ -679,7 +679,7 @@ type are described in *note Unsized RNGs::.
  -- 'fpnglib/irng_t.h': void fpngl_irng_delete (fpngl_irng_t* RNG)
      Releases the resources acquired upon the construction of the RNg
      RNG.  The parameter RNG must point to an RNG not already released,
-     otherwise the behaviour is undefined.
+     otherwise the behavior is undefined.
 
  -- 'fpnglib/irng32_t.h': uint32_t fpngl_irng32_next32 (fpngl_irng32_t*
           RNG)
@@ -689,7 +689,7 @@ type are described in *note Unsized RNGs::.
      Return the next 32-bit random integer.  A 64-bit RNG will usually
      compute a 64-bit integer and return the lower or higher 32 bits.
 
-     The behaviour is undefined if RNG does not point to some valid RNG.
+     The behavior is undefined if RNG does not point to some valid RNG.
 
  -- 'fpnglib/irng32_t.h': uint64_t fpngl_irng32_next64 (fpngl_irng32_t*
           RNG)
@@ -699,7 +699,7 @@ type are described in *note Unsized RNGs::.
      Return the next 64-bit random integer.  A 32-bit RNG will be called
      twice to create a 64-bit integer.
 
-     The behaviour is undefined if RNG does not point to some valid RNG.
+     The behavior is undefined if RNG does not point to some valid RNG.
 
  -- 'fpnglib/irng32_t.h': uint32_t fpngl_irng32_nextk (fpngl_irng32_t*
           RNG, uint32_t K)
@@ -1022,18 +1022,18 @@ following functions:
      The function 'fpngl_ubound64' may be slower when the computer does
      not offer 128 bits integers natively.
 
-   Note that, for both functions, no provision is made to ensure that A
-is smaller than the largest integer that can be computed by RNG,
-'fpngl_irng_max(rng)'.  It is up to the user to check that this
-precondition is met.
+     Note that, for both functions, no provision is made to ensure that
+     A is smaller than the largest integer that can be computed by RNG,
+     'fpngl_irng_max(rng)'.  It is up to the user to check that this
+     precondition is met.
 
    When the domain considered is of the form [a,b), with a and b
 potentially negative integers, use the following functions:
 
- -- Library Function: int32_t fpngl_range32 (fpngl_irng_t* RNG, int32_t
-          A, int32_t B)
- -- Library Function: int64_t fpngl_range64 (fpngl_irng_t* RNG, int64_t
-          A, int64_t B)
+ -- 'fpnglib/irange.h': int32_t fpngl_range32 (fpngl_irng_t* RNG,
+          int32_t A, int32_t B)
+ -- 'fpnglib/irange.h': int64_t fpngl_range64 (fpngl_irng_t* RNG,
+          int64_t A, int64_t B)
      Use the RNG RNG to draw integers uniformly at random in the domain
      [A,B).
 
@@ -1056,25 +1056,17 @@ probabilities shown in *note Figure 4.1: fig:biased_dice.
 
 Figure 4.1: Biased dice modeled with a discrete probability distribution
 
-   A discrete probability distribution is created by calling the
-'fpnlg_distribution_new' function with an integer RNG and an array of
-probabilities as parameters.  It returns an object of type
-'fpngl_distribution_t', which can be used to draw 32-bit random integers
-following the distribution embodied by the array of probabilities:
-
 // doc/snippets/biased_dice_2.c
 #include <stdio.h>
 #include <fpnglib/discrete_distribution.h>
 #include <fpnglib/mt19937-64.h>
-
 const uint64_t seed = 42;
 const uint32_t ndraws = 1000000;
 int main(void)
 {
   fpngl_irng_t *irng = fpngl_irng_new64(fpngl_mt19937v64(seed));
   fpngl_distribution_t *dist = fpngl_distribution_new(irng,
-                                       (double[]){0.1,0.2,0.1,0.1,0.3,0.2},
-                                       6);
+                                 (double[]){0.1,0.2,0.1,0.1,0.3,0.2}, 6);
   uint32_t draws[6] = {0,0,0,0,0,0};
   for (uint32_t i = 0; i < ndraws; ++i) {
     draws[fpngl_distribution_next32(dist)]++;
@@ -1086,12 +1078,27 @@ int main(void)
   fpngl_distribution_delete(dist);
 }
 
-The output of this program is:
-0.0999 0.199 0.0999 0.1 0.3 0.2
-which is very close to the distribution we expect.
+Example 4.2: Biased dice with discrete distribution probability for the
+faces.
 
- -- Library Function: fpngl_distribution_t* fpngl_distribution_new
-          (fpngl_irng_t* RNG, const double P[], uint32_t SZP)
+   A discrete probability distribution is created by calling the
+'fpnlg_distribution_new' function with an integer RNG and an array of
+probabilities as parameters.  It returns an object of type
+'fpngl_distribution_t', which can be used to draw 32-bit random integers
+following the distribution embodied by the array of probabilities.
+*note Example 4.2: exa:biased2. draws NDRAWS values with the loaded dice
+from *note Figure 4.1: fig:biased_dice. and computes the probability of
+each face to occur.
+
+The output of the program in *note Example 4.2: exa:biased2. is:
+0.0999 0.199 0.0999 0.1 0.3 0.2
+
+which is very close to the distribution expected ('[0.1, 0.2, 0.1, 0.1,
+0.3, 0.2]').
+
+ -- 'fpnglib/discrete_distribution.h': fpngl_distribution_t*
+          fpngl_distribution_new (fpngl_irng_t* RNG, const double P[],
+          uint32_t SZP)
      Construct a discrete distribution with probability P'[i]' of
      drawing the integer 'i'.  The array P must have at least SZP
      elements, where SZP must be lower or equal to 2^{30} (The limit on
@@ -1100,27 +1107,30 @@ which is very close to the distribution we expect.
      be equal to 1.
 
      The current implementation uses the Walker/Vose alias method with
-     linear complexity('"An Efficient Method for Generating Discrete
-     Random Variables with General Distributions." A.J. Walker. ACM
-     Transactions on Mathematical Software. 3 (3): 253–256, 1977' and
-     '"A linear algorithm for generating random numbers with a given
-     distribution." M.D. Vose. IEEE Transactions on Software
-     Engineering. 17 (9): 972–975').
+     linear complexity.(1)
 
      The ownership of the integer RNG RNG is transferred to the
      'fpngl_distribution_t' object, which is responsible for its
      disposal.
 
- -- Library Function: void fpngl_distribution_delete
+ -- 'fpnglib/discrete_distribution.h': void fpngl_distribution_delete
           (fpngl_distribution_t* DIST)
      Reclaim the memory allocated to represent a discrete distribution.
      It also reclaims the memory used to represent the RNG passed upon
      its construction.
 
- -- Library Function: uint32_t fpngl_distribution_next32
-          (fpngl_distribution_t *DIST)
+ -- 'fpnglib/discrete_distribution.h': uint32_t
+          fpngl_distribution_next32 (fpngl_distribution_t *DIST)
      Return a random 32-bit integer according to the discrete
      distribution DIST.
+
+   ---------- Footnotes ----------
+
+   (1) '"An Efficient Method for Generating Discrete Random Variables
+with General Distributions." A.J. Walker. ACM Transactions on
+Mathematical Software. 3 (3): 253–256, 1977' and '"A linear algorithm
+for generating random numbers with a given distribution." M.D. Vose.
+IEEE Transactions on Software Engineering. 17 (9): 972–975'
 
 
 File: fpnglib.info,  Node: Floating-Point Random Generators,  Next: IEEE 754 and the Floating-Point Unit,  Prev: Integer Random Generators
@@ -1132,57 +1142,63 @@ The standard libraries of most programming languages offers only one
 algorithm to compute random IEEE 754 floating-point numbers.  Usually,
 it computes floats by dividing random integers by some constant.  This
 imparts a specific structure to the fractional parts of the floats,
-which may adversely impact programs that use them.
+which may adversely impact programs that use them.(1)
 
    FPNGlib gives the user the choice of the method used to produce
-floats.  All float RNGs are either of the type 'fpngl_frng32_t' or
-'fpngl_frng64_t'; they all must propose the same functionalities:
+floats.  All float RNGs are either of the type 'fpngl_frng32_t', when
+they produce single precision floats, or 'fpngl_frng64_t', for double
+precision floats; they must all propose the same functionalities:
 
- -- Library Function: void fpngl_frng32_delete (fpngl_frng32_t* RNG)
- -- Library Function: void fpngl_frng64_delete (fpngl_frng64_t* RNG)
+ -- 'fpnglib/frng32_t.h': void fpngl_frng32_delete (fpngl_frng32_t* RNG)
+ -- 'fpnglib/frng64_t.h': void fpngl_frng64_delete (fpngl_frng64_t* RNG)
      Reclaim the memory allocated to the RNG RNG.  If it was constructed
      with an integer RNG, the memory for that one is also reclaimed
-     since float RNGs "own" the integer RNGs they are made of.
+     since float RNGs "own" the integer RNGs they are built with.
 
- -- Library Function: float fpngl_frng32_min (fpngl_frng32_t* RNG)
- -- Library Function: float fpngl_frng32_max (fpngl_frng32_t* RNG)
- -- Library Function: double fpngl_frng64_min (fpngl_frng64_t* RNG)
- -- Library Function: double fpngl_frng64_max (fpngl_frng64_t* RNG)
+ -- 'fpnglib/frng32_t.h': float fpngl_frng32_min (fpngl_frng32_t* RNG)
+ -- 'fpnglib/frng32_t.h': float fpngl_frng32_max (fpngl_frng32_t* RNG)
+ -- 'fpnglib/frng64_t.h': double fpngl_frng64_min (fpngl_frng64_t* RNG)
+ -- 'fpnglib/frng64_t.h': double fpngl_frng64_max (fpngl_frng64_t* RNG)
      Return, respectively, the minimum and the maximum possible values
      drawn by the floating-point RNG.
 
      In the literature, many FRNGs are described as returning values in
      the domain [0,1).  Technically, their actual domain is not an
      interval but a set of discrete values.  It is then always possible
-     to describe the domain with closed brackets.  The functions '*_min'
-     and '*_max' return the smallest and largest values in this set.
+     to describe the domain with closed brackets.  The functions
+     "'*_min'" and "'*_max'" return, respectively, the smallest and
+     largest values in this set.
 
- -- Library Function: float fpngl_frng32_nextf32 (fpngl_frng32_t* RNG)
- -- Library Function: double fpngl_frng64_nextf64 (fpngl_frng64_t* RNG)
+ -- 'fpnglib/frng32_t.h': float fpngl_frng32_nextf32 (fpngl_frng32_t*
+          RNG)
+ -- 'fpnglib/frng64_t.h': double fpngl_frng64_nextf64 (fpngl_frng64_t*
+          RNG)
      Return the next random floating-point number uniformly drawn from,
      respectively, the domain '[fpngl_frng32_min(rng),
      fpngl_frng32_max(rng)]', or the domain '[fpngl_frng64_min(rng),
      fpngl_frng64_max(rng)]'.
 
- -- Library Function: float fpngl_frng32_next_arrayf32 (fpngl_frng32_t*
-          RNG, float *T, uint32_t N)
- -- Library Function: double fpngl_frng64_next_arrayf64 (fpngl_frng64_t*
-          RNG, double *T, uint32_t N)
+ -- 'fpnglib/frng32_t.h': float fpngl_frng32_next_arrayf32
+          (fpngl_frng32_t* RNG, float *T, uint32_t N)
+ -- 'fpnglib/frng64_t.h': double fpngl_frng64_next_arrayf64
+          (fpngl_frng64_t* RNG, double *T, uint32_t N)
      Fill the array T with N random floating-point numbers drawn with
      the FRNG RNG.
 
      *Caution*: some FRNGs may allocate a temporary array of size
      2\timesN to implement this function.
 
- -- Library Function: const char* fpngl_fprng32_name (fpngl_frng32_t*
-          RNG)
- -- Library Function: const char* fpngl_fprng64_name (fpngl_frng64_t*
-          RNG)
+ -- 'fpnglib/frng32_t.h': const char* fpngl_fprng32_name
+          (fpngl_frng32_t* RNG)
+ -- 'fpnglib/frng64_t.h': const char* fpngl_fprng64_name
+          (fpngl_frng64_t* RNG)
      Return the string corresponding to the name of the FRNG (*Note
      Existing float RNGs::).
 
- -- Library Function: uint32_t fpngl_fprng32_seed (fpngl_frng32_t* RNG)
- -- Library Function: uint64_t fpngl_fprng64_seed (fpngl_frng64_t* RNG)
+ -- 'fpnglib/frng32_t.h': uint32_t fpngl_fprng32_seed (fpngl_frng32_t*
+          RNG)
+ -- 'fpnglib/frng64_t.h': uint64_t fpngl_fprng64_seed (fpngl_frng64_t*
+          RNG)
      Return the integer used to initialize the FRNG.
 
 * Menu:
@@ -1190,6 +1206,13 @@ floats.  All float RNGs are either of the type 'fpngl_frng32_t' or
 * Existing float RNGs::
 * Drawing floats in a class::
 * Drawing floats non-uniformly::
+
+   ---------- Footnotes ----------
+
+   (1) '"Generating Random Floating-Point Numbers by Dividing Integers:
+a Case Study", Fre'de'ric Goualard. In proceedings of the International
+Conference on Computational Science (ICCS 2020). Lecture Notes in
+Computer Science, Springer, June 2020.'
 
 
 File: fpnglib.info,  Node: Existing float RNGs,  Next: Drawing floats in a class,  Up: Floating-Point Random Generators
@@ -1361,7 +1384,7 @@ the order "'zero, subnormal, normal, infinite, nan'" with the function
 'fpngl_class_float64_new'; it is then possible to draw floats following
 that distribution with the function 'fpngl_float64_distrib'.  This
 functionality is just a facility offered around the more general method
-presented in *Note Non-Uniform Distributions::.
+presented in *note Non-Uniform Distributions::.
 
  -- 'fpnglib/float64.h': fpngl_distribution_t* fpngl_class_float64_new
           (fpngl_irng_t* IRNG, const double P[static 5])
@@ -1377,11 +1400,11 @@ presented in *Note Non-Uniform Distributions::.
      that, inside the classes 1 and 2 (subnormal and normal numbers),
      the floats are still drawn uniformly at random.
 
- -- 'fpnglib/float64.h': fpngl_distribution_t* fpngl_class_float64_new
-          (fpngl_irng_t* IRNG, const double P[static 5])
-     Create an 'fpngl_distribution_t' object representing the discrete
-     probability distribution defined by the array P of at least 5
-     values.
+ -- 'fpnglib/float64.h': double fpngl_float64_distrib
+          (fpngl_distribution_t* FPD)
+     Return a floating-point number from one of the four classes "zero,
+     subnormal, normal, infinite, nan" according to the probability
+     distribution FPD.
 
 
 File: fpnglib.info,  Node: IEEE 754 and the Floating-Point Unit,  Next: Extending the Library,  Prev: Floating-Point Random Generators
@@ -1389,7 +1412,7 @@ File: fpnglib.info,  Node: IEEE 754 and the Floating-Point Unit,  Next: Extendin
 6 IEEE 754 and the Floating-Point Unit
 **************************************
 
-That chapter describes the various constants, functions and macros
+This chapter describes the various constants, functions and macros
 provided by FPNGlib that do not directly contribute to the generation of
 random numbers.
 
@@ -1401,10 +1424,10 @@ floating-point format are defined in files 'fpnglib/constants32.h' --for
 the single precision-- and 'fpnglib/constants64.h' --for the double
 precision.
 
- -- Constant: uint32_t fpngl_emin32
- -- Constant: uint32_t fpngl_emin64
- -- Constant: uint32_t fpngl_emax32
- -- Constant: uint32_t fpngl_emax64
+ -- 'fpnglib/constants32.h': const uint32_t fpngl_emin32
+ -- 'fpnglib/constants64.h': const uint32_t fpngl_emin64
+ -- 'fpnglib/constants32.h': const uint32_t fpngl_emax32
+ -- 'fpnglib/constants64.h': const uint32_t fpngl_emax64
      Smallest and largest unbiased exponents for single and double
      precision float.
 
@@ -1426,8 +1449,8 @@ precision.
      Single precision exponent in [-126, 127]
      Double precision exponent in [-1022, 1023]
 
- -- Constant: uint32_t fpngl_t32
- -- Constant: uint32_t fpngl_t64
+ -- 'fpnglib/constants32.h': const uint32_t fpngl_t32
+ -- 'fpnglib/constants64.h': const uint32_t fpngl_t64
      Number of bits in the significand of a single or double precision
      float.  The "significand" of a float corresponds to the fractional
      part together with the hidden bit before the binary point.
@@ -1456,9 +1479,11 @@ precision.
      Number of digits with single precision: 7
      Number of digits with double precision: 15
 
- -- Constant: float fpngl_mu32
- -- Constant: double fpngl_mu64
-     Smallest positive float.  This is a subnormal number.  Example:
+ -- 'fpnglib/constants32.h': const float fpngl_mu32
+ -- 'fpnglib/constants64.h': const double fpngl_mu64
+     Smallest positive float.  This is a subnormal number.
+
+     Example:
      // doc/snippets/mu.c
      #include <stdio.h>
      #include <math.h>
@@ -1474,9 +1499,11 @@ precision.
      1
      1
 
- -- Constant: float fpngl_lambda32
- -- Constant: double fpngl_lambda64
-     Smallest positive normal float.  Example:
+ -- 'fpnglib/constants32.h': const float fpngl_lambda32
+ -- 'fpnglib/constants64.h': const double fpngl_lambda64
+     Smallest positive normal float.
+
+     Example:
      // doc/snippets/lambda.c
      #include <stdio.h>
      #include <fpnglib/constants32.h>
@@ -1493,10 +1520,12 @@ precision.
      Single precision smallest positive normal: 1.17549e-38
      Double precision smallest positive normal: 2.22507e-308
 
- -- Constant: float fpngl_u32
- -- Constant: double fpngl_u64
+ -- 'fpnglib/constants32.h': const float fpngl_u32
+ -- 'fpnglib/constants64.h': const double fpngl_u64
      "Unit roundoff", which is half the distance between '1.0' and the
-     next floating-point number.  Example:
+     next floating-point number.
+
+     Example:
      // doc/snippets/unitroundoff.c
      #include <stdio.h>
      #include <fpnglib/constants32.h>
@@ -1511,9 +1540,11 @@ precision.
      Single precision unit roundoff: 5.96046e-08
      Double precision unit roundoff: 1.11022e-16
 
- -- Constant: float fpngl_max32
- -- Constant: double fpngl_max64
-     Largest positive float smaller than the "infinity" value.  Example:
+ -- 'fpnglib/constants32.h': const float fpngl_max32
+ -- 'fpnglib/constants64.h': const double fpngl_max64
+     Largest positive finite float.
+
+     Example:
      // doc/snippets/max.c
      #include <stdio.h>
      #include <fpnglib/constants32.h>
@@ -1528,9 +1559,11 @@ precision.
      Single precision largest float: 3.40282e+38
      Double precision largest float: 1.79769e+308
 
- -- Constant: float fpngl_NaN32
- -- Constant: double fpngl_NaN64
-     Return a _Not a Number_.  Example:
+ -- 'fpnglib/constants32.h': const float fpngl_NaN32
+ -- 'fpnglib/constants64.h': const double fpngl_NaN64
+     Return a _Not a Number_.
+
+     Example:
      // doc/snippets/nan.c
      #include <stdio.h>
      #include <fpnglib/constants32.h>
@@ -1545,9 +1578,11 @@ precision.
      Single precision NaN: nan
      Double precision NaN: nan
 
- -- Constant: float fpngl_infinity32
- -- Constant: double fpngl_infinity64
-     Infinity value.  Example:
+ -- 'fpnglib/constants32.h': const float fpngl_infinity32
+ -- 'fpnglib/constants64.h': const double fpngl_infinity64
+     Infinity value.
+
+     Example:
      // doc/snippets/inf.c
      #include <stdio.h>
      #include <fpnglib/constants32.h>
@@ -1562,12 +1597,14 @@ precision.
      Single precision infinity: inf
      Double precision infinity: inf
 
- -- Constant: uint64_t fpngl_minfrac64
- -- Constant: uint64_t fpngl_maxfrac64
+ -- 'fpnglib/constants64.h': const uint64_t fpngl_minfrac64
+ -- 'fpnglib/constants64.h': constant uint64_t fpngl_maxfrac64
      Minimum and maximum value for the fractional part of a 64-bit
      double precision floating-point number.  These constants are mainly
      used when calling 'fpngl_float64' to draw floats with some
-     properties.  Example:
+     properties.
+
+     Example:
      // doc/snippets/minmaxfrac64.c
      #include <stdio.h>
      #include <fpnglib/constants64.h>
@@ -1581,11 +1618,13 @@ precision.
      minfrac64: 0
      maxfrac64: fffffffffffff
 
- -- Constant: uint64_t fpngl_noand64
- -- Constant: uint64_t fpngl_noor64
+ -- 'fpnglib/constants64.h': const uint64_t fpngl_noand64
+ -- 'fpnglib/constants64.h': const uint64_t fpngl_noor64
      Masks to use with the function 'fpng_float64' when no _and_ mask
      (resp. no _or_ mask) is needed for the fractional part of the
-     floats constructed.  Example:
+     floats constructed.
+
+     Example:
      // doc/snippets/noandor.c
      #include <stdio.h>
      #include <fpnglib/constants64.h>
@@ -1603,15 +1642,16 @@ precision.
 =====================
 
 FPNGlib defines functions that can aid in computing the floating-point
-numbers an application requires.  They are:
+numbers an application requires.
 
- -- Library Function: double fpngl_nextafter64 (double V, uint64_t N)
+ -- 'fpnglib/float64.h': double fpngl_nextafter64 (double V, uint64_t N)
      Return a double precision number that is N floating-point numbers
      _after_ V on the real line.
 
      The value of N must be smaller or equal to '0xffe0000000000000'.
      The function will abort if N is greater than that and the library
-     has been compiled with '--enable-debug=yes'.
+     has been compiled with '--enable-debug=yes'.  Otherwise, the
+     behavior is undefined.
 
      If V is an NaN, the function returns the same NaN. Otherwise, it
      returns either a finite float or a positive infinite, depending on
@@ -1631,13 +1671,14 @@ numbers an application requires.  They are:
      The output is '1' since there are 2^{52} floats from '1.0' to '2.0'
      in double precision.
 
- -- Library Function: double fpngl_previous64 (double V, uint64_t N)
+ -- 'fpnglib/float64.h': double fpngl_previous64 (double V, uint64_t N)
      Return a double precision number that is N floating-point numbers
      _before_ V on the real line.
 
      The value of N must be smaller or equal to '0xffe0000000000000'.
      The function will abort if N is greater than that and the library
-     has been compiled with '--enable-debug=yes'.
+     has been compiled with '--enable-debug=yes'.  Otherwise, the
+     behavior is undefined.
 
      If V is an NaN, the function returns the same NaN. Otherwise, it
      returns either a finite float or a positive infinite, depending on
@@ -1699,7 +1740,7 @@ macros that can be used to display messages to the standard error ouput
 '--enable-debug=yes' (the default) or '--enable-debug=info' for some
 macros.
 
- -- Macro: FPNGL_DEBUG (...)
+ -- 'fpnglib/debug.h': FPNGL_DEBUG (...)
      Uses 'fprintf' to output its arguments to 'stderr' if the macro
      'NDEBUG' is defined to '1'.  Otherwise, it does nothing.
 
@@ -1715,7 +1756,7 @@ macros.
        FPNGL_DEBUG("This will be displayed only in debug mode: %g\n",a);
      }
 
- -- Macro: FPNGL_WARNING (...)
+ -- 'fpnglib/debug.h': FPNGL_WARNING (...)
      Displays a warning message to 'stderr' if the library was
      configured with either '--enable-debug=yes' or
      '--enable-debug=info'.
@@ -1757,18 +1798,16 @@ File: fpnglib.info,  Node: Function Index,  Next: Type Index,  Prev: Extending t
 
 * fpngl_class_float64_new:               Drawing floats non-uniformly.
                                                               (line  16)
-* fpngl_class_float64_new <1>:           Drawing floats non-uniformly.
-                                                              (line  30)
 * FPNGL_DEBUG:                           Extending the Library.
                                                               (line  24)
 * fpngl_distance_float64:                IEEE 754 and the Floating-Point Unit.
-                                                              (line 275)
+                                                              (line 293)
 * fpngl_distribution_delete:             Non-Uniform Distributions.
-                                                              (line  70)
+                                                              (line  72)
 * fpngl_distribution_new:                Non-Uniform Distributions.
-                                                              (line  49)
+                                                              (line  55)
 * fpngl_distribution_next32:             Non-Uniform Distributions.
-                                                              (line  76)
+                                                              (line  78)
 * fpngl_div32:                           Double Precision FRNGs.
                                                               (line  24)
 * fpngl_div53:                           Double Precision FRNGs.
@@ -1781,38 +1820,40 @@ File: fpnglib.info,  Node: Function Index,  Next: Type Index,  Prev: Extending t
                                                               (line  95)
 * fpngl_float64:                         Drawing floats in a class.
                                                               (line  27)
+* fpngl_float64_distrib:                 Drawing floats non-uniformly.
+                                                              (line  30)
 * fpngl_fog05:                           Double Precision FRNGs.
                                                               (line  42)
 * fpngl_fog97:                           Double Precision FRNGs.
                                                               (line  35)
 * fpngl_fprng32_name:                    Floating-Point Random Generators.
-                                                              (line  53)
+                                                              (line  57)
 * fpngl_fprng32_seed:                    Floating-Point Random Generators.
-                                                              (line  60)
+                                                              (line  64)
 * fpngl_fprng64_name:                    Floating-Point Random Generators.
-                                                              (line  55)
+                                                              (line  59)
 * fpngl_fprng64_seed:                    Floating-Point Random Generators.
-                                                              (line  61)
+                                                              (line  66)
 * fpngl_frng32_delete:                   Floating-Point Random Generators.
-                                                              (line  17)
-* fpngl_frng32_max:                      Floating-Point Random Generators.
-                                                              (line  24)
-* fpngl_frng32_min:                      Floating-Point Random Generators.
-                                                              (line  23)
-* fpngl_frng32_nextf32:                  Floating-Point Random Generators.
-                                                              (line  36)
-* fpngl_frng32_next_arrayf32:            Floating-Point Random Generators.
-                                                              (line  43)
-* fpngl_frng64_delete:                   Floating-Point Random Generators.
                                                               (line  18)
-* fpngl_frng64_max:                      Floating-Point Random Generators.
-                                                              (line  26)
-* fpngl_frng64_min:                      Floating-Point Random Generators.
+* fpngl_frng32_max:                      Floating-Point Random Generators.
                                                               (line  25)
+* fpngl_frng32_min:                      Floating-Point Random Generators.
+                                                              (line  24)
+* fpngl_frng32_nextf32:                  Floating-Point Random Generators.
+                                                              (line  38)
+* fpngl_frng32_next_arrayf32:            Floating-Point Random Generators.
+                                                              (line  47)
+* fpngl_frng64_delete:                   Floating-Point Random Generators.
+                                                              (line  19)
+* fpngl_frng64_max:                      Floating-Point Random Generators.
+                                                              (line  27)
+* fpngl_frng64_min:                      Floating-Point Random Generators.
+                                                              (line  26)
 * fpngl_frng64_nextf64:                  Floating-Point Random Generators.
-                                                              (line  37)
+                                                              (line  40)
 * fpngl_frng64_next_arrayf64:            Floating-Point Random Generators.
-                                                              (line  45)
+                                                              (line  49)
 * fpngl_gnuc_lcg64:                      Integer RNGs available.
                                                               (line  83)
 * fpngl_golang:                          Double Precision FRNGs.
@@ -1913,11 +1954,11 @@ File: fpnglib.info,  Node: Function Index,  Next: Type Index,  Prev: Extending t
 * fpngl_nan64:                           Drawing floats in a class.
                                                               (line  23)
 * fpngl_nextafter64:                     IEEE 754 and the Floating-Point Unit.
-                                                              (line 223)
+                                                              (line 239)
 * fpngl_normal64:                        Drawing floats in a class.
                                                               (line  18)
 * fpngl_previous64:                      IEEE 754 and the Floating-Point Unit.
-                                                              (line 249)
+                                                              (line 266)
 * fpngl_randu64:                         Integer RNGs available.
                                                               (line  89)
 * fpngl_range32:                         Random Integers in a Range.
@@ -1927,7 +1968,7 @@ File: fpnglib.info,  Node: Function Index,  Next: Type Index,  Prev: Extending t
 * fpngl_rationalLCG10:                   Double Precision FRNGs.
                                                               (line  61)
 * fpngl_signed_distance_float64:         IEEE 754 and the Floating-Point Unit.
-                                                              (line 283)
+                                                              (line 301)
 * fpngl_subnormal64:                     Drawing floats in a class.
                                                               (line   6)
 * fpngl_ubound32:                        Random Integers in a Range.
@@ -1955,6 +1996,22 @@ File: fpnglib.info,  Node: Type Index,  Next: Concept Index,  Prev: Function Ind
 9 Type Index
 ************
 
+ [index ]
+* Menu:
+
+* fpngl_frng32_t:                        General Organization of the Library.
+                                                               (line 28)
+* fpngl_frng64_t:                        General Organization of the Library.
+                                                               (line 30)
+* fpngl_irng32_t:                        Generating Random Integers.
+                                                               (line 58)
+* fpngl_irng32_t <1>:                    General Organization of the Library.
+                                                               (line 22)
+* fpngl_irng64_t:                        General Organization of the Library.
+                                                               (line 23)
+* fpngl_irng_t:                          General Organization of the Library.
+                                                               (line 25)
+
 
 File: fpnglib.info,  Node: Concept Index,  Prev: Type Index
 
@@ -1964,6 +2021,8 @@ File: fpnglib.info,  Node: Concept Index,  Prev: Type Index
  [index ]
 * Menu:
 
+* _internal suffix:                      Extending the Library.
+                                                               (line 13)
 * Bug report:                            What is FPNGlib?.     (line 60)
 * Compiling with libfpnglib.so:          Generating Random Integers.
                                                                (line 29)
@@ -1999,26 +2058,29 @@ Node: Generating a random float with some properties20331
 Ref: Generating a random float with some properties-Footnote-125223
 Node: General Organization of the Library25357
 Node: Integer Random Generators27370
-Node: Unsized RNGs34343
-Ref: exa:irng35094
-Node: Integer RNGs available36850
-Ref: tab:irngs37773
-Node: Random Integers in a Range42282
-Node: Non-Uniform Distributions45063
-Ref: fig:biased_dice45638
-Node: Floating-Point Random Generators48532
-Node: Existing float RNGs51706
-Node: Single Precision FRNGs51942
-Node: Double Precision FRNGs52205
-Node: Drawing floats in a class54612
-Ref: Drawing floats in a class-Footnote-157476
-Ref: Drawing floats in a class-Footnote-257587
-Node: Drawing floats non-uniformly57697
-Node: IEEE 754 and the Floating-Point Unit59542
-Node: Extending the Library69130
-Ref: fig:classes69389
-Node: Function Index71374
-Node: Type Index85198
-Node: Concept Index85311
+Node: Unsized RNGs34340
+Ref: exa:irng35091
+Node: Integer RNGs available36847
+Ref: tab:irngs37770
+Node: Random Integers in a Range42279
+Node: Non-Uniform Distributions45081
+Ref: fig:biased_dice45656
+Ref: exa:biased245730
+Ref: Non-Uniform Distributions-Footnote-148564
+Node: Floating-Point Random Generators48900
+Ref: Floating-Point Random Generators-Footnote-152309
+Node: Existing float RNGs52560
+Node: Single Precision FRNGs52796
+Node: Double Precision FRNGs53059
+Node: Drawing floats in a class55466
+Ref: Drawing floats in a class-Footnote-158330
+Ref: Drawing floats in a class-Footnote-258441
+Node: Drawing floats non-uniformly58551
+Node: IEEE 754 and the Floating-Point Unit60372
+Node: Extending the Library70521
+Ref: fig:classes70780
+Node: Function Index72789
+Node: Type Index86613
+Node: Concept Index87645
 
 End Tag Table

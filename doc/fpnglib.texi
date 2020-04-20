@@ -139,7 +139,8 @@ In the example above, we use the 32-bit version of the Mersenne Twister MT19937@
 
 Random integers come in two sizes: 32-bit and 64-bit. As exemplified in the example above, both sizes may be created by 32-bit generators as well as 64-bit ones: A 32-bit generator will combine two outputs to return a 64-bit integer; on the other hand, a 64-bit generator will usually split its output into two 32-bit integers and return one of them to produce a 32-bit integer.
 
-All Random Number Generators (@dfn{RNG}) may be initialized by a single integer, the @emph{seed}. In addition, some may be initialized by other means, mostly vectors of integers. It is the case with the Mersenne Twister MT19937, of which an instance may be created with the @code{fpngl_mt19937v32_by_array} function instead of @code{fpngl_mt19937v32}. Both functions return a pointer to an object of the opaque type @code{fpngl_irng32_t}. @tindex{fpngl_irng32_t}
+All Random Number Generators (@dfn{RNG}) may be initialized by a single integer, the @emph{seed}. In addition, some may be initialized by other means, mostly vectors of integers. It is the case with the Mersenne Twister MT19937, of which an instance may be created with the @code{fpngl_mt19937v32_by_array} function instead of @code{fpngl_mt19937v32}. Both functions return a pointer to an object of the opaque type @code{fpngl_irng32_t}.
+@tindex fpngl_irng32_t
 Since the implementation of that type is not public, all object of the type must be manipulated through pointers only. This is the rule for most types in FPNGlib.
 
 By calling the function @code{fpngl_irng32_next32}, we compute the next 32-bit
@@ -295,11 +296,16 @@ double precision floating-point numbers), and finally the postfix @samp{_t} to m
 
 There are at present five Random Number Generator types in FPNGlib:
 @itemize
-@item@w{}@code{fpngl_irng32_t}. RNG generating 32-bit integers natively;@tindex{fpngl_irng32_t}
-@item@w{}@code{fpngl_irng64_t}. RNG generating 64-bit integers natively;@tindex{fpngl_irng64_t}
-@item@w{}@code{fpngl_irng_t}. Wrapper for a RNG generating natively either 32-bit or 64-bit integers;@tindex{fpngl_irng_t}
-@item@w{}@code{fpngl_frng32_t}. RNG generating single precision (C type ``@code{float}'') IEEE@tie{}754 floating-point numbers; @tindex{fpngl_frng32_t}
-@item@w{}@code{fpngl_frng64_t}. RNG generating double precision (C type ``@code{double}'') IEEE@tie{}754 floating-point numbers. @tindex{fpngl_frng64_t}
+@item@w{}@code{fpngl_irng32_t}. RNG generating 32-bit integers natively;
+@tindex fpngl_irng32_t
+@item@w{}@code{fpngl_irng64_t}. RNG generating 64-bit integers natively;
+@tindex fpngl_irng64_t
+@item@w{}@code{fpngl_irng_t}. Wrapper for a RNG generating natively either 32-bit or 64-bit integers;
+@tindex fpngl_irng_t
+@item@w{}@code{fpngl_frng32_t}. RNG generating single precision (C type ``@code{float}'') IEEE@tie{}754 floating-point numbers;
+@tindex fpngl_frng32_t
+@item@w{}@code{fpngl_frng64_t}. RNG generating double precision (C type ``@code{double}'') IEEE@tie{}754 floating-point numbers.
+@tindex fpngl_frng64_t
 @end itemize
 Note that both 32-bit and 64-bit integer RNGs can generate 32-bit as well as 64-bit integers with, respectively, the functions @code{fpngl_irng32_next64} and @code{fpngl_irn64_next32}.
 
@@ -1158,7 +1164,8 @@ The library is written with an object-oriented style that should make it easy to
 @caption{The ``classes'' of FPNGlib}
 @end float
 
-Functions with ``@code{_internal}'' in their name are for internal use in the library and should not be used outside of its realm. @cindex @code{_internal} suffix
+Functions with ``@code{_internal}'' in their name are for internal use in the library and should not be used outside of its realm.
+@cindex @code{_internal} suffix
 
 @section Debugging facilities
 @c --------------------------

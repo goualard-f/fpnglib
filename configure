@@ -2432,6 +2432,18 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
+
+
+
+
+        # $is_release = (.git directory does not exist)
+        if test -d ${srcdir}/.git || (test -f ${srcdir}/.git && grep \.git/worktrees ${srcdir}/.git); then :
+  ax_is_release=no
+else
+  ax_is_release=yes
+fi
+
+
 am__api_version='1.15'
 
 ac_aux_dir=
@@ -3043,22 +3055,10 @@ fi
 
 
 
-
-
-        # $is_release = (.git directory does not exist)
-        if test -d ${srcdir}/.git || (test -f ${srcdir}/.git && grep \.git/worktrees ${srcdir}/.git); then :
-  ax_is_release=no
-else
-  ax_is_release=yes
-fi
-
-
-
-
     { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to enable debugging" >&5
 $as_echo_n "checking whether to enable debugging... " >&6; }
 
-    ax_enable_debug_default=no
+    ax_enable_debug_default=yes
     ax_enable_debug_is_release=$ax_is_release
 
     # If this is a release, override the default.
