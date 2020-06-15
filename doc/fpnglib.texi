@@ -118,7 +118,7 @@ Our very first program using FPNGlib simply draws one integer at random:
 @verbatiminclude snippets/isimple.c
 @end cartouche
 
-Assuming you have installed FPNGlib locally in some directory @file{$HOME/local} by configuring it with the command @samp{./configure --prefix=$HOME/local}, you may compile the example above by calling @command{gcc} as such:
+Assuming you have installed FPNGlib locally in some directory @file{$HOME/local} by configuring it with the command @command{./configure --prefix=$HOME/local}, you may compile the example above by calling @command{gcc} as such:
 
 @example
 gcc -I$HOME/local/include -L$HOME/local/lib \

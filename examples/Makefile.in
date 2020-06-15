@@ -111,7 +111,8 @@ build_triplet = @build@
 host_triplet = @host@
 noinst_PROGRAMS = timing_mt19937v32$(EXEEXT) \
 	timing_mt19937v64$(EXEEXT) pi$(EXEEXT) biased$(EXEEXT) \
-	ddistribution$(EXEEXT) coin$(EXEEXT) penney_game$(EXEEXT)
+	ddistribution$(EXEEXT) coin$(EXEEXT) penney_game$(EXEEXT) \
+	julia_rand$(EXEEXT)
 subdir = examples
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_check_enable_debug.m4 \
@@ -152,6 +153,11 @@ ddistribution_SOURCES = ddistribution.c
 ddistribution_OBJECTS = ddistribution.$(OBJEXT)
 ddistribution_LDADD = $(LDADD)
 ddistribution_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
+	$(am__DEPENDENCIES_1)
+julia_rand_SOURCES = julia_rand.c
+julia_rand_OBJECTS = julia_rand.$(OBJEXT)
+julia_rand_LDADD = $(LDADD)
+julia_rand_DEPENDENCIES = $(top_builddir)/src/libfpnglib.la \
 	$(am__DEPENDENCIES_1)
 penney_game_SOURCES = penney_game.c
 penney_game_OBJECTS = penney_game.$(OBJEXT)
@@ -208,10 +214,11 @@ am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = $(libctiming_la_SOURCES) biased.c coin.c ddistribution.c \
-	penney_game.c pi.c timing_mt19937v32.c timing_mt19937v64.c
-DIST_SOURCES = $(libctiming_la_SOURCES) biased.c coin.c \
-	ddistribution.c penney_game.c pi.c timing_mt19937v32.c \
+	julia_rand.c penney_game.c pi.c timing_mt19937v32.c \
 	timing_mt19937v64.c
+DIST_SOURCES = $(libctiming_la_SOURCES) biased.c coin.c \
+	ddistribution.c julia_rand.c penney_game.c pi.c \
+	timing_mt19937v32.c timing_mt19937v64.c
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -434,6 +441,10 @@ ddistribution$(EXEEXT): $(ddistribution_OBJECTS) $(ddistribution_DEPENDENCIES) $
 	@rm -f ddistribution$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(ddistribution_OBJECTS) $(ddistribution_LDADD) $(LIBS)
 
+julia_rand$(EXEEXT): $(julia_rand_OBJECTS) $(julia_rand_DEPENDENCIES) $(EXTRA_julia_rand_DEPENDENCIES) 
+	@rm -f julia_rand$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(julia_rand_OBJECTS) $(julia_rand_LDADD) $(LIBS)
+
 penney_game$(EXEEXT): $(penney_game_OBJECTS) $(penney_game_DEPENDENCIES) $(EXTRA_penney_game_DEPENDENCIES) 
 	@rm -f penney_game$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(penney_game_OBJECTS) $(penney_game_LDADD) $(LIBS)
@@ -459,6 +470,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/biased.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/coin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ddistribution.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/julia_rand.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libctiming_la-ctiming.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/penney_game.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pi.Po@am__quote@
