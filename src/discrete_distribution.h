@@ -59,6 +59,8 @@ extern "C" {
   // Return a random value according to the distribution in `dd`.
   uint32_t fpngl_distribution_next32(fpngl_distribution_t *dd);
 
+	// TODO: implement fpngl_distribution_next64()
+	
 #ifdef __cplusplus
 }
 #endif

@@ -12,7 +12,7 @@ framework.  As the name implies, its strong point is the availability of
 many IEEE 754(1) floating-point random number generators, with the
 possibility to control the characteristics of the floating-point numbers
 generated (e.g., the amount of subnormal vs.  normal, or the probability
-of having a least significant bit of the fractional part to be 1)
+of having a least significant bit of the fractional part to be "1")
 
    Even though it is entirely written in ISO Standard C99, FPNGlib is,
 at present, only supported on UNIX-like systems (GNU/Linux and Mac OS X
@@ -34,11 +34,11 @@ beneficial to at least read its Wikipedia entry
      Takuji Nishimura and Makoto Matsumoto, whose licenses can be found
      in files 'src/mt19937-64.c' and 'src/mt19937ar.c'.
 
-   Additionally, the implementation of the Walker/Vose algorithm in
-'src/walker_vose.c' is mostly a reimplementation in C of the Java
-version by Keith Schwarz
-(<https://www.keithschwarz.com/interesting/code/?dir=alias-method>).
-Some code is also directly taken from the GNU GSL 2.6
+   Additionally, the implementation of the Walker/Vose algorithm
+(https://en.wikipedia.org/wiki/Alias_method) in 'src/walker_vose.c' is
+mostly a reimplementation in C of the Java version by Keith Schwarz
+(https://www.keithschwarz.com/interesting/code/?dir=alias-method).  Some
+code is also directly taken from the GNU GSL 2.6
 (https://www.gnu.org/software/gsl/) implementation of the same.
 
    The FPNGlib library is licensed under the terms of the GNU Lesser
@@ -46,26 +46,25 @@ General Public License v.3 or later
 (https://www.gnu.org/licenses/lgpl-3.0.en.html), except from third party
 code, which comes with its own license.  More information about the
 FPNGlib library can be found at the project homepage,
-<https://gitlab.univ-nantes.fr/goualard-f/fpnglib>.
+<https://github.com/goualard-f/fpnglib>.
 
 A Word of Caution
 =================
 
 FPNGlib does not contain any truly random number generator as its focus
-is on reproducibility for applications such as Monte-Carlo algorithms.
-As a consequence, it is not suited for cryptographic applications.
+is on reproducibility for applications such as Monte Carlo algorithms.
+As a consequence, it is _not_ suited for cryptographic applications.
 
 Reporting a Bug
 ===============
 
-Questions and bug reports shall be directly submitted on the GitLab
-platform (https://gitlab.univ-nantes.fr/goualard-f/fpnglib/issues) for
-the project.
+Questions and bug reports shall be directly submitted on the Github
+platform (https://github.com/goualard-f/fpnglib) for the project.
 
    ---------- Footnotes ----------
 
-   (1) IEEE Standard for Floating-Point Arithmetic.  IEEE STD 754-2008.
-IEEE Computer Society, 2008.
+   (1) IEEE Standard for Floating-Point Arithmetic.  IEEE STD 754-2019.
+IEEE Computer Society, 2019.
 
 
 File: fpnglib.info,  Node: Getting Started with FPNGlib,  Next: General Organization of the Library,  Prev: What is FPNGlib?
@@ -1054,6 +1053,8 @@ FPNGlib only allows to draw integers from a discrete distribution.
 Consider, for example, the modeling of a biased dice with the
 probabilities shown in *note Figure 4.1: fig:biased_dice.
 
+     [image src="fpnglib-figures/discrete_distribution.jpg" text="" ]
+
 Figure 4.1: Biased dice modeled with a discrete probability distribution
 
 // doc/snippets/biased_dice_2.c
@@ -1803,11 +1804,11 @@ File: fpnglib.info,  Node: Function Index,  Next: Type Index,  Prev: Extending t
 * fpngl_distance_float64:                IEEE 754 and the Floating-Point Unit.
                                                               (line 293)
 * fpngl_distribution_delete:             Non-Uniform Distributions.
-                                                              (line  72)
+                                                              (line  74)
 * fpngl_distribution_new:                Non-Uniform Distributions.
-                                                              (line  55)
+                                                              (line  57)
 * fpngl_distribution_next32:             Non-Uniform Distributions.
-                                                              (line  78)
+                                                              (line  80)
 * fpngl_div32:                           Double Precision FRNGs.
                                                               (line  24)
 * fpngl_div53:                           Double Precision FRNGs.
@@ -2039,48 +2040,48 @@ File: fpnglib.info,  Node: Concept Index,  Prev: Type Index
 
 Tag Table:
 Node: What is FPNGlib?75
-Ref: What is FPNGlib?-Footnote-12874
-Node: Getting Started with FPNGlib2976
-Node: An Introduction to FPNGlib6185
-Node: Generating Random Integers6954
-Ref: Generating Random Integers-Footnote-110196
-Node: Generating Random Integers in a Domain10464
-Ref: biased_dice_c11199
-Ref: Generating Random Integers in a Domain-Footnote-113532
-Ref: Generating Random Integers in a Domain-Footnote-213605
-Ref: Generating Random Integers in a Domain-Footnote-313737
-Node: Generating Random Floating-Point Numbers13831
-Ref: exa:mcpi18832
-Ref: Generating Random Floating-Point Numbers-Footnote-120031
-Ref: Generating Random Floating-Point Numbers-Footnote-220133
-Ref: Generating Random Floating-Point Numbers-Footnote-320183
-Node: Generating a random float with some properties20331
-Ref: Generating a random float with some properties-Footnote-125223
-Node: General Organization of the Library25357
-Node: Integer Random Generators27370
-Node: Unsized RNGs34340
-Ref: exa:irng35091
-Node: Integer RNGs available36847
-Ref: tab:irngs37770
-Node: Random Integers in a Range42279
-Node: Non-Uniform Distributions45081
-Ref: fig:biased_dice45656
-Ref: exa:biased245730
-Ref: Non-Uniform Distributions-Footnote-148564
-Node: Floating-Point Random Generators48900
-Ref: Floating-Point Random Generators-Footnote-152309
-Node: Existing float RNGs52560
-Node: Single Precision FRNGs52796
-Node: Double Precision FRNGs53059
-Node: Drawing floats in a class55466
-Ref: Drawing floats in a class-Footnote-158330
-Ref: Drawing floats in a class-Footnote-258441
-Node: Drawing floats non-uniformly58551
-Node: IEEE 754 and the Floating-Point Unit60372
-Node: Extending the Library70521
-Ref: fig:classes70780
-Node: Function Index72789
-Node: Type Index86613
-Node: Concept Index87645
+Ref: What is FPNGlib?-Footnote-12893
+Node: Getting Started with FPNGlib2995
+Node: An Introduction to FPNGlib6204
+Node: Generating Random Integers6973
+Ref: Generating Random Integers-Footnote-110215
+Node: Generating Random Integers in a Domain10483
+Ref: biased_dice_c11218
+Ref: Generating Random Integers in a Domain-Footnote-113551
+Ref: Generating Random Integers in a Domain-Footnote-213624
+Ref: Generating Random Integers in a Domain-Footnote-313756
+Node: Generating Random Floating-Point Numbers13850
+Ref: exa:mcpi18851
+Ref: Generating Random Floating-Point Numbers-Footnote-120050
+Ref: Generating Random Floating-Point Numbers-Footnote-220152
+Ref: Generating Random Floating-Point Numbers-Footnote-320202
+Node: Generating a random float with some properties20350
+Ref: Generating a random float with some properties-Footnote-125242
+Node: General Organization of the Library25376
+Node: Integer Random Generators27389
+Node: Unsized RNGs34359
+Ref: exa:irng35110
+Node: Integer RNGs available36866
+Ref: tab:irngs37789
+Node: Random Integers in a Range42298
+Node: Non-Uniform Distributions45100
+Ref: fig:biased_dice45675
+Ref: exa:biased245822
+Ref: Non-Uniform Distributions-Footnote-148656
+Node: Floating-Point Random Generators48992
+Ref: Floating-Point Random Generators-Footnote-152401
+Node: Existing float RNGs52652
+Node: Single Precision FRNGs52888
+Node: Double Precision FRNGs53151
+Node: Drawing floats in a class55558
+Ref: Drawing floats in a class-Footnote-158422
+Ref: Drawing floats in a class-Footnote-258533
+Node: Drawing floats non-uniformly58643
+Node: IEEE 754 and the Floating-Point Unit60464
+Node: Extending the Library70613
+Ref: fig:classes70872
+Node: Function Index72881
+Node: Type Index86705
+Node: Concept Index87737
 
 End Tag Table

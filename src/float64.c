@@ -92,7 +92,7 @@ double fpngl_nextafter64(double v, uint64_t n)
 	 } else {
 		return fpngl_infinity64;
 	 }
-  } else { // v < 0?
+  } else { // v <= 0?
 	 vi.ui &= 0x7fffffffffffffff; // vi.i <- abs(vi.i)
 	 if (vi.ui >= n) { // We will not create a positive number by adding n to v?
 		vi.ui -= n;

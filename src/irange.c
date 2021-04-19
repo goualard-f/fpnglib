@@ -26,6 +26,7 @@
 
 uint32_t fpngl_ubound32(fpngl_irng_t *irng, uint32_t a)
 {
+	// TODO: what if `irng` has a domain smaller than [0,2^{32}-1]?
 	uint32_t x = fpngl_irng_next32(irng);
 	uint64_t m = (uint64_t)x * (uint64_t)a;
 	uint32_t l = (uint32_t)m;

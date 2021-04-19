@@ -17,7 +17,7 @@ LS2N UMR CNRS 6004, University of Nantes, France
 
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 2019,2020 University of Nantes, France
+Copyright @copyright{} 2019--2021 University of Nantes, France
 
 Permission is granted to make and distribute verbatim copies of
 this manual provided the copyright notice and this permission notice
@@ -42,7 +42,7 @@ by the Foundation.
 @chapter What is FPNGlib?
 @c ======================
 
-FPNGlib is a C library that offers pseudo-random generators in a unified framework. As the name implies, its strong point is the availability of many IEEE@tie{}754@footnote{@i{IEEE Standard for Floating-Point Arithmetic. IEEE STD 754-2008}. IEEE Computer Society, 2008.} floating-point random number generators, with the possibility to control the characteristics of the floating-point numbers generated (e.g., the amount of subnormal vs. normal, or the probability of having a least significant bit of the fractional part to be @math{1})
+FPNGlib is a C library that offers pseudo-random generators in a unified framework. As the name implies, its strong point is the availability of many IEEE@tie{}754@footnote{@i{IEEE Standard for Floating-Point Arithmetic. IEEE STD 754-2019}. IEEE Computer Society, 2019.} floating-point random number generators, with the possibility to control the characteristics of the floating-point numbers generated (e.g., the amount of subnormal vs. normal, or the probability of having a least significant bit of the fractional part to be ``@math{1}'')
 
 Even though it is entirely written in ISO Standard C99, FPNGlib is, at present, only supported on UNIX-like systems (GNU/Linux and Mac@tie{}OS@tie{}X are the only two tested environments) due to the tools used for its configuration, compilation and deployment (@emph{autotools}).
 @cindex Supported platforms
@@ -55,20 +55,20 @@ The FPNGlib library contains code from third parties, specifically:
 @item Both 64-bit and 32-bit versions of the @url{http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/emt.html,Mersenne twister}, by Takuji Nishimura and Makoto Matsumoto, whose licenses can be found in files @file{src/mt19937-64.c} and @file{src/mt19937ar.c}.
 @end itemize
 
-Additionally, the implementation of the Walker/Vose algorithm in @code{src/walker_vose.c} is mostly a reimplementation in C of the Java version by Keith Schwarz (@url{https://www.keithschwarz.com/interesting/code/?dir=alias-method}). Some code is also directly taken from the @url{https://www.gnu.org/software/gsl/,GNU GSL 2.6} implementation of the same.
+Additionally, the implementation of the @url{https://en.wikipedia.org/wiki/Alias_method,Walker/Vose algorithm} in @code{src/walker_vose.c} is mostly a reimplementation in C of the @url{https://www.keithschwarz.com/interesting/code/?dir=alias-method,Java version by Keith Schwarz}. Some code is also directly taken from the @url{https://www.gnu.org/software/gsl/,GNU GSL 2.6} implementation of the same.
 
-The FPNGlib library is licensed under the terms of the @url{https://www.gnu.org/licenses/lgpl-3.0.en.html,GNU Lesser General Public License v.3 or later}, except from third party code, which comes with its own license. More information about the FPNGlib library can be found at the project homepage, @uref{https://gitlab.univ-nantes.fr/goualard-f/fpnglib}.
+The FPNGlib library is licensed under the terms of the @url{https://www.gnu.org/licenses/lgpl-3.0.en.html,GNU Lesser General Public License v.3 or later}, except from third party code, which comes with its own license. More information about the FPNGlib library can be found at the project homepage, @uref{https://github.com/goualard-f/fpnglib}.
 
 
 
 @unnumberedsec A Word of Caution
 @cindex Cryptographic use
-FPNGlib does not contain any truly random number generator as its focus is on reproducibility for applications such as Monte-Carlo algorithms. As a consequence, it is not suited for cryptographic applications.
+FPNGlib does not contain any truly random number generator as its focus is on reproducibility for applications such as Monte Carlo algorithms. As a consequence, it is @emph{not} suited for cryptographic applications.
 
 @unnumberedsec Reporting a Bug
 @cindex Bug report
 
-Questions and bug reports shall be directly submitted on the @url{https://gitlab.univ-nantes.fr/goualard-f/fpnglib/issues,GitLab platform} for the project.
+Questions and bug reports shall be directly submitted on the @url{https://github.com/goualard-f/fpnglib,Github platform} for the project.
 
 @node Getting Started with FPNGlib
 @chapter Getting Started with FPNGlib
@@ -101,13 +101,13 @@ After having compiled the library, you should test it, in order to ensure that e
 
 The library should be installed before being used. However, if you want to get a taste of it beforehand, you may modify and execute the examples in the subdirectory @command{examples/}, even before the installation. Calling ``@command{make}'' in this directory will recompile the necessary files.
 
-The installation is done by calling ``@command{make install}'' from the top directory of the distribution. By default, the library is installed into @file{/usr/local}. As seen above, this can be changed by using the @option{--enable-debug} option at configuration time.
+The installation is done by calling ``@command{make install}'' from the top directory of the distribution. By default, the library is installed into @file{/usr/local}. As seen above, this can be changed by using the ``@option{--prefix}'' option at configuration time.
 
 @page
 @node An Introduction to FPNGlib
 @section An Introduction to FPNGlib
 @c --------------------------------
-FPNGlib offers generators for random integers and for both single precision and double precision random IEEE 754 floating-point numbers (@dfn{floats}, for short). We will first see how to obtain random integers in @ref{Generating Random Integers} and @ref{Generating Random Integers in a Domain}, and then random floats in @ref{Generating Random Floating-Point Numbers} and @ref{Generating a random float with some properties}.
+FPNGlib offers generators for random integers and for both single precision and double precision random IEEE 754 floating-point numbers (@dfn{floats}, for short. Not to be confused with the @code{float} single precision type). We will first see how to obtain random integers in @ref{Generating Random Integers} and @ref{Generating Random Integers in a Domain}, and then random floats in @ref{Generating Random Floating-Point Numbers} and @ref{Generating a random float with some properties}.
 
 @node Generating Random Integers
 @subsection Generating Random Integers
@@ -126,8 +126,8 @@ gcc -I$HOME/local/include -L$HOME/local/lib \
 @end example
 @cindex Compiling with libfpnglib.so
 
-Of course, if both the @emph{include} directory and the @emph{lib} directory paths appear in the relevant environment variables (@env{C_INCLUDE_PATH} and @env{LD_LIBRARY_PATH}, respectively), you may omit the ``@code{-I}'' and ``@code{-L}'' directives entirely.
-Alternatively, as long as you work on the example file provided in the @file{doc/snippets} directory of the distribution of the library, you may simply call @command{make isimple} to compile it.
+Of course, if both the @emph{include} directory and the @emph{lib} directory paths appear in the relevant environment variables (@env{C_INCLUDE_PATH} and @env{LD_LIBRARY_PATH}, respectively, for Linux-based platforms), you may omit the ``@code{-I}'' and ``@code{-L}'' directives entirely.
+Alternatively, as long as you work on the example file provided in the @file{doc/snippets} directory of the distribution of the library, you may simply call ``@command{make isimple}'' to compile it.
 
 The output of this program should be:
 @verbatim
@@ -139,12 +139,14 @@ In the example above, we use the 32-bit version of the Mersenne Twister MT19937@
 
 Random integers come in two sizes: 32-bit and 64-bit. As exemplified in the example above, both sizes may be created by 32-bit generators as well as 64-bit ones: A 32-bit generator will combine two outputs to return a 64-bit integer; on the other hand, a 64-bit generator will usually split its output into two 32-bit integers and return one of them to produce a 32-bit integer.
 
-All Random Number Generators (@dfn{RNG}) may be initialized by a single integer, the @emph{seed}. In addition, some may be initialized by other means, mostly vectors of integers. It is the case with the Mersenne Twister MT19937, of which an instance may be created with the @code{fpngl_mt19937v32_by_array} function instead of @code{fpngl_mt19937v32}. Both functions return a pointer to an object of the opaque type @code{fpngl_irng32_t}.
+All Random Number Generators (@dfn{RNG}) may be initialized by a single integer, the @emph{seed}.
+@cindex Seed
+In addition, some may be initialized by other means, mostly vectors of integers. It is the case with the Mersenne Twister MT19937, of which an instance may be created with the @code{fpngl_mt19937v32_by_array} function instead of @code{fpngl_mt19937v32}. Both functions return a pointer to an object of the opaque type @code{fpngl_irng32_t}.
 @tindex fpngl_irng32_t
 Since the implementation of that type is not public, all object of the type must be manipulated through pointers only. This is the rule for most types in FPNGlib.
 
 By calling the function @code{fpngl_irng32_next32}, we compute the next 32-bit
-integer. When calling the function @code{fpngl_irng32_next64}, the next two 32-bit integers are computed and combined to produce one 64-bit integer.
+integer. With the function @code{fpngl_irng32_next64}, the next two 32-bit integers are computed and combined to produce one 64-bit integer.
 
 The call to @code{fpngl_mt19937v32} allocates some memory from the heap to represent the internal structure of the MT19937 RNG. We need to call @code{fpngl_irng32_delete} to reclaim that memory when the RNG is no longer used.
 
@@ -153,7 +155,7 @@ The 32-bit MT19937 RNG instance was constructed and initialized with the @code{f
 @node Generating Random Integers in a Domain
 @subsection Generating Random Integers in a Domain
 @c ...............................................
-A 32-bit Integer RNG (@dfn{IRNG}, for short) will usually draw an integer in the domain @math{[0,2^{32}-1]} or in some other smaller but still impractically large domain. More often than not, simulations require drawing integers in some precise domain, say @math{[1,6]} to simulate a dice, for example. For such an application, many sources still suggest to draw an integer in the full domain of the RNG and then use the modulo to restrict the output to the correct domain:
+A 32-bit Integer RNG (@dfn{IRNG}, for short) will usually draw an integer in the domain @math{[0,2^{32}-1]} or in some other smaller but still impractically large domain for some applications. More often than not, simulations require drawing integers in some precise domain, say @math{[1,6]} to simulate a dice, for example. For such an application, many sources still suggest to draw an integer in the full domain of the RNG and then use the modulo to restrict the output to the correct domain:
 @cartouche
 @anchor{biased_dice_c}
 @verbatiminclude snippets/biased_dice.c
@@ -161,22 +163,22 @@ A 32-bit Integer RNG (@dfn{IRNG}, for short) will usually draw an integer in the
 
 However, since @math{2^{32} = 6\times 715827882 + 4}, there are @math{715827883} ways to produce the numbers @math{1} to @math{4}, and only @math{715827882} ways to produce the numbers @math{5} and @math{6}, which introduces a @math{1.397\times 10^{-7}}% bias. A very small bias indeed, but one that could become significant if one used a different RNG, such as a @emph{Linear Congruential Generator}@footnote{@cite{@url{https://en.wikipedia.org/wiki/Linear_congruential_generator}}.} (@dfn{LCG}) with a congruence much smaller than @math{2^{32}}.
 
-With FPNGlib, the proper way to generate a random integer in the domain @math{[0,k]}, is to use the @code{fpngl_ubound32} or @code{fpngl_ubound64} functions available in @file{fpnglib/irange.h}, depending on the type of integer expected (@code{uint32_t} or @code{uint64_t}):
+With FPNGlib, the proper way to generate a random integer in the domain @math{[0,k)}, is to use the @code{fpngl_ubound32} or @code{fpngl_ubound64} functions available in @file{fpnglib/irange.h}, depending on the type of integer expected (@code{uint32_t} or @code{uint64_t}):
 
 @cartouche
 @verbatiminclude snippets/dice.c
 @end cartouche
-Remember that the function @code{fpngl_mt19937v32} creates a 32-bit RNG with type @code{fpngl_irng32_t}. The @code{fpngl_ubound32} function computes a random integer in @math{[0,k-1]}, given @math{k} as its second argument. However, it must accept to do so with both a 32-bit RNG and a 64-bit RNG. We therefore need to encapsulate the actual 32-bit RNG into a ``generic'' RNG of type @code{fpngl_irng_t} with the function @code{fpngl_irng_new32}. The @code{irng} variable owns the 32-bit RNG it encapsulates and is responsible for its deletion, which will be done when we call @code{fpngl_irng_delete} instead of @code{fpngl_irng32_delete}. 
+Remember that the function @code{fpngl_mt19937v32} creates a 32-bit RNG with type @code{fpngl_irng32_t}. The @code{fpngl_ubound32} function computes a random integer in @math{[0,k)}, given @math{k} as its second argument. However, it must accept to do so with both a 32-bit RNG and a 64-bit RNG. We therefore need to encapsulate the actual 32-bit RNG into a ``generic'' RNG of type @code{fpngl_irng_t} with the function @code{fpngl_irng_new32}. The @code{irng} variable owns the 32-bit RNG it encapsulates and is responsible for its deletion, which will be done when we call @code{fpngl_irng_delete} instead of @code{fpngl_irng32_delete}. 
 
-The @code{fpngl_ubound32} function uses the modification by O'Neill@footnote{@i{Efficiently Generating a Number in a Range}, Melissa E. O'Neil, @url{https://www.pcg-random.org/posts/bounded-rands.html}, 2018.} of Lemire's algorithm@footnote{@i{Fast Random Integer Generation in an Interval}, Daniel Lemire, ACM TOMACS 29(1), 2019.} to draw integers in an interval. The @code{fpngl_ubound64} uses the same algorithm, provided a 128 bits integer type
+The @code{fpngl_ubound32} function uses the modification by O'Neill@footnote{@i{Efficiently Generating a Number in a Range}, Melissa E. O'Neil, @url{https://www.pcg-random.org/posts/bounded-rands.html}, 2018.} of Lemire's algorithm@footnote{@i{Fast Random Integer Generation in an Interval}, Daniel Lemire, ACM TOMACS 29(1), p.@tie{}3:1--3:12, 2019.} to draw integers in an interval. The @code{fpngl_ubound64} uses the same algorithm, provided a 128 bits integer type
 is available on the platform used. Otherwise, it uses slower methods presented by O'Neill at @url{https://www.pcg-random.org/posts/bounded-rands.html}.
 
-To draw integers from a domain @math{[a,b]} instead of @math{[0,k]}, one can use the functions @code{fpngl_range32} and @code{fpngl_range64}. 
+To draw integers from a domain @math{[a,b)} instead of @math{[0,k)}, one can use the functions @code{fpngl_range32} and @code{fpngl_range64}. 
 
 @node Generating Random Floating-Point Numbers
 @subsection Generating Random Floating-Point Numbers
 @c .................................................
-One of the strong points of FPNGlib is the generation of IEEE@tie{}754 floating-point numbers@footnote{@i{IEEE Standard for Floating-Point Arithmetic. IEEE STD 754-2008}. IEEE Computer Society, 2008.}. It offers many methods to draw floats in different domains and with various properties.
+One of the strong points of FPNGlib is the generation of IEEE@tie{}754 floating-point numbers@footnote{@i{IEEE Standard for Floating-Point Arithmetic. IEEE STD 754-2019}. IEEE Computer Society, 2019.}. It offers many methods to draw floats in different domains and with various properties.
 
 In the following example, we use an RNG that computes a double precision floating-point number in @math{[0,1)} by drawing first an integer in @math{[0,2^{53}-1]} and then dividing it by @math{2^{53}}.
 
@@ -393,7 +395,7 @@ have been allocated to the correct size before the call.
 
 The speed-up obtained with this function, compared with calling @var{n} times a
 @code{*_next32} function depends on the RNG used. For most implementations, a 64-bit
-RNG will be called at most @math{@var{n}/2} times and each 64-bit integer split into
+RNG will be called at most @math{@lceil@var{n}/2@rceil} times and each 64-bit integer split into
 two 32-bit integers to fill adjacent positions in the array. Some RNGs do have dedicated
 fast implementations of this function (refer to their documentation).
 @end deftypefn
@@ -479,7 +481,7 @@ is responsible for the destruction of the RNG passed as a parameter. Consequentl
 There is also a function to draw an integer of the size supported natively by the
 wrapped RNG:
 
-@deftypefn {Library Function} uint64_t fpngl_irng_next (fpngl_irng_t* @var{rng})
+@deftypefn {@file{fpnglib/irng_t.h}} uint64_t fpngl_irng_next (fpngl_irng_t* @var{rng})
 This function is unique to the @code{fpngl_irng_t} type. If the RNG wrapped is of type @code{fpngl_irng64_t}, it behaves like @code{fpngl_irng_next64}, otherwise it returns the
 integer computed with @code{fpngl_irng_next32} cast to 64 bits.
 @end deftypefn
@@ -540,7 +542,7 @@ The function @code{fpngl_irng32_seed} will return @code{0} if the RNG is initial
 @end deftypefn
 
 @deftypefn {@file{fpnglib/xorgens.h}} fpngl_irng32_t* fpngl_xor4096iv32 (uint32_t @var{seed})
-This is the 32-bit implementation of the @code{xor4096i} algorithm by Richard P. Brent.
+This is the 32-bit implementation of the @code{xor4096i} algorithm presented in @emph{Some long-period random number generators using shifts and xors}, Richard P. Brent, ANZIAM Journal 48 (CTAC2006), p.@tie{}C188--C202, 2007.
 @end deftypefn
 
 
@@ -607,14 +609,14 @@ The function @code{fpngl_irng_seed} will return @code{0} if the RNG is initializ
 @end deftypefn
 
 @deftypefn {@file{fpnglib/xorgens.h}} fpngl_irng64_t* fpngl_xor4096iv64 (uint64_t @var{seed})
-This is the 64-bit implementation of the @code{xor4096i} algorithm by Richard P. Brent.
+This is the 64-bit implementation of the @code{xor4096i} algorithm by Richard P. Brent (see @code{fpngl_xor4096iv32}).
 @end deftypefn
 
 @node Random Integers in a Range
 @section Random Integers in a Range
 @c --------------------------------
 
-Most RNGs of @ref{Integer RNGs available} return random integers drawn from a large domain (typically @math{[0,2^{32}-1]} or @math{[0,2^{64}-1]}). Many applications, however, require random integers from much smaller domains, e.g., to model dice throwing, coin tossing, @enddots{} An oft quoted tentative answer to the problem is to use the modulo operation, as in @ref{biased_dice_c,,Program @file{biased_dice.c}}. As already discussed for that program, this approach is biased whenever the number of values in the original domain of the RNG is not a multiple of the modulus. Even if it is a multiple of the modulus, the modulo operation extracts the low-order bits of the random integer, which are the least ``random'' ones for many RNGs.
+Most RNGs of @ref{Integer RNGs available} return random integers drawn from a large domain (typically @math{[0,2^{32}-1]} or @math{[0,2^{64}-1]}). Many applications, however, require random integers from much smaller domains, e.g., to model dice throwing, coin tossing, @enddots{} An oft quoted tentative answer to the problem is to use the modulo operation, as in @ref{biased_dice_c,,Program @file{biased_dice.c}}. As already discussed for that program, this approach is biased whenever the number of values in the original domain of the RNG is not a multiple of the modulus. Even if it is a multiple of the modulus, the modulo operation extracts the low-order bits of the random integer, which are the least ``random'' ones for some RNGs.
 
 FPNGlib offers four different functions to compute random numbers in a ``small'' domain, depending on the size of the integers required and the bounds of the domain: if the domain is of the form ``@math{[0,a)}'', use the following functions:
 
@@ -628,7 +630,7 @@ These functions use an efficient algorithm by D. Lemire presented in @cite{``Fas
 
 The function @code{fpngl_ubound64} may be slower when the computer does not offer 128 bits integers natively.
 
-Note that, for both functions, no provision is made to ensure that @var{a} is smaller than the largest integer that can be computed by @var{rng}, @code{fpngl_irng_max(rng)}. It is up to the user to check that this precondition is met.
+Note that, for both functions, no provision is made to ensure that @var{a} is smaller than the largest integer that can be computed by @var{rng}, @code{fpngl_irng_max(rng)}. @strong{It is up to the user to check that this precondition is met}.
 @end deftypefn
 
 
@@ -652,7 +654,7 @@ These functions rely, respectively, on functions @code{fpngl_ubound32} and @code
 All the RNGs presented in @ref{Integer RNGs available} return integers drawn uniformly at random in their domain of definition. It is sometimes necessary to consider other distributions. At present, FPNGlib only allows to draw integers from a discrete distribution. Consider, for example, the modeling of a biased dice with the probabilities shown in @ref{fig:biased_dice}.
 
 @float Figure,fig:biased_dice
-@center @image{fpnglib-figures/discrete_distribution,3in,}
+@center @image{fpnglib-figures/discrete_distribution,2.5in,}
 @caption{Biased dice modeled with a discrete probability distribution}
 @end float
 
@@ -697,7 +699,7 @@ Return a random 32-bit integer according to the discrete distribution @var{dist}
 @chapter Floating-Point Random Generators
 @c ======================================
 
-The standard libraries of most programming languages offers only one algorithm to compute random IEEE@tie{}754 floating-point numbers. Usually, it computes floats by dividing random integers by some constant. This imparts a specific structure to the fractional parts of the floats, which may adversely impact programs that use them.@footnote{@cite{``Generating Random Floating-Point Numbers by Dividing Integers: a Case Study'', Fr@'ed@'eric Goualard. In proceedings of the International Conference on Computational Science (ICCS 2020). Lecture Notes in Computer Science, Springer, June 2020.}}
+The standard libraries of most programming languages offers only one algorithm to compute random IEEE@tie{}754 floating-point numbers. Usually, it computes floats by dividing random integers by some constant. This imparts a specific structure to the fractional parts of the floats, which may adversely impact programs that use them.@footnote{@cite{``Generating Random Floating-Point Numbers by Dividing Integers: a Case Study'', Fr@'ed@'eric Goualard. In proceedings of the International Conference on Computational Science (ICCS 2020). Lecture Notes in Computer Science 12138, p.@tie{}15--28, Springer, June 2020.}}
 
 FPNGlib gives the user the choice of the method used to produce floats. All float RNGs are either of the type @code{fpngl_frng32_t}, when they produce single precision floats, or @code{fpngl_frng64_t}, for double precision floats; they must all propose the same functionalities:
 
