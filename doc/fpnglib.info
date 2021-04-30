@@ -133,7 +133,7 @@ Calling "'make'" in this directory will recompile the necessary files.
    The installation is done by calling "'make install'" from the top
 directory of the distribution.  By default, the library is installed
 into '/usr/local'.  As seen above, this can be changed by using the
-'--enable-debug' option at configuration time.
+"'--prefix'" option at configuration time.
 
 
 File: fpnglib.info,  Node: An Introduction to FPNGlib,  Up: Getting Started with FPNGlib
@@ -143,11 +143,12 @@ File: fpnglib.info,  Node: An Introduction to FPNGlib,  Up: Getting Started with
 
 FPNGlib offers generators for random integers and for both single
 precision and double precision random IEEE 754 floating-point numbers
-("floats", for short).  We will first see how to obtain random integers
-in *note Generating Random Integers:: and *note Generating Random
-Integers in a Domain::, and then random floats in *note Generating
-Random Floating-Point Numbers:: and *note Generating a random float with
-some properties::.
+("floats", for short.  Not to be confused with the 'float' single
+precision type).  We will first see how to obtain random integers in
+*note Generating Random Integers:: and *note Generating Random Integers
+in a Domain::, and then random floats in *note Generating Random
+Floating-Point Numbers:: and *note Generating a random float with some
+properties::.
 
 * Menu:
 
@@ -188,10 +189,11 @@ int main(void)
 
    Of course, if both the _include_ directory and the _lib_ directory
 paths appear in the relevant environment variables ('C_INCLUDE_PATH' and
-'LD_LIBRARY_PATH', respectively), you may omit the "'-I'" and "'-L'"
-directives entirely.  Alternatively, as long as you work on the example
-file provided in the 'doc/snippets' directory of the distribution of the
-library, you may simply call 'make isimple' to compile it.
+'LD_LIBRARY_PATH', respectively, for Linux-based platforms), you may
+omit the "'-I'" and "'-L'" directives entirely.  Alternatively, as long
+as you work on the example file provided in the 'doc/snippets' directory
+of the distribution of the library, you may simply call "'make isimple'"
+to compile it.
 
    The output of this program should be:
 3340206418
@@ -219,9 +221,8 @@ all object of the type must be manipulated through pointers only.  This
 is the rule for most types in FPNGlib.
 
    By calling the function 'fpngl_irng32_next32', we compute the next
-32-bit integer.  When calling the function 'fpngl_irng32_next64', the
-next two 32-bit integers are computed and combined to produce one 64-bit
-integer.
+32-bit integer.  With the function 'fpngl_irng32_next64', the next two
+32-bit integers are computed and combined to produce one 64-bit integer.
 
    The call to 'fpngl_mt19937v32' allocates some memory from the heap to
 represent the internal structure of the MT19937 RNG. We need to call
@@ -248,11 +249,11 @@ File: fpnglib.info,  Node: Generating Random Integers in a Domain,  Next: Genera
 
 A 32-bit Integer RNG ("IRNG", for short) will usually draw an integer in
 the domain [0,2^{32}-1] or in some other smaller but still impractically
-large domain.  More often than not, simulations require drawing integers
-in some precise domain, say [1,6] to simulate a dice, for example.  For
-such an application, many sources still suggest to draw an integer in
-the full domain of the RNG and then use the modulo to restrict the
-output to the correct domain:
+large domain for some applications.  More often than not, simulations
+require drawing integers in some precise domain, say [1,6] to simulate a
+dice, for example.  For such an application, many sources still suggest
+to draw an integer in the full domain of the RNG and then use the modulo
+to restrict the output to the correct domain:
 // doc/snippets/biased_dice.c
 // WARNING: wrong solution!
 #include <stdio.h>
@@ -275,7 +276,7 @@ used a different RNG, such as a _Linear Congruential Generator_(1)
 ("LCG") with a congruence much smaller than 2^{32}.
 
    With FPNGlib, the proper way to generate a random integer in the
-domain [0,k], is to use the 'fpngl_ubound32' or 'fpngl_ubound64'
+domain [0,k), is to use the 'fpngl_ubound32' or 'fpngl_ubound64'
 functions available in 'fpnglib/irange.h', depending on the type of
 integer expected ('uint32_t' or 'uint64_t'):
 
@@ -294,7 +295,7 @@ int main(void)
 }
    Remember that the function 'fpngl_mt19937v32' creates a 32-bit RNG
 with type 'fpngl_irng32_t'.  The 'fpngl_ubound32' function computes a
-random integer in [0,k-1], given k as its second argument.  However, it
+random integer in [0,k), given k as its second argument.  However, it
 must accept to do so with both a 32-bit RNG and a 64-bit RNG. We
 therefore need to encapsulate the actual 32-bit RNG into a "generic" RNG
 of type 'fpngl_irng_t' with the function 'fpngl_irng_new32'.  The 'irng'
@@ -309,7 +310,7 @@ type is available on the platform used.  Otherwise, it uses slower
 methods presented by O'Neill at
 <https://www.pcg-random.org/posts/bounded-rands.html>.
 
-   To draw integers from a domain [a,b] instead of [0,k], one can use
+   To draw integers from a domain [a,b) instead of [0,k), one can use
 the functions 'fpngl_range32' and 'fpngl_range64'.
 
    ---------- Footnotes ----------
@@ -320,7 +321,7 @@ the functions 'fpngl_range32' and 'fpngl_range64'.
 <https://www.pcg-random.org/posts/bounded-rands.html>, 2018.
 
    (3) Fast Random Integer Generation in an Interval, Daniel Lemire, ACM
-TOMACS 29(1), 2019.
+TOMACS 29(1), p. 3:1-3:12, 2019.
 
 
 File: fpnglib.info,  Node: Generating Random Floating-Point Numbers,  Next: Generating a random float with some properties,  Prev: Generating Random Integers in a Domain,  Up: An Introduction to FPNGlib
@@ -463,8 +464,8 @@ method.
 
    ---------- Footnotes ----------
 
-   (1) IEEE Standard for Floating-Point Arithmetic.  IEEE STD 754-2008.
-IEEE Computer Society, 2008.
+   (1) IEEE Standard for Floating-Point Arithmetic.  IEEE STD 754-2019.
+IEEE Computer Society, 2019.
 
    (2) See Section 6.4.4.2 of ISO/IEC 9899:1999.
 
@@ -727,10 +728,11 @@ type are described in *note Unsized RNGs::.
 
      The speed-up obtained with this function, compared with calling N
      times a '*_next32' function depends on the RNG used.  For most
-     implementations, a 64-bit RNG will be called at most N/2 times and
-     each 64-bit integer split into two 32-bit integers to fill adjacent
-     positions in the array.  Some RNGs do have dedicated fast
-     implementations of this function (refer to their documentation).
+     implementations, a 64-bit RNG will be called at most ceil(N/2)
+     times and each 64-bit integer split into two 32-bit integers to
+     fill adjacent positions in the array.  Some RNGs do have dedicated
+     fast implementations of this function (refer to their
+     documentation).
 
  -- 'fpnglib/irng32_t.h': void fpngl_irng32_array64 (fpngl_irng32_t*
           RNG, uint64_t* T, uint32_t N)
@@ -852,7 +854,7 @@ then done with 'fpngl_irng_delete' only.
    There is also a function to draw an integer of the size supported
 natively by the wrapped RNG:
 
- -- Library Function: uint64_t fpngl_irng_next (fpngl_irng_t* RNG)
+ -- 'fpnglib/irng_t.h': uint64_t fpngl_irng_next (fpngl_irng_t* RNG)
      This function is unique to the 'fpngl_irng_t' type.  If the RNG
      wrapped is of type 'fpngl_irng64_t', it behaves like
      'fpngl_irng_next64', otherwise it returns the integer computed with
@@ -928,8 +930,10 @@ seed, which can be one integer or an array of integers.
 
  -- 'fpnglib/xorgens.h': fpngl_irng32_t* fpngl_xor4096iv32 (uint32_t
           SEED)
-     This is the 32-bit implementation of the 'xor4096i' algorithm by
-     Richard P. Brent.
+     This is the 32-bit implementation of the 'xor4096i' algorithm
+     presented in _Some long-period random number generators using
+     shifts and xors_, Richard P. Brent, ANZIAM Journal 48 (CTAC2006),
+     p. C188-C202, 2007.
 
 4.2.2 64-bit Integer RNGs
 -------------------------
@@ -978,7 +982,7 @@ seed, which can be one integer or an array of integers.
  -- 'fpnglib/xorgens.h': fpngl_irng64_t* fpngl_xor4096iv64 (uint64_t
           SEED)
      This is the 64-bit implementation of the 'xor4096i' algorithm by
-     Richard P. Brent.
+     Richard P. Brent (see 'fpngl_xor4096iv32').
 
 
 File: fpnglib.info,  Node: Random Integers in a Range,  Next: Non-Uniform Distributions,  Prev: Integer RNGs available,  Up: Integer Random Generators
@@ -996,7 +1000,7 @@ that program, this approach is biased whenever the number of values in
 the original domain of the RNG is not a multiple of the modulus.  Even
 if it is a multiple of the modulus, the modulo operation extracts the
 low-order bits of the random integer, which are the least "random" ones
-for many RNGs.
+for some RNGs.
 
    FPNGlib offers four different functions to compute random numbers in
 a "small" domain, depending on the size of the integers required and the
@@ -1023,8 +1027,8 @@ following functions:
 
      Note that, for both functions, no provision is made to ensure that
      A is smaller than the largest integer that can be computed by RNG,
-     'fpngl_irng_max(rng)'.  It is up to the user to check that this
-     precondition is met.
+     'fpngl_irng_max(rng)'.  *It is up to the user to check that this
+     precondition is met*.
 
    When the domain considered is of the form [a,b), with a and b
 potentially negative integers, use the following functions:
@@ -1213,7 +1217,7 @@ precision floats; they must all propose the same functionalities:
    (1) '"Generating Random Floating-Point Numbers by Dividing Integers:
 a Case Study", Fre'de'ric Goualard. In proceedings of the International
 Conference on Computational Science (ICCS 2020). Lecture Notes in
-Computer Science, Springer, June 2020.'
+Computer Science 12138, p. 15-28, Springer, June 2020.'
 
 
 File: fpnglib.info,  Node: Existing float RNGs,  Next: Drawing floats in a class,  Up: Floating-Point Random Generators
@@ -1818,7 +1822,7 @@ File: fpnglib.info,  Node: Function Index,  Next: Type Index,  Prev: Extending t
 * fpngl_drand48gnu:                      Double Precision FRNGs.
                                                               (line  30)
 * fpngl_drand48_lcg64:                   Integer RNGs available.
-                                                              (line  95)
+                                                              (line  98)
 * fpngl_float64:                         Drawing floats in a class.
                                                               (line  27)
 * fpngl_float64_distrib:                 Drawing floats non-uniformly.
@@ -1856,7 +1860,7 @@ File: fpnglib.info,  Node: Function Index,  Next: Type Index,  Prev: Extending t
 * fpngl_frng64_next_arrayf64:            Floating-Point Random Generators.
                                                               (line  49)
 * fpngl_gnuc_lcg64:                      Integer RNGs available.
-                                                              (line  83)
+                                                              (line  86)
 * fpngl_golang:                          Double Precision FRNGs.
                                                               (line  46)
 * fpngl_inf64:                           Drawing floats in a class.
@@ -1864,15 +1868,15 @@ File: fpnglib.info,  Node: Function Index,  Next: Type Index,  Prev: Extending t
 * fpngl_irng32_array32:                  Integer Random Generators.
                                                               (line  76)
 * fpngl_irng32_array64:                  Integer Random Generators.
-                                                              (line  92)
+                                                              (line  93)
 * fpngl_irng32_delete:                   Integer Random Generators.
                                                               (line  33)
 * fpngl_irng32_max:                      Integer Random Generators.
-                                                              (line 133)
+                                                              (line 134)
 * fpngl_irng32_min:                      Integer Random Generators.
-                                                              (line 126)
+                                                              (line 127)
 * fpngl_irng32_name:                     Integer Random Generators.
-                                                              (line 117)
+                                                              (line 118)
 * fpngl_irng32_new:                      Extending the Library.
                                                               (line  60)
 * fpngl_irng32_next32:                   Integer Random Generators.
@@ -1882,21 +1886,21 @@ File: fpnglib.info,  Node: Function Index,  Next: Type Index,  Prev: Extending t
 * fpngl_irng32_nextk:                    Integer Random Generators.
                                                               (line  60)
 * fpngl_irng32_seed:                     Integer Random Generators.
-                                                              (line 107)
+                                                              (line 108)
 * fpngl_irng32_seed <1>:                 Integer Random Generators.
-                                                              (line 111)
+                                                              (line 112)
 * fpngl_irng64_array32:                  Integer Random Generators.
                                                               (line  78)
 * fpngl_irng64_array64:                  Integer Random Generators.
-                                                              (line  94)
+                                                              (line  95)
 * fpngl_irng64_delete:                   Integer Random Generators.
                                                               (line  34)
 * fpngl_irng64_max:                      Integer Random Generators.
-                                                              (line 135)
+                                                              (line 136)
 * fpngl_irng64_min:                      Integer Random Generators.
-                                                              (line 128)
+                                                              (line 129)
 * fpngl_irng64_name:                     Integer Random Generators.
-                                                              (line 119)
+                                                              (line 120)
 * fpngl_irng64_next32:                   Integer Random Generators.
                                                               (line  42)
 * fpngl_irng64_next64:                   Integer Random Generators.
@@ -1904,19 +1908,19 @@ File: fpnglib.info,  Node: Function Index,  Next: Type Index,  Prev: Extending t
 * fpngl_irng64_nextk:                    Integer Random Generators.
                                                               (line  62)
 * fpngl_irng64_seed:                     Integer Random Generators.
-                                                              (line 109)
+                                                              (line 110)
 * fpngl_irng_array32:                    Integer Random Generators.
                                                               (line  80)
 * fpngl_irng_array64:                    Integer Random Generators.
-                                                              (line  96)
+                                                              (line  97)
 * fpngl_irng_delete:                     Integer Random Generators.
                                                               (line  35)
 * fpngl_irng_max:                        Integer Random Generators.
-                                                              (line 137)
+                                                              (line 138)
 * fpngl_irng_min:                        Integer Random Generators.
-                                                              (line 130)
+                                                              (line 131)
 * fpngl_irng_name:                       Integer Random Generators.
-                                                              (line 121)
+                                                              (line 122)
 * fpngl_irng_new32:                      Unsized RNGs.        (line  47)
 * fpngl_irng_new64:                      Unsized RNGs.        (line  49)
 * fpngl_irng_next:                       Unsized RNGs.        (line  60)
@@ -1927,9 +1931,9 @@ File: fpnglib.info,  Node: Function Index,  Next: Type Index,  Prev: Extending t
 * fpngl_irng_nextk:                      Integer Random Generators.
                                                               (line  64)
 * fpngl_is_irng32:                       Integer Random Generators.
-                                                              (line 140)
-* fpngl_is_irng64:                       Integer Random Generators.
                                                               (line 141)
+* fpngl_is_irng64:                       Integer Random Generators.
+                                                              (line 142)
 * fpngl_java:                            Double Precision FRNGs.
                                                               (line  50)
 * fpngl_KGW:                             Double Precision FRNGs.
@@ -1939,19 +1943,19 @@ File: fpnglib.info,  Node: Function Index,  Next: Type Index,  Prev: Extending t
 * fpngl_matlabp5:                        Double Precision FRNGs.
                                                               (line   6)
 * fpngl_minstd64:                        Integer RNGs available.
-                                                              (line  76)
+                                                              (line  79)
 * fpngl_mt19937v32:                      Integer RNGs available.
                                                               (line  55)
 * fpngl_mt19937v32_by_array:             Integer RNGs available.
                                                               (line  57)
 * fpngl_mt19937v64:                      Integer RNGs available.
-                                                              (line 104)
+                                                              (line 107)
 * fpngl_mt19937v64_by_array:             Integer RNGs available.
-                                                              (line 106)
+                                                              (line 109)
 * fpngl_mupad:                           Double Precision FRNGs.
                                                               (line  14)
 * fpngl_mupad_lcg64:                     Integer RNGs available.
-                                                              (line 100)
+                                                              (line 103)
 * fpngl_nan64:                           Drawing floats in a class.
                                                               (line  23)
 * fpngl_nextafter64:                     IEEE 754 and the Floating-Point Unit.
@@ -1961,7 +1965,7 @@ File: fpnglib.info,  Node: Function Index,  Next: Type Index,  Prev: Extending t
 * fpngl_previous64:                      IEEE 754 and the Floating-Point Unit.
                                                               (line 266)
 * fpngl_randu64:                         Integer RNGs available.
-                                                              (line  89)
+                                                              (line  92)
 * fpngl_range32:                         Random Integers in a Range.
                                                               (line  49)
 * fpngl_range64:                         Random Integers in a Range.
@@ -1983,7 +1987,7 @@ File: fpnglib.info,  Node: Function Index,  Next: Type Index,  Prev: Extending t
 * fpngl_xor4096iv32:                     Integer RNGs available.
                                                               (line  68)
 * fpngl_xor4096iv64:                     Integer RNGs available.
-                                                              (line 117)
+                                                              (line 120)
 * fpngl_xor4096rv32:                     Single Precision FRNGs.
                                                               (line   6)
 * fpngl_xor4096rv64:                     Double Precision FRNGs.
@@ -2005,7 +2009,7 @@ File: fpnglib.info,  Node: Type Index,  Next: Concept Index,  Prev: Function Ind
 * fpngl_frng64_t:                        General Organization of the Library.
                                                                (line 30)
 * fpngl_irng32_t:                        Generating Random Integers.
-                                                               (line 58)
+                                                               (line 59)
 * fpngl_irng32_t <1>:                    General Organization of the Library.
                                                                (line 22)
 * fpngl_irng64_t:                        General Organization of the Library.
@@ -2032,6 +2036,8 @@ File: fpnglib.info,  Node: Concept Index,  Prev: Type Index
                                                                (line 38)
 * Prefix:                                General Organization of the Library.
                                                                (line  8)
+* Seed:                                  Generating Random Integers.
+                                                               (line 54)
 * Supported platforms:                   What is FPNGlib?.     (line 19)
 * Type name formation:                   General Organization of the Library.
                                                                (line 19)
@@ -2042,46 +2048,46 @@ Tag Table:
 Node: What is FPNGlib?75
 Ref: What is FPNGlib?-Footnote-12893
 Node: Getting Started with FPNGlib2995
-Node: An Introduction to FPNGlib6204
-Node: Generating Random Integers6973
-Ref: Generating Random Integers-Footnote-110215
-Node: Generating Random Integers in a Domain10483
-Ref: biased_dice_c11218
-Ref: Generating Random Integers in a Domain-Footnote-113551
-Ref: Generating Random Integers in a Domain-Footnote-213624
-Ref: Generating Random Integers in a Domain-Footnote-313756
-Node: Generating Random Floating-Point Numbers13850
-Ref: exa:mcpi18851
-Ref: Generating Random Floating-Point Numbers-Footnote-120050
-Ref: Generating Random Floating-Point Numbers-Footnote-220152
-Ref: Generating Random Floating-Point Numbers-Footnote-320202
-Node: Generating a random float with some properties20350
-Ref: Generating a random float with some properties-Footnote-125242
-Node: General Organization of the Library25376
-Node: Integer Random Generators27389
-Node: Unsized RNGs34359
-Ref: exa:irng35110
-Node: Integer RNGs available36866
-Ref: tab:irngs37789
-Node: Random Integers in a Range42298
-Node: Non-Uniform Distributions45100
-Ref: fig:biased_dice45675
-Ref: exa:biased245822
-Ref: Non-Uniform Distributions-Footnote-148656
-Node: Floating-Point Random Generators48992
-Ref: Floating-Point Random Generators-Footnote-152401
-Node: Existing float RNGs52652
-Node: Single Precision FRNGs52888
-Node: Double Precision FRNGs53151
-Node: Drawing floats in a class55558
-Ref: Drawing floats in a class-Footnote-158422
-Ref: Drawing floats in a class-Footnote-258533
-Node: Drawing floats non-uniformly58643
-Node: IEEE 754 and the Floating-Point Unit60464
-Node: Extending the Library70613
-Ref: fig:classes70872
-Node: Function Index72881
-Node: Type Index86705
-Node: Concept Index87737
+Node: An Introduction to FPNGlib6200
+Node: Generating Random Integers7029
+Ref: Generating Random Integers-Footnote-110292
+Node: Generating Random Integers in a Domain10560
+Ref: biased_dice_c11317
+Ref: Generating Random Integers in a Domain-Footnote-113648
+Ref: Generating Random Integers in a Domain-Footnote-213721
+Ref: Generating Random Integers in a Domain-Footnote-313853
+Node: Generating Random Floating-Point Numbers13960
+Ref: exa:mcpi18961
+Ref: Generating Random Floating-Point Numbers-Footnote-120160
+Ref: Generating Random Floating-Point Numbers-Footnote-220262
+Ref: Generating Random Floating-Point Numbers-Footnote-320312
+Node: Generating a random float with some properties20460
+Ref: Generating a random float with some properties-Footnote-125352
+Node: General Organization of the Library25486
+Node: Integer Random Generators27499
+Node: Unsized RNGs34480
+Ref: exa:irng35231
+Node: Integer RNGs available36989
+Ref: tab:irngs37912
+Node: Random Integers in a Range42584
+Node: Non-Uniform Distributions45388
+Ref: fig:biased_dice45963
+Ref: exa:biased246110
+Ref: Non-Uniform Distributions-Footnote-148944
+Node: Floating-Point Random Generators49280
+Ref: Floating-Point Random Generators-Footnote-152689
+Node: Existing float RNGs52956
+Node: Single Precision FRNGs53192
+Node: Double Precision FRNGs53455
+Node: Drawing floats in a class55862
+Ref: Drawing floats in a class-Footnote-158726
+Ref: Drawing floats in a class-Footnote-258837
+Node: Drawing floats non-uniformly58947
+Node: IEEE 754 and the Floating-Point Unit60768
+Node: Extending the Library70917
+Ref: fig:classes71176
+Node: Function Index73185
+Node: Type Index87009
+Node: Concept Index88041
 
 End Tag Table

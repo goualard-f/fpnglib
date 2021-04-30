@@ -395,9 +395,16 @@ have been allocated to the correct size before the call.
 
 The speed-up obtained with this function, compared with calling @var{n} times a
 @code{*_next32} function depends on the RNG used. For most implementations, a 64-bit
-RNG will be called at most @math{@lceil@var{n}/2@rceil} times and each 64-bit integer split into
-two 32-bit integers to fill adjacent positions in the array. Some RNGs do have dedicated
-fast implementations of this function (refer to their documentation).
+RNG will be called at most
+@ifinfo
+ceil(@var{n}/2)
+@end ifinfo
+@iftex
+@math{@lceil@var{n}/2@rceil}
+@end iftex
+times and each 64-bit integer
+split into two 32-bit integers to fill adjacent positions in the array. Some RNGs do
+have dedicated fast implementations of this function (refer to their documentation).
 @end deftypefn
 
 @deftypefn {@file{fpnglib/irng32_t.h}} void fpngl_irng32_array64 @
